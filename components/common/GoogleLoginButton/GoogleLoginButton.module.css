@@ -1,0 +1,37 @@
+.loginButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: clamp(240px, 80%, 320px);
+  height: 52px;
+  padding: 0 24px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(240, 240, 240, 0.92));
+  box-shadow:
+    0 12px 25px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  color: #3b4045;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.loginButton:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 18px 35px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.loginButton:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+}
+
+.logo {
+  width: 22px;
+  height: 22px;
+}
