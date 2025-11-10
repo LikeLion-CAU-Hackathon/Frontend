@@ -6,33 +6,35 @@ const CalendarPage = () => {
 
   return (
     <PageContainer>
-      <ContentWrapper>
+      <MainContent>
         <CardGrid />
-      </ContentWrapper>
-      <FooterWrapper>
+      </MainContent>
+      <FooterSection>
         <Footer />
-      </FooterWrapper>
+      </FooterSection>
     </PageContainer>
   )
 }
 
 export default CalendarPage
 
-const PageContainer = styled.div`
+const PageContainer = styled.main`
   display: flex;
+  width: 100%;
+  height: 100%;
   flex-direction: column;
   align-items: center;            
   justify-content: center;     
   gap: 25px;    
 `
 
-const ContentWrapper = styled.div`
+const MainContent = styled.section`
   display: flex;
   align-items: center;
   justify-content: center;
 `
 
-const FooterWrapper = styled.div`
+const FooterSection = styled.footer`
   display: flex;
   justify-content: center;
   width: 100%;
