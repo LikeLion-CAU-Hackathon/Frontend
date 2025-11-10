@@ -20,10 +20,8 @@ export default CalendarCard
 
 const CardSection = styled.section<{ $isOpened: boolean }>`
     margin: 0;
-    max-width: 100%;
-    max-height: 100%;
 `
 
 const CardImage = styled.img`
-
+  cursor: pointer;
 `
