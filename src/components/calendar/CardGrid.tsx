@@ -2,13 +2,12 @@ import styled from "styled-components";
 import type { Card } from "../../types/card";
 import CalendarCard from "./CalendarCard";
 
-const CardGrid = () => {
-  // 4x6 그리드용 24개 카드 
-  const cards: Card[] = Array.from({ length: 24 }, (_, index) => ({
-    id: index + 1,
-    image: '',
-    isOpened: false,
-  }));
+interface CardGridProps {
+  cards: Card[];
+  onCardClick: (id: number) => void;
+}
+
+const CardGrid = ( {cards, onCardClick} : CardGridProps) => {
 
   return (
     <GridContainer>
@@ -16,7 +15,7 @@ const CardGrid = () => {
         <CalendarCard
           key={card.id}
           card={card}
-          onClick={() =>{} }
+          onClick={() => onCardClick(card.id) }
         />
       ))}
     </GridContainer>
