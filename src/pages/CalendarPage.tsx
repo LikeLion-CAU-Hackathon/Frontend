@@ -1,12 +1,11 @@
 import styled from 'styled-components'
-import coverImage from '../assets/images/cover.png'
 import CardGrid from '../components/calendar/CardGrid'
 import Footer from '../components/common/Footer'
 
 const CalendarPage = () => {
 
   return (
-    <PageContainer $coverImage={coverImage}>
+    <PageContainer>
       <ContentWrapper>
         <CardGrid />
       </ContentWrapper>
@@ -19,11 +18,7 @@ const CalendarPage = () => {
 
 export default CalendarPage
 
-const PageContainer = styled.div<{ $coverImage: string }>`
-  padding: 76px;                     
-  background-image: url(${props => props.$coverImage});
-  background-position: center;
-  background-size: auto;
+const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;            
