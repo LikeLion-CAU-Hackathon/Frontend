@@ -1,5 +1,5 @@
 import styles from './GoogleLoginButton.module.css';
-import googleLogo from '../../../src/assets/images/google-logo.svg';
+import googleLoginButtonImage from '../../../src/assets/images/google-login-button.svg';
 
 const GoogleLoginButton = () => {
   const handleLogin = () => {
@@ -8,9 +8,13 @@ const GoogleLoginButton = () => {
   };
 
   return (
-    <button type="button" className={styles.loginButton} onClick={handleLogin}>
-      <img src={googleLogo} alt="Google logo" className={styles.logo} />
-      Log in with Google
+    <button
+      type="button"
+      className={styles.loginButton}
+      onClick={handleLogin}
+      aria-label="Log in with Google"
+    >
+      <img src={googleLoginButtonImage} alt="" aria-hidden="true" className={styles.buttonImage} />
     </button>
   );
 };

@@ -1,6 +1,7 @@
 .screen {
   width: 500px;
   height: 978px;
+  margin: 0 auto;
   position: relative;
   overflow: hidden;
   border-radius: 32px;

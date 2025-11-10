@@ -1,6 +1,6 @@
 import GoogleLoginButton from '../../components/common/GoogleLoginButton/GoogleLoginButton';
 import styles from './Login.module.css';
-import envelopesStackImg from '../../src/assets/images/Frame 30.svg';
+import envelopesStackImg from '../../src/assets/images/letters.svg';
 
 const Login = () => {
   return (
