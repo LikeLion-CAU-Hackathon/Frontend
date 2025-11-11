@@ -24,9 +24,14 @@ const CardGrid = ( {cards, onCardClick} : CardGridProps) => {
 
 export default CardGrid;
 
-const GridContainer = styled.div`
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-`
+const GridContainer = styled.section`
+    // display: grid;
+    // grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+   display: flex;
+   flex-wrap: wrap;
+   align-content: center;
+   justify-content: center;
+`;
+
 
