@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CalendarPage from "./pages/CalendarPage";
-import "../pages/Login/styles/global.css"; // 전역 스타일 적용
+import "./pages/Login/styles/global.css"; // 전역 스타일 적용
 import FixedScreenLayout from "./components/layout/FixedScreenLayout/FixedScreenLayout";
-import Login from "./Login/Login";
+import Login from "./pages/Login/Login";
 
 function App() {
   return (
