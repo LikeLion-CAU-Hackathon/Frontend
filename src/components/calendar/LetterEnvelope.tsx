@@ -1,23 +1,29 @@
-// card.ts 상태 isOpened=true일 때
 import styled from "styled-components";
-import sideFoldImage from "../assets/images/side_fold.png";
-import bottomFoldImage from "../assets/images/bottom_fold.png";
-import topFoldImage from "../assets/images/top_fold.png";
+import sideFoldImage from "../../assets/images/side_fold.png";
+import bottomFoldImage from "../../assets/images/bottom_fold.png";
+import topFoldImage from "../../assets/images/top_fold.png";
 
-const LetterPage = () => {
-  return (
-    <LetterWrapper>
-        <LetterSection>
-            <TopFold src={topFoldImage} alt="letter top fold" />
-            <LetterBackground />
-        </LetterSection>
-        <SideFold src={sideFoldImage} alt="letter side fold" />
-        <BottomFold src={bottomFoldImage} alt="letter bottom fold" />
-    </LetterWrapper>
-  )
+interface LetterEnvelopeProps {
+  /** 편지봉투를 화면에 표시할지 여부 */
+  isOpened?: boolean;
 }
 
-export default LetterPage
+const LetterEnvelope = ({ isOpened = true } : LetterEnvelopeProps) => {
+  if (!isOpened) return null;
+
+  return (
+    <LetterWrapper>
+      <EnvelopeBody>
+        <TopFold src={topFoldImage} alt="letter top fold" />
+        <LetterBackground />
+      </EnvelopeBody>
+      <SideFold src={sideFoldImage} alt="letter side fold" />
+      <BottomFold src={bottomFoldImage} alt="letter bottom fold" />
+    </LetterWrapper>
+  );
+};
+
+export default LetterEnvelope;
 
 const LetterWrapper = styled.main`
   position: absolute;
@@ -25,16 +31,18 @@ const LetterWrapper = styled.main`
   width: 100%;
   display: flex;
   z-index: 20;
-`
-const LetterSection = styled.section`
+`;
+
+const EnvelopeBody = styled.section`
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
-`
+`;
+
 const TopFold = styled.img`
-  z-index: 4;
-  display: block;
+  z-index: 4; 
+  display: block; 
   margin-bottom: -23px; // 간격이 생기는 이유 모르겠어서 일단 이렇게 해결
 `;
 

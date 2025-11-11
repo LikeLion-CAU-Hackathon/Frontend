@@ -3,7 +3,7 @@ import CardGrid from '../components/calendar/CardGrid'
 import Footer from '../components/common/Footer'
 import { useState } from 'react';
 import type { Card } from '../types/card';
-import LetterPage from './LetterPage';
+import LetterEnvelope from '../components/calendar/LetterEnvelope';
 
 const CalendarPage = () => {
   // 4x6 그리드용 24개 카드 
@@ -34,9 +34,7 @@ const CalendarPage = () => {
             <CardGrid cards = {cards} onCardClick={handleCardClick} />
         </MainContent>
         {/* isOpened=true인 경우 편지지 슬라이딩  */}
-        {isCardOpened && (
-        <LetterPage />
-        )}
+        <LetterEnvelope isOpened={isCardOpened} />
         <Footer />
     </PageContainer>
   )
