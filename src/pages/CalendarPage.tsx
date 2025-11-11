@@ -3,6 +3,7 @@ import CardGrid from '../components/calendar/CardGrid'
 import Footer from '../components/common/Footer'
 import { useState } from 'react';
 import type { Card } from '../types/card';
+import LetterPage from './LetterPage';
 
 const CalendarPage = () => {
   // 4x6 그리드용 24개 카드 
@@ -29,14 +30,14 @@ const CalendarPage = () => {
 
   return (
     <PageContainer isOpened={isCardOpened} >
-      {/* isOpened=true인 경우 overlay 추가  */}
-      {isCardOpened && <Overlay />}
         <MainContent>
             <CardGrid cards = {cards} onCardClick={handleCardClick} />
         </MainContent>
-        <FooterSection>
-            <Footer />
-        </FooterSection>
+        {/* isOpened=true인 경우 편지지 슬라이딩  */}
+        {isCardOpened && (
+        <LetterPage />
+        )}
+        <Footer />
     </PageContainer>
   )
 }
@@ -50,17 +51,9 @@ const PageContainer = styled.main<{isOpened : boolean}>`
   flex-direction: column;
   align-items: center;            
   justify-content: center;     
-  gap: 25px;    
+  gap: 25px;
+  position: relative;
 `
-const Overlay = styled.div`
-  position: absolute; 
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 10;
-`;
 
 const MainContent = styled.section`
   display: flex;
@@ -68,9 +61,3 @@ const MainContent = styled.section`
   justify-content: center;
 `
 
-const FooterSection = styled.footer`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  max-width: 1200px;
-`
