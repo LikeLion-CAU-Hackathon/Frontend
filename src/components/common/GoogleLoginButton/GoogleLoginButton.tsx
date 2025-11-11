@@ -1,10 +1,27 @@
 import styles from './GoogleLoginButton.module.css';
 import googleLoginButtonImage from '../../../assets/images/google-login-button.svg';
 
+const LOCAL_GOOGLE_AUTH_URL = 'http://localhost:8080/oauth2/authorization/google';
+const PROD_GOOGLE_AUTH_URL = 'https://hackathon-santa.p-e.kr/oauth2/authorization/google';
+
+const getGoogleAuthUrl = () => {
+  const envUrl = import.meta.env?.VITE_GOOGLE_AUTH_URL;
+  if (envUrl) return envUrl;
+
+  if (typeof window === 'undefined') {
+    return LOCAL_GOOGLE_AUTH_URL;
+  }
+
+  const isLocalhost =
+    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+  return isLocalhost ? LOCAL_GOOGLE_AUTH_URL : PROD_GOOGLE_AUTH_URL;
+};
+
 const GoogleLoginButton = () => {
   const handleLogin = () => {
-    // TODO: 여기에 구글 로그인 로직 구현
-    console.log('Google 로그인 시도');
+    const googleAuthUrl = getGoogleAuthUrl();
+    window.location.assign(googleAuthUrl);
   };
 
   return (
