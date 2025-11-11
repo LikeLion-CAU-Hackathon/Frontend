@@ -1,6 +1,6 @@
-import GoogleLoginButton from '../../components/common/GoogleLoginButton/GoogleLoginButton';
-import styles from './Login.module.css';
-import envelopesStackImg from '../../src/assets/images/letters.svg';
+import GoogleLoginButton from "../components/common/GoogleLoginButton/GoogleLoginButton";
+import styles from "./Login.module.css";
+import envelopesStackImg from "../assets/images/letters.svg";
 
 const Login = () => {
   return (
@@ -11,7 +11,11 @@ const Login = () => {
       </header>
 
       <main className={styles.content}>
-        <img src={envelopesStackImg} alt="Stacked envelopes" className={styles.envelopes} />
+        <img
+          src={envelopesStackImg}
+          alt="Stacked envelopes"
+          className={styles.envelopes}
+        />
       </main>
 
       <footer className={styles.footer}>
