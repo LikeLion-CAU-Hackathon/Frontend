@@ -24,13 +24,15 @@ const LetterWrapper = styled.main`
   bottom: 0;
   width: 100%;
   display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: -10.4px; // 중앙 정렬이 안되는 이유?
 `;
 
 const EnvelopeBody = styled.section`
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100%;
 `;
 
 const TopFold = styled.img`
@@ -58,7 +60,7 @@ const SideFold = styled.img`
 
 const BottomFold = styled.img`
   position: absolute;
-  z-index: 3;
+  z-index: 4;
   bottom: 0;
   display: block;
 `;
