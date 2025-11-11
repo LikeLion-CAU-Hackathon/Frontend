@@ -3,14 +3,8 @@ import sideFoldImage from "../../assets/images/side_fold.png";
 import bottomFoldImage from "../../assets/images/bottom_fold.png";
 import topFoldImage from "../../assets/images/top_fold.png";
 
-interface LetterEnvelopeProps {
-  /** 편지봉투를 화면에 표시할지 여부 */
-  isOpened?: boolean;
-}
-
-const LetterEnvelope = ({ isOpened = true } : LetterEnvelopeProps) => {
-  if (!isOpened) return null;
-
+const LetterEnvelope = () => {
+                                             
   return (
     <LetterWrapper>
       <EnvelopeBody>
@@ -30,7 +24,6 @@ const LetterWrapper = styled.main`
   bottom: 0;
   width: 100%;
   display: flex;
-  z-index: 20;
 `;
 
 const EnvelopeBody = styled.section`
@@ -41,7 +34,6 @@ const EnvelopeBody = styled.section`
 `;
 
 const TopFold = styled.img`
-  z-index: 4; 
   display: block; 
   margin-bottom: -23px; // 간격이 생기는 이유 모르겠어서 일단 이렇게 해결
 `;

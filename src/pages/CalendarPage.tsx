@@ -4,6 +4,7 @@ import Footer from '../components/common/Footer'
 import { useState } from 'react';
 import type { Card } from '../types/card';
 import LetterEnvelope from '../components/calendar/LetterEnvelope';
+import LetterPage from './LetterPage';
 
 const CalendarPage = () => {
   // 4x6 그리드용 24개 카드 
@@ -34,7 +35,7 @@ const CalendarPage = () => {
             <CardGrid cards = {cards} onCardClick={handleCardClick} />
         </MainContent>
         {/* isOpened=true인 경우 편지지 슬라이딩  */}
-        <LetterEnvelope isOpened={isCardOpened} />
+        <LetterPage isOpened={isCardOpened} question={"질문이 들어갈 부분"} />
         <Footer />
     </PageContainer>
   )
@@ -58,4 +59,3 @@ const MainContent = styled.section`
   align-items: center;
   justify-content: center;
 `
-
