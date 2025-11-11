@@ -7,7 +7,6 @@ import Login from "./pages/Login/Login";
 function App() {
   return (
     <FixedScreenLayout>
-      {/* 라우터가 있다면 여기에 <Router> 등을 설정 */}
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />

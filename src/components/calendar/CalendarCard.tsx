@@ -4,13 +4,15 @@ import type { Card } from '../../types/card'
 
 interface CalendarCardProps {
     card: Card;
-    onClick: () => void;
+    onClick: (id: number ) => void;
 }
 
+
 const CalendarCard = ({ card, onClick }: CalendarCardProps) => {
+
   return (
     // 나중에 isOpened가 true일 때 편지지 열리게 추가 
-    <CardSection onClick={onClick} $isOpened={card.isOpened}> 
+    <CardSection onClick={() => onClick(card.id)}> 
         <CardImage src={stampImage} alt='stamp background' /> 
     </CardSection> 
   )
@@ -18,12 +20,10 @@ const CalendarCard = ({ card, onClick }: CalendarCardProps) => {
 
 export default CalendarCard
 
-const CardSection = styled.section<{ $isOpened: boolean }>`
+const CardSection = styled.section`
     margin: 0;
-    max-width: 100%;
-    max-height: 100%;
 `
 
 const CardImage = styled.img`
-
+  cursor: pointer;
 `
