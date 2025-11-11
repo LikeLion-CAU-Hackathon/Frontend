@@ -1,6 +1,6 @@
 .screen {
-  width: 500px;
-  height: 978px;
+  width: 393px;
+  height: 852px;
   margin: 0 auto;
   position: relative;
   overflow: hidden;
@@ -10,7 +10,5 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.25),
-    0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.15);
 }
