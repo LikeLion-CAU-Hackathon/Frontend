@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import sideFoldImage from "../../assets/images/side_fold.png";
-import bottomFoldImage from "../../assets/images/bottom_fold.png";
-import topFoldImage from "../../assets/images/top_fold.png";
+import sideFoldImage from "../../../assets/images/side_fold.png";
+import bottomFoldImage from "../../../assets/images/bottom_fold.png";
+import topFoldImage from "../../../assets/images/top_fold.png";
 
 const LetterEnvelope = () => {
                                              

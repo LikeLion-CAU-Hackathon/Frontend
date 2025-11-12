@@ -1,6 +1,6 @@
 import styled from "styled-components"
-import LetterEnvelope from "../components/calendar/LetterEnvelope";
-import LetterContent from "../components/calendar/LetterContent";
+import LetterEnvelope from "./components/LetterEnvelope";
+import LetterContent from "../../components/calendar/LetterContent";
 
 interface LetterEnvelopeProps {
   isOpened: boolean;

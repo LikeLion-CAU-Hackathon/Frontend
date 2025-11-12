@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import type { Card } from "../../types/card";
-import CalendarCard from "./CalendarCard";
+import type { Card } from "../../../types/card";
+import CalendarCard from "../../../components/calendar/CalendarCard";
 
 interface CardGridProps {
   cards: Card[];

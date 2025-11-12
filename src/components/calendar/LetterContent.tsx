@@ -2,7 +2,7 @@ import styled from "styled-components";
 import letterBg from '../../assets/images/letter_background.png';
 import { useEffect, useState } from "react";
 import { getTodayDate } from "../../utils/date";
-import { getQuestion } from "../../services/apis/questionAPI";
+import { getQuestion } from "../../apis/questionAPI";
 import { formatDayToKorean } from "../../utils/dayToKorean";
 
 interface LetterContentProps {
