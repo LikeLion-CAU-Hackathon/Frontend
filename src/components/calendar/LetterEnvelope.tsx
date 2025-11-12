@@ -3,14 +3,8 @@ import sideFoldImage from "../../assets/images/side_fold.png";
 import bottomFoldImage from "../../assets/images/bottom_fold.png";
 import topFoldImage from "../../assets/images/top_fold.png";
 
-interface LetterEnvelopeProps {
-  /** 편지봉투를 화면에 표시할지 여부 */
-  isOpened?: boolean;
-}
-
-const LetterEnvelope = ({ isOpened = true } : LetterEnvelopeProps) => {
-  if (!isOpened) return null;
-
+const LetterEnvelope = () => {
+                                             
   return (
     <LetterWrapper>
       <EnvelopeBody>
@@ -30,18 +24,18 @@ const LetterWrapper = styled.main`
   bottom: 0;
   width: 100%;
   display: flex;
-  z-index: 20;
+  justify-content: center;
+  align-items: center;
+  margin-left: -10.4px; // 중앙 정렬이 안되는 이유?
 `;
 
 const EnvelopeBody = styled.section`
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100%;
 `;
 
 const TopFold = styled.img`
-  z-index: 4; 
   display: block; 
   margin-bottom: -23px; // 간격이 생기는 이유 모르겠어서 일단 이렇게 해결
 `;
@@ -66,7 +60,7 @@ const SideFold = styled.img`
 
 const BottomFold = styled.img`
   position: absolute;
-  z-index: 3;
+  z-index: 4;
   bottom: 0;
   display: block;
 `;
