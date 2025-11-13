@@ -38,9 +38,15 @@ const CalendarPage = () => {
   const isCardOpened = cards.some(card => card.isOpened);
 
   {/* TODO: 어딜 클릭해도 편지지 사라지게 */}
+  const handleCloseLetter = () => {
+    setCards((prev) => prev.map((card) => ({ ...card, isOpened: false })));
+    setSelectedCard(null);
+  };
+
+  
   return (
     <PageContainer isOpened={isCardOpened} >
-        {isCardOpened && <Overlay isVisible={isCardOpened} />}
+        {isCardOpened && <Overlay isVisible={isCardOpened} onClick={handleCloseLetter}/>}
         <MainContent>
             <CardGrid cards={cards} onCardClick={handleCardClick} />
         </MainContent>
@@ -62,7 +68,7 @@ const Overlay = styled.div<{ isVisible: boolean }>`
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
   transition: opacity 0.3s ease-in-out; // 편지지 올라오는거랑 맞추기
   z-index: 1; 
-  pointer-events: none;
+  pointer-events: auto;
 `;
 
 const PageContainer = styled.main<{isOpened : boolean}>`
