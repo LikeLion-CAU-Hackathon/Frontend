@@ -23,7 +23,7 @@ const LetterPage = ({ isOpened, card }: LetterEnvelopeProps) => {
 
 export default LetterPage
 
-const LetterSection = styled.section`
+const LetterSection = styled.main`
   position: absolute;
   bottom: 0;
   width: 100%;
