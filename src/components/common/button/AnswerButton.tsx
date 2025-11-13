@@ -25,4 +25,5 @@ const ButtonWrapper = styled.button<{$width: string; $height: string; $borderRad
   background-color: #F3E5C5;
   font-weight: 600;
   word-wrap: break-word;
+  cursor: pointer;
 `;

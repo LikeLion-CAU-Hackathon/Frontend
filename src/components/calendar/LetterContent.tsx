@@ -62,10 +62,11 @@ const ArticleContainer = styled.article<{ isOpened?: boolean }>`
   display: flex;
   flex-direction: column;
   font-family: 'Gowun Batang', serif;
-  padding:10px;
+  padding:34px;
+  gap:15px;
 
   // 편지지 슬라이딩 효과 
-  transform: ${({ isOpened }) => (isOpened ? "translateY(0)" : "translateY(120%)")};
+  transform: ${({ isOpened }) => (isOpened ? "translateY(-15%)" : "translateY(120%)")};
   opacity: ${({ isOpened }) => (isOpened ? 1 : 0)};
   transition: transform 1.5s ease-in-out, opacity 0.6s ease-in-out;
 `;
