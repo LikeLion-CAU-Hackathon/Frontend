@@ -16,14 +16,23 @@ const CalendarPage = () => {
         isAnswered: false
     })));
 
+  // 현재 클릭한 우표 
+  const [ selectedCard, setSelectedCard ] = useState<Card | null>(null);
+
   // 우표 클릭 시 상태 변경 -> 편지지 슬라이딩 
   const handleCardClick = (id: number) => {
     setCards(initialCards => 
         initialCards.map(card => 
             card.id === id ? { ...card, isOpened : !card.isOpened} : card
         )
-    )
-  }
+    );
+    // 클릭된 우표 저장
+    const clickedCard = cards.find((card) => card.id === id );
+  
+    if(clickedCard) {
+      setSelectedCard(clickedCard);
+   }
+}
 
   // 우표 클릭된 순간 배경 overlay 추가
   const isCardOpened = cards.some(card => card.isOpened);
@@ -36,7 +45,8 @@ const CalendarPage = () => {
             <CardGrid cards={cards} onCardClick={handleCardClick} />
         </MainContent>
         {/* isOpened=true인 경우 편지지 슬라이딩  */}
-        <LetterPage isOpened={isCardOpened} />
+        {/* 클릭한 우표 편지지에 표시  */}
+        <LetterPage card={selectedCard} isOpened={isCardOpened} />
         <Footer />
     </PageContainer>
   )
@@ -50,7 +60,7 @@ const Overlay = styled.div<{ isVisible: boolean }>`
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
-  transitions: opacity 0.3s ease-in-out; // 편지지 올라오는거랑 맞추기
+  transition: opacity 0.3s ease-in-out; // 편지지 올라오는거랑 맞추기
   z-index: 1; 
 `;
 

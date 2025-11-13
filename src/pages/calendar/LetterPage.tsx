@@ -1,17 +1,20 @@
+/* 우표 클릭시 편지봉투 열리는 페이지  */
 import styled from "styled-components"
 import LetterEnvelope from "./components/LetterEnvelope";
 import LetterContent from "../../components/calendar/LetterContent";
+import type { Card } from "../../types/card";
 
 interface LetterEnvelopeProps {
   isOpened: boolean;
+  card: Card | null;
 }
 
-const LetterPage = ({ isOpened }: LetterEnvelopeProps) => {
+const LetterPage = ({ isOpened, card }: LetterEnvelopeProps) => {
 
   return (
     <LetterSection>
         <EnvelopeContainer $visible={isOpened}>
-            <LetterEnvelope />
+            {card && <LetterEnvelope card={card} />}
         </EnvelopeContainer>
         <LetterContent isOpened={isOpened}/>
     </LetterSection>

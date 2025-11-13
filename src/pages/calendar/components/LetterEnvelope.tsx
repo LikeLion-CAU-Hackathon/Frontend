@@ -2,9 +2,15 @@ import styled from "styled-components";
 import sideFoldImage from "../../../assets/images/side_fold.png";
 import bottomFoldImage from "../../../assets/images/bottom_fold.png";
 import topFoldImage from "../../../assets/images/top_fold.png";
+import CalendarCard from "../../../components/calendar/CalendarCard";
+import type { Card } from "../../../types/card";
 
-const LetterEnvelope = () => {
-                                             
+interface LetterEnvelopeProps {
+  card: Card;
+}
+
+const LetterEnvelope = ({ card }: LetterEnvelopeProps) => {
+
   return (
     <LetterWrapper>
       <EnvelopeBody>
@@ -13,6 +19,9 @@ const LetterEnvelope = () => {
       </EnvelopeBody>
       <SideFold src={sideFoldImage} alt="letter side fold" />
       <BottomFold src={bottomFoldImage} alt="letter bottom fold" />
+      <StampSection>
+        <CalendarCard card={card} onClick={() => {}} />
+      </StampSection>
     </LetterWrapper>
   );
 };
@@ -38,6 +47,7 @@ const EnvelopeBody = styled.section`
 const TopFold = styled.img`
   display: block; 
   margin-bottom: -23px; // 간격이 생기는 이유 모르겠어서 일단 이렇게 해결
+  z-index:0;
 `;
 
 const LetterBackground = styled.div`
@@ -53,7 +63,7 @@ const LetterBackground = styled.div`
 
 const SideFold = styled.img`
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   bottom: 0;
   display: block;
 `;
@@ -64,3 +74,10 @@ const BottomFold = styled.img`
   bottom: 0;
   display: block;
 `;
+
+const StampSection = styled.section`
+  position: absolute;
+  z-index: 5;
+  bottom: 10px;
+  right: 23px;
+  `;
