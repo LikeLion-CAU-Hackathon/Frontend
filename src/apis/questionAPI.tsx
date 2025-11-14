@@ -3,6 +3,7 @@ import { BASE_URL } from "../constants/baseURL";
 
 {/* TODO: 토큰 확인 API 따로 만들어서 뺴기  */}
 
+{/* 해당날짜의 질문 가져오기 */}
 export const getQuestion = async (date : string) => {
     const token = localStorage.getItem("token");
 
