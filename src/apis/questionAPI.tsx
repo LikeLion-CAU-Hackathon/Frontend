@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_URL } from "../../constants/baseURL";
+import { BASE_URL } from "../constants/baseURL";
 
 {/* TODO: 토큰 확인 API 따로 만들어서 뺴기  */}
 
