@@ -1,15 +1,15 @@
 import styled from "styled-components";
-import sideFoldImage from "../../assets/images/side_fold.png";
-import bottomFoldImage from "../../assets/images/bottom_fold.png";
-import topFoldImage from "../../assets/images/top_fold.png";
+import sideFoldImage from "../../../assets/images/side_fold.png";
+import bottomFoldImage from "../../../assets/images/bottom_fold.png";
+import topFoldImage from "../../../assets/images/top_fold.png";
+import CalendarCard from "../../../components/calendar/CalendarCard";
+import type { Card } from "../../../types/card";
 
 interface LetterEnvelopeProps {
-  /** 편지봉투를 화면에 표시할지 여부 */
-  isOpened?: boolean;
+  card: Card;
 }
 
-const LetterEnvelope = ({ isOpened = true } : LetterEnvelopeProps) => {
-  if (!isOpened) return null;
+const LetterEnvelope = ({ card }: LetterEnvelopeProps) => {
 
   return (
     <LetterWrapper>
@@ -19,6 +19,9 @@ const LetterEnvelope = ({ isOpened = true } : LetterEnvelopeProps) => {
       </EnvelopeBody>
       <SideFold src={sideFoldImage} alt="letter side fold" />
       <BottomFold src={bottomFoldImage} alt="letter bottom fold" />
+      <StampSection>
+        <CalendarCard card={card} onClick={() => {}} />
+      </StampSection>
     </LetterWrapper>
   );
 };
@@ -30,43 +33,53 @@ const LetterWrapper = styled.main`
   bottom: 0;
   width: 100%;
   display: flex;
-  z-index: 20;
+  justify-content: center;
+  align-items: center;
+  margin-left: -10.4px; // 중앙 정렬이 안되는 이유?
 `;
 
 const EnvelopeBody = styled.section`
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100%;
 `;
 
 const TopFold = styled.img`
-  z-index: 4; 
   display: block; 
-  margin-bottom: -23px; // 간격이 생기는 이유 모르겠어서 일단 이렇게 해결
+  z-index:0;
+  margin-bottom: -25px;
+  z-index: 1;
+  width: 100%;
 `;
 
 const LetterBackground = styled.div`
   width: 100%;
-  height: 249px;
+  height: 255px;
   background: #781313;
   border-radius: 4.16px;
   border: 0.39px #781313 solid;
-  bottom: 0;
-  position: relative;
-  z-index: 1;
+  z-index: 0;
 `;
 
 const SideFold = styled.img`
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   bottom: 0;
   display: block;
+  height: 230px;
+  width: 100%;
 `;
 
 const BottomFold = styled.img`
   position: absolute;
-  z-index: 3;
+  z-index: 4;
   bottom: 0;
   display: block;
 `;
+
+const StampSection = styled.section`
+  position: absolute;
+  z-index: 5;
+  bottom: 10px;
+  right: 23px;
+  `;
