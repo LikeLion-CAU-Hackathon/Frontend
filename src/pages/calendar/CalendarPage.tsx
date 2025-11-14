@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { Card } from '../../types/card';
 import LetterPage from './LetterPage';
 import CardGrid from './components/CardGrid';
+import Overlay from '../../components/common/Overlay/Overlay';
 
 const CalendarPage = () => {
   // 4x6 그리드용 24개 카드 
@@ -59,17 +60,6 @@ const CalendarPage = () => {
 }
 
 export default CalendarPage
-
-const Overlay = styled.div<{ isVisible: boolean }>`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
-  transition: opacity 0.3s ease-in-out; // 편지지 올라오는거랑 맞추기
-  z-index: 1; 
-  pointer-events: auto;
-`;
 
 const PageContainer = styled.main<{isOpened : boolean}>`
   display: flex;
