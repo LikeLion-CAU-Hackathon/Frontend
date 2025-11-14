@@ -1,3 +1,5 @@
+@import url('https://cdn.jsdelivr.net/gh/webfontworld/maruburi/MaruBuri.css');
+
 /* 기본 리셋 */
 body, html {
   margin: 0;
@@ -13,7 +15,7 @@ body, html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'MaruBuri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   min-height: 100vh;
   display: flex;
   justify-content: center;
