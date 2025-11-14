@@ -1,8 +1,36 @@
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import GoogleLoginButton from "../../components/common/GoogleLoginButton/GoogleLoginButton";
 import styles from "./Login.module.css";
 import envelopesStackImg from "../../assets/images/letters.svg";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const hasAuthCode = params.has("code");
+    const loginStatus = params.get("login");
+    const token = params.get("token");
+    const hasError = params.has("error");
+
+    if (hasError || (!token && !hasAuthCode && loginStatus !== "success")) return;
+
+    if (token) {
+      localStorage.setItem("access_token", token);
+    }
+
+    const redirectParam = params.get("redirect");
+    const redirectPath = redirectParam
+      ? redirectParam.startsWith("/")
+        ? redirectParam
+        : `/${redirectParam}`
+      : "/calendar";
+
+    navigate(redirectPath, { replace: true });
+  }, [location.search, navigate]);
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
