@@ -5,6 +5,7 @@ import { clearToken, getAccessToken } from "../utils/token";
 
 export const axiosAPI = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
 });
 
 
