@@ -66,7 +66,7 @@ const AnswerListPage = () => {
 
   return (
     <PageWrapper backgroundImg={currentBackgroundImg}>
-      <Overlay isVisible={true} />
+      <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"}/>
       <QuestionHeader>{question}</QuestionHeader>
       <SliderWrapper>
         <Slider {...settings}>
@@ -111,27 +111,7 @@ const QuestionHeader = styled.header`
 const SliderWrapper = styled.section`
   width: 100%;
   max-width: 100vw;
-  overflow: hidden;
-  
-  .slick-slider {
-    width: 100%;
-  }
-  
-  .slick-list {
-    width: 100%;
-  }
-  
-  .slick-track {
-    display: flex;
-  }
-  
-  .slick-slide {
-    width: 100%;
-  }
-  
-  .slick-dots {
-    bottom: 0px;
-    
+
     li button:before {
       color: rgba(255, 255, 255, 0.5);
       font-size: 10px;
