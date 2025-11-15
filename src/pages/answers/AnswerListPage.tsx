@@ -7,6 +7,7 @@ import Footer from "../../components/common/Footer";
 import { useEffect, useState } from "react";
 import Overlay from "../../components/common/Overlay/Overlay";
 import { getAnswerList } from "../../apis/answer/answer.api";
+import { useSearchParams } from "react-router-dom";
 
 interface Answer {
   id: number;
@@ -19,12 +20,12 @@ interface Answer {
 }
 
 const AnswerListPage = () => {
+  const [searchParams] = useSearchParams();
+  const questionId = Number(searchParams.get('questionId')) || 1;
+  
   const [currentSlide, setCurrentSlide] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // TODO: 라우터에서 받을 예정
-  const questionId = 1; 
+  const [loading, setLoading] = useState(true); 
 
   // 답변 리스트 불러오기 
   useEffect(() => {
