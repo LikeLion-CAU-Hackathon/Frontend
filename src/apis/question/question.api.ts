@@ -1,5 +1,6 @@
 import { axiosAPI } from "../axiosInstance";
 
+
 export const getQuestion = async (date: string) => {
   try {
     const response = await axiosAPI.get(`/questions/${date}`);
