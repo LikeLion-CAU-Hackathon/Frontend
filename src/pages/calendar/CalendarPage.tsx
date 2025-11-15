@@ -1,82 +1,21 @@
 import styled from 'styled-components'
 import Footer from '../../components/common/Footer'
-import { useState } from 'react';
-import type { Card } from '../../types/card';
 import LetterPage from './LetterPage';
 import CardGrid from './components/CardGrid';
 import { useNavigate } from 'react-router-dom';
-import { checkAnswered } from '../../apis/answer/answer.api';
-import { isCardOpenableToday } from '../../utils/date';
+import Overlay from '../../components/common/Overlay/Overlay';
+import { useCalendar } from '../../hooks/useCalendar';
 
 const CalendarPage = () => {
   const navigate = useNavigate();
-  
-  // 4x6 그리드용 24개 카드 
-  const [ cards, setCards ] = useState<Card[]>(() => 
-    Array.from({ length: 24}, (_, index) => ({
-        id: index+1,
-        image: "", // 각 우표 이미지를 stamp1, stamp2, ... , 로 다운받기
-        isOpened: false,
-        isExpired: false,
-        isAnswered: false
-    })));
 
-  // 현재 클릭한 우표 
-  const [ selectedCard, setSelectedCard ] = useState<Card | null>(null);
-
-  // 우표 클릭 시 상태 변경 -> 편지지 슬라이딩 
-  const handleCardClick = async (id: number) => {
-    try {
-      // 오늘 열리는 우표인지 확인 (오늘 기준 전과 후로 나누기)
-      if (!isCardOpenableToday(id)) {
-        alert("오늘의 우표가 아닙니다!");
-        return;
-    }
-
-      // checkAnswered API 호출 (카드 id를 questionId로 사용)
-      const response = await checkAnswered(id);
-      const isAnswered = response.answered; 
-      
-      if (isAnswered) {
-        navigate(`/answer-list?questionId=${id}`);
-      } else {
-        setCards(initialCards => {
-          const updatedCards = initialCards.map(card => 
-            card.id === id ? { ...card, isOpened : !card.isOpened} : card
-          );
-          // 클릭된 우표 저장
-          const clickedCard = updatedCards.find((card) => card.id === id);
-          if(clickedCard) {
-            setSelectedCard(clickedCard);
-          }
-          return updatedCards;
-        });
-      }
-    } catch (error) {
-      console.error("답변 확인 중 오류가 발생했습니다: ", error);
-      // 에러 발생 시 LetterPage 렌더링
-      setCards(initialCards => {
-        const updatedCards = initialCards.map(card => 
-          card.id === id ? { ...card, isOpened: !card.isOpened} : card
-        );
-        // 클릭된 우표 저장
-        const clickedCard = updatedCards.find((card) => card.id === id);
-        if(clickedCard) {
-          setSelectedCard(clickedCard);
-        }
-        return updatedCards;
-      });
-    }
-  }
-
-  // 우표 클릭된 순간 배경 overlay 추가
-  const isCardOpened = cards.some(card => card.isOpened);
-
-  {/* TODO: 어딜 클릭해도 편지지 사라지게 */}
-  const handleCloseLetter = () => {
-    setCards((prev) => prev.map((card) => ({ ...card, isOpened: false })));
-    setSelectedCard(null);
-  };
+  const {
+    cards,
+    selectedCard,
+    isCardOpened,
+    handleCardClick,
+    handleCloseLetter,
+  } = useCalendar(navigate);
 
   
   return (
@@ -94,17 +33,6 @@ const CalendarPage = () => {
 }
 
 export default CalendarPage
-
-const Overlay = styled.div<{ isVisible: boolean }>`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
-  transition: opacity 0.3s ease-in-out; // 편지지 올라오는거랑 맞추기
-  z-index: 1; 
-  pointer-events: auto;
-`;
 
 const PageContainer = styled.main<{isOpened : boolean}>`
   display: flex;
