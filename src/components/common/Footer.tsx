@@ -9,10 +9,11 @@ export default function Footer() {
 }
 
 const FooterSection = styled.footer`
+  position: absolute;
   color: white;
   font-size: 12px;
   font-family: SF Pro;
   font-weight: 400;
-  overflow-wrap: break-word; // 자동 줄바꿈
   z-index:1;
+  bottom:37px;
 `
