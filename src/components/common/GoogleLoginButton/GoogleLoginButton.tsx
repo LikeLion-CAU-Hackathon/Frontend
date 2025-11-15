@@ -7,14 +7,7 @@ const GOOGLE_AUTH_BASE_URL =
 
 const GoogleLoginButton = () => {
   const handleLogin = () => {
-    const currentOrigin = window.location.origin;
-    const callbackUrl = new URL('/login', currentOrigin);
-    callbackUrl.searchParams.set('redirect', '/calendar');
-
-    const authUrl = new URL(GOOGLE_AUTH_BASE_URL);
-    authUrl.searchParams.set('redirect_uri', callbackUrl.toString());
-
-    window.location.assign(authUrl.toString());
+    window.location.href = GOOGLE_AUTH_BASE_URL;
   };
 
   return (
