@@ -1,13 +1,10 @@
-import styles from './GoogleLoginButton.module.css';
-import googleLoginButtonImage from '../../../assets/images/google-login-button.svg';
-
-const GOOGLE_AUTH_BASE_URL =
-  import.meta.env?.VITE_GOOGLE_AUTH_URL ??
-  'https://hackathon-santa.p-e.kr/oauth2/authorization/google';
+import styles from "./GoogleLoginButton.module.css";
+import googleLoginButtonImage from "../../../assets/images/google-login-button.svg";
+import { GOOGLE_AUTH_URL } from "../../../constants/oauth";
 
 const GoogleLoginButton = () => {
   const handleLogin = () => {
-    window.location.href = GOOGLE_AUTH_BASE_URL;
+    window.location.href = GOOGLE_AUTH_URL;
   };
 
   return (
