@@ -1,4 +1,3 @@
-import React from 'react'
 import AnswerCard from '../../components/common/AnswerCard'
 
 const AnswerListPage = () => {
