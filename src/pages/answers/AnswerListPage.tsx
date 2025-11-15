@@ -4,48 +4,63 @@ import "slick-carousel/slick/slick-theme.css";
 import AnswerSlide from "./components/AnswerSlide";
 import styled from "styled-components";
 import Footer from "../../components/common/Footer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Overlay from "../../components/common/Overlay/Overlay";
+import { getAnswerList } from "../../apis/answer/answer.api";
 
 interface Answer {
   id: number;
   author: string;
   date: string;
   time: string;
-  content: string;
+  contents: string;
   likes: number;
   comments: number;
 }
 
 const AnswerListPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const settings = {
-    dots: true,
-    infinite: false,
-    speed: 600,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: false,
-    beforeChange: (_current: number, next: number) => {
-      setCurrentSlide(next);
-    },
-  }
+  // TODO: 라우터에서 받을 예정
+  const questionId = 1; 
 
-  // TODO: 해당 우표의 질문 가져오기 (클릭한 우표 id로)
-  const question = "올해 가장 기억에 남는 크리스마스 선물은 무엇인가요?";
+  // 답변 리스트 불러오기 
+  useEffect(() => {
+    const fetchAnswers = async () => {
+      try {
+        const data = await getAnswerList(questionId);
+        
+        // 백엔드 응답 형식 변환
+        const mappedData = data.map((response: any) => ({
+          id: response.id,
+          author: response.userName,
+          date: response.createdTime.slice(0, 10),
+          time: response.createdTime.slice(11, 16),
+          contents: response.contents,
+          likes: response.likeCount,
+          comments: response.replyCount,
+        }));
+
+        setAnswers(mappedData);
+      } catch(error) {
+        console.error("답변 리스트를 불러오는 데 오류가 발생했습니다: ", error);
+      }
+    };
+    fetchAnswers();
+  }, [questionId]);
 
   // 더미데이터 
   // TODO: 답변 API 불러오기 
   const allAnswers: Answer[] = [
-    { id: 1, author: "잘생긴 루돌프", date: "DEC 7", time: "18:44", content: "아ㅓ알ㅇ러알아러아러아아ㅓ아ㅓㅏ랄ㅇ라얼ㅇ러알알ㅇㄹ아알ㅇ라이라이랑랑라리ㅏㄹㅏㄹ아알아러아ㅓ아러ㅏ러아러ㅏㅓㅇㄹ아ㅓㄹㅇ러ㅓㄹ러ㅏㅓㅇ라러ㅏㅓ라ㅓ러라러ㅏ러아ㅓ라러라ㅓ러ㅏㅓㅏ어라얼아러아렁렁라ㅏㅓ알댜ㅏ러야랑ㄹ아러아러아렁어ㅏㅓㄹ아ㅓ랑러앙ㄹ어러아라ㅓ러ㅏ어아ㅓㅏㅇㄹ알알라ㅏ알알", likes: 99, comments: 99 },
-    { id: 2, author: "예쁜 산타", date: "DEC 7", time: "16:24", content: "2번", likes: 99, comments: 99 },
-    { id: 3, author: "건강한 개발자", date: "DEC 7", time: "12:28", content: "3번", likes: 19, comments: 9 },
-    { id: 4, author: "무례한 눈사람", date: "DEC 7", time: "11:59", content: "4번", likes: 2, comments: 5 },
-    { id: 5, author: "잘생긴 산타", date: "DEC 7", time: "13:00", content: "5번", likes: 2, comments: 0 },
-    { id: 6, author: "건강한 눈사람", date: "DEC 7", time: "14:30", content: "6번", likes: 4, comments: 1 },
-    { id: 7, author: "크리스마스", date: "DEC 7", time: "14:30", content: "7번", likes: 3, comments: 1 },
-    { id: 8, author: "멜크", date: "DEC 7", time: "14:30", content: "8번", likes: 2, comments: 1 },
+    { id: 1, author: "잘생긴 루돌프", date: "DEC 7", time: "18:44", contents: "아ㅓ알ㅇ러알아러아러아아ㅓ아ㅓㅏ랄ㅇ라얼ㅇ러알알ㅇㄹ아알ㅇ라이라이랑랑라리ㅏㄹㅏㄹ아알아러아ㅓ아러ㅏ러아러ㅏㅓㅇㄹ아ㅓㄹㅇ러ㅓㄹ러ㅏㅓㅇ라러ㅏㅓ라ㅓ러라러ㅏ러아ㅓ라러라ㅓ러ㅏㅓㅏ어라얼아러아렁렁라ㅏㅓ알댜ㅏ러야랑ㄹ아러아러아렁어ㅏㅓㄹ아ㅓ랑러앙ㄹ어러아라ㅓ러ㅏ어아ㅓㅏㅇㄹ알알라ㅏ알알", likes: 99, comments: 99 },
+    { id: 2, author: "예쁜 산타", date: "DEC 7", time: "16:24", contents: "2번", likes: 99, comments: 99 },
+    { id: 3, author: "건강한 개발자", date: "DEC 7", time: "12:28", contents: "3번", likes: 19, comments: 9 },
+    { id: 4, author: "무례한 눈사람", date: "DEC 7", time: "11:59", contents: "4번", likes: 2, comments: 5 },
+    { id: 5, author: "잘생긴 산타", date: "DEC 7", time: "13:00", contents: "5번", likes: 2, comments: 0 },
+    { id: 6, author: "건강한 눈사람", date: "DEC 7", time: "14:30", contents: "6번", likes: 4, comments: 1 },
+    { id: 7, author: "크리스마스", date: "DEC 7", time: "14:30", contents: "7번", likes: 3, comments: 1 },
    
   ];
 
@@ -64,6 +79,21 @@ const AnswerListPage = () => {
 
   const currentBackgroundImg = slides[currentSlide]?.backgroundImg || slides[0]?.backgroundImg;
 
+  const settings = {
+    dots: true,
+    infinite: false,
+    speed: 600,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: false,
+    beforeChange: (_current: number, next: number) => {
+      setCurrentSlide(next);
+    },
+  }
+
+  // TODO: 해당 우표의 질문 가져오기 (클릭한 우표 id로)
+  const question = "올해 가장 기억에 남는 크리스마스 선물은 무엇인가요?";
+
   return (
     <PageWrapper backgroundImg={currentBackgroundImg}>
       <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"}/>
@@ -73,7 +103,6 @@ const AnswerListPage = () => {
           {slides.map((slide, index) => (
             <AnswerSlide 
               key={slide.id} 
-              backgroundImg={slide.backgroundImg}
               answers={answerChunks[index] || []}
             />
           ))}
