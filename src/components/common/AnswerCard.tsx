@@ -1,6 +1,4 @@
 /* 답변 포스트잇 컴포넌트 */
-
-import { useState } from "react";
 import { AiOutlineComment, AiOutlineHeart } from "react-icons/ai";
 import styled from "styled-components";
 import { useLike } from "../../hooks/useLike";
