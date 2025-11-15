@@ -1,6 +1,3 @@
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import AnswerSlide from "./components/AnswerSlide";
 import styled from "styled-components";
 import Footer from "../../components/common/Footer";
@@ -77,19 +74,17 @@ const AnswerListPage = () => {
     backgroundImg: new URL(`../../assets/images/background/bg${(i % 10) + 1}.png`, import.meta.url).href,
   }));
 
-  const currentBackgroundImg = slides[currentSlide]?.backgroundImg || slides[0]?.backgroundImg;
+  const defaultBackground = new URL("../../assets/images/background/bg1.png", import.meta.url).href;
+  const currentBackgroundImg =
+    slides[currentSlide]?.backgroundImg || slides[0]?.backgroundImg || defaultBackground;
+  const totalSlides = answerChunks.length;
+  const canGoPrev = currentSlide > 0;
+  const canGoNext = currentSlide < totalSlides - 1;
 
-  const settings = {
-    dots: true,
-    infinite: false,
-    speed: 600,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: false,
-    beforeChange: (_current: number, next: number) => {
-      setCurrentSlide(next);
-    },
-  }
+  const goToSlide = (index: number) => {
+    if (index < 0 || index >= totalSlides) return;
+    setCurrentSlide(index);
+  };
 
   // TODO: 해당 우표의 질문 가져오기 (클릭한 우표 id로)
   const question = "올해 가장 기억에 남는 크리스마스 선물은 무엇인가요?";
@@ -99,14 +94,30 @@ const AnswerListPage = () => {
       <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"}/>
       <QuestionHeader>{question}</QuestionHeader>
       <SliderWrapper>
-        <Slider {...settings}>
-          {slides.map((slide, index) => (
-            <AnswerSlide 
-              key={slide.id} 
-              answers={answerChunks[index] || []}
-            />
-          ))}
-        </Slider>
+        {totalSlides > 0 && (
+          <AnswerSlide answers={answerChunks[currentSlide]} />
+        )}
+        {totalSlides > 1 && (
+          <SlideControls>
+            <NavButton type="button" onClick={() => goToSlide(currentSlide - 1)} disabled={!canGoPrev}>
+              이전
+            </NavButton>
+            <Dots>
+              {slides.map((slide, index) => (
+                <DotButton
+                  key={slide.id}
+                  type="button"
+                  $active={currentSlide === index}
+                  aria-label={`${index + 1}번째 슬라이드`}
+                  onClick={() => goToSlide(index)}
+                />
+              ))}
+            </Dots>
+            <NavButton type="button" onClick={() => goToSlide(currentSlide + 1)} disabled={!canGoNext}>
+              다음
+            </NavButton>
+          </SlideControls>
+        )}
       </SliderWrapper>
       <Footer />
     </PageWrapper>
@@ -140,16 +151,50 @@ const QuestionHeader = styled.header`
 const SliderWrapper = styled.section`
   width: 100%;
   max-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px 48px;
+`;
 
-    li button:before {
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 10px;
-    }
-    
-    li.slick-active button:before {
-      color: white;
-      font-size: 14px;
-    }
+const SlideControls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`;
+
+const NavButton = styled.button`
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  color: white;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background: rgba(0, 0, 0, 0.6);
   }
 `;
 
+const Dots = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+const DotButton = styled.button<{ $active: boolean }>`
+  width: ${({ $active }) => ($active ? "12px" : "8px")};
+  height: ${({ $active }) => ($active ? "12px" : "8px")};
+  border-radius: 50%;
+  border: none;
+  background: ${({ $active }) => ($active ? "white" : "rgba(255, 255, 255, 0.4)")};
+  cursor: pointer;
+  transition: all 0.2s ease;
+`;
