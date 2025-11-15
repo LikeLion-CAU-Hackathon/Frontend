@@ -1,92 +1,126 @@
-import styled from 'styled-components'
-import Footer from '../../components/common/Footer'
-import { useState } from 'react';
-import type { Card } from '../../types/card';
-import LetterPage from './LetterPage';
-import CardGrid from './components/CardGrid';
-import { useNavigate } from 'react-router-dom';
-import { checkAnswered } from '../../apis/answer/answer.api';
+import styled from "styled-components";
+import Footer from "../../components/common/Footer";
+import { useRef, useState } from "react";
+import type { Card } from "../../types/card";
+import LetterPage from "./LetterPage";
+import CardGrid from "./components/CardGrid";
+import { getQuestion } from "../../apis/question/question.api";
+import { GOOGLE_AUTH_URL } from "../../constants/oauth";
+import axios from "axios";
+
+const TOTAL_STAMPS = 24;
+const FIRST_QUESTION_DATE = Date.UTC(2025, 11, 1); // 2025-12-01
+
+const createQuestionDate = (offset: number) => {
+  const date = new Date(FIRST_QUESTION_DATE);
+  date.setUTCDate(date.getUTCDate() + offset);
+  return date.toISOString().split("T")[0];
+};
+
+const createInitialCards = (): Card[] =>
+  Array.from({ length: TOTAL_STAMPS }, (_, index) => ({
+    id: index + 1,
+    date: createQuestionDate(index),
+    image: "",
+    isOpened: false,
+    isExpired: false,
+    isAnswered: false,
+  }));
+
+const extractQuestionText = (payload: unknown): string => {
+  if (!payload) return "";
+  if (typeof payload === "string") return payload;
+  if (typeof (payload as any).question === "string") return (payload as any).question;
+  if (typeof (payload as any).data === "string") return (payload as any).data;
+  if (typeof (payload as any).data?.question === "string") return (payload as any).data.question;
+  return "";
+};
 
 const CalendarPage = () => {
-  const navigate = useNavigate();
-  
-  // 4x6 그리드용 24개 카드 
-  const [ cards, setCards ] = useState<Card[]>(() => 
-    Array.from({ length: 24}, (_, index) => ({
-        id: index+1,
-        image: "", // 각 우표 이미지를 stamp1, stamp2, ... , 로 다운받기
-        isOpened: false,
-        isExpired: false,
-        isAnswered: false
-    })));
+  const [cards, setCards] = useState<Card[]>(createInitialCards);
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [questionText, setQuestionText] = useState("");
+  const [questionError, setQuestionError] = useState<string | null>(null);
+  const [isQuestionLoading, setIsQuestionLoading] = useState(false);
+  const activeQuestionDateRef = useRef<string | null>(null);
 
-  // 현재 클릭한 우표 
-  const [ selectedCard, setSelectedCard ] = useState<Card | null>(null);
+  const fetchQuestionForCard = async (card: Card) => {
+    activeQuestionDateRef.current = card.date;
+    setIsQuestionLoading(true);
+    setQuestionError(null);
+    setQuestionText("");
 
-  // 우표 클릭 시 상태 변경 -> 편지지 슬라이딩 
-  const handleCardClick = async (id: number) => {
     try {
-      // checkAnswered API 호출 (카드 id를 questionId로 사용)
-      const response = await checkAnswered(id);
-      const isAnswered = response.answered || response; 
-      
-      if (isAnswered) {
-        navigate(`/answer-list?questionId=${id}`);
-      } else {
-        setCards(initialCards => {
-          const updatedCards = initialCards.map(card => 
-            card.id === id ? { ...card, isOpened : !card.isOpened} : card
-          );
-          // 클릭된 우표 저장
-          const clickedCard = updatedCards.find((card) => card.id === id);
-          if(clickedCard) {
-            setSelectedCard(clickedCard);
-          }
-          return updatedCards;
-        });
+      const response = await getQuestion(card.date);
+      const resolvedQuestion = extractQuestionText(response);
+
+      if (activeQuestionDateRef.current === card.date) {
+        setQuestionText(resolvedQuestion);
       }
     } catch (error) {
-      console.error("답변 확인 중 오류가 발생했습니다: ", error);
-      // 에러 발생 시 기본 동작 (LetterPage 렌더링)
-      setCards(initialCards => {
-        const updatedCards = initialCards.map(card => 
-          card.id === id ? { ...card, isOpened : !card.isOpened} : card
-        );
-        // 클릭된 우표 저장
-        const clickedCard = updatedCards.find((card) => card.id === id);
-        if(clickedCard) {
-          setSelectedCard(clickedCard);
+      console.error("질문을 불러오는 데 실패했습니다.", error);
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        if (status === 401 || status === 403) {
+          window.location.href = GOOGLE_AUTH_URL;
+          return;
         }
-        return updatedCards;
-      });
+      }
+      if (activeQuestionDateRef.current === card.date) {
+        setQuestionError("질문을 불러오는데 실패했습니다.");
+      }
+    } finally {
+      if (activeQuestionDateRef.current === card.date) {
+        setIsQuestionLoading(false);
+      }
     }
-  }
+  };
 
-  // 우표 클릭된 순간 배경 overlay 추가
-  const isCardOpened = cards.some(card => card.isOpened);
+  const handleCardClick = (id: number) => {
+    const clickedCard = cards.find((card) => card.id === id);
+    if (!clickedCard) return;
 
-  {/* TODO: 어딜 클릭해도 편지지 사라지게 */}
+    setCards((prevCards) =>
+      prevCards.map((card) => ({
+        ...card,
+        isOpened: card.id === id,
+      }))
+    );
+
+    setSelectedCard(clickedCard);
+    fetchQuestionForCard(clickedCard);
+  };
+
+  const isCardOpened = cards.some((card) => card.isOpened);
+
   const handleCloseLetter = () => {
     setCards((prev) => prev.map((card) => ({ ...card, isOpened: false })));
     setSelectedCard(null);
+    setQuestionText("");
+    setQuestionError(null);
+    setIsQuestionLoading(false);
+    activeQuestionDateRef.current = null;
   };
 
-  
   return (
-    <PageContainer isOpened={isCardOpened} >
-        {isCardOpened && <Overlay isVisible={isCardOpened} onClick={handleCloseLetter}/>}
-        <MainContent>
-            <CardGrid cards={cards} onCardClick={handleCardClick} />
-        </MainContent>
-        {/* isOpened=true인 경우 편지지 슬라이딩  */}
-        {/* 클릭한 우표 편지지에 표시  */}
-        <LetterPage card={selectedCard} isOpened={isCardOpened} />
-        <Footer />
+    <PageContainer isOpened={isCardOpened}>
+      {isCardOpened && <Overlay isVisible={isCardOpened} onClick={handleCloseLetter} />}
+      <MainContent>
+        <CardGrid cards={cards} onCardClick={handleCardClick} />
+      </MainContent>
+      <LetterPage
+        card={selectedCard}
+        isOpened={isCardOpened}
+        question={questionText}
+        isLoading={isQuestionLoading}
+        error={questionError}
+      />
+      <Footer />
     </PageContainer>
-  )
-}
+  );
+};
 
-export default CalendarPage
+export default CalendarPage;
 
 const Overlay = styled.div<{ isVisible: boolean }>`
   position: absolute;
@@ -94,25 +128,24 @@ const Overlay = styled.div<{ isVisible: boolean }>`
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
-  transition: opacity 0.3s ease-in-out; // 편지지 올라오는거랑 맞추기
-  z-index: 1; 
+  transition: opacity 0.3s ease-in-out;
+  z-index: 1;
   pointer-events: auto;
 `;
 
-const PageContainer = styled.main<{isOpened : boolean}>`
+const PageContainer = styled.main<{ isOpened: boolean }>`
   display: flex;
   width: 100%;
   height: 100%;
   flex-direction: column;
-  align-items: center;            
-  justify-content: center;     
+  align-items: center;
+  justify-content: center;
   gap: 25px;
   position: relative;
-
-`
+`;
 
 const MainContent = styled.section`
   display: flex;
   align-items: center;
   justify-content: center;
-`
+`;

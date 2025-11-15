@@ -3,7 +3,7 @@ import { BASE_URL } from "../constants/baseURL";
 
 export const axiosAPI = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true,  // 쿠키 포함
+  withCredentials: true,
 });
 
 axiosAPI.interceptors.request.use(

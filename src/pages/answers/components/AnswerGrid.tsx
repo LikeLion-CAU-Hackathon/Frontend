@@ -1,35 +1,31 @@
-import AnswerCard from '../../../components/common/AnswerCard';
-import styled from 'styled-components';
+import AnswerCard from "../../../components/common/AnswerCard";
+import type { AnswerCardData } from "../../../components/common/AnswerCard";
+import styled from "styled-components";
 
 interface AnswerGridProps {
-    answers: {
-        id: number;
-        author: string;
-        date: string;
-        time: string;
-        contents: string;
-        likes: number;
-        comments : number;
-    }[];
+  answers: AnswerCardData[];
+  onAnswerSelect?: (answer: AnswerCardData, rect: DOMRect) => void;
 }
 
-const AnswerGrid = ( { answers }: AnswerGridProps ) => {
+const AnswerGrid = ({ answers, onAnswerSelect }: AnswerGridProps) => {
   return (
     <GridWrapper>
-        {answers.map((answer) => (
-            <AnswerCard
-                id = {answer.id}
-                author={answer.author}
-                date={answer.date}
-                time={answer.time}
-                contents={answer.contents}
-                likes={answer.likes}
-                comments={answer.comments}
-            />
-        ))}
+      {answers.map((answer) => (
+        <AnswerCard
+          key={answer.id}
+          id={answer.id}
+          author={answer.author}
+          date={answer.date}
+          time={answer.time}
+          contents={answer.contents}
+          likes={answer.likes}
+          comments={answer.comments}
+          onSelect={onAnswerSelect}
+        />
+      ))}
     </GridWrapper>
-  )
-}
+  );
+};
 
 export default AnswerGrid;
 
