@@ -1,20 +1,25 @@
 /* 답변 포스트잇 컴포넌트 */
 
+import { useState } from "react";
 import { AiOutlineComment, AiOutlineHeart } from "react-icons/ai";
 import styled from "styled-components";
+import { useLike } from "../../hooks/useLike";
 
 interface AnswerListProps {
+    id: number;
     author: string;
     date: string;
     time: string;
-    content: string;
+    contents: string;
     likes: number;
     comments : number;
     width?: string;
     height?: string;
 }
 
-const AnswerCard = ({ author, date, time, content, likes, comments, width, height } : AnswerListProps) => {
+const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, height } : AnswerListProps) => {
+    const { liked, likeCount, handleLike } = useLike(false, likes, id);
+
     return (
         <AnswerContainer $width={width} $height={height}>
             <AnswerWrapper>
@@ -30,10 +35,10 @@ const AnswerCard = ({ author, date, time, content, likes, comments, width, heigh
                 <Divider />
                 {/* <Divider marginSize={marginSize}/> */}
                 <CardContent>
-                    {content}
+                    {contents}
                 </CardContent>
                 <CardFooter>
-                    <Icon>
+                    <Icon onClick={handleLike} >
                         <AiOutlineHeart />
                         {likes} 
                     </Icon>

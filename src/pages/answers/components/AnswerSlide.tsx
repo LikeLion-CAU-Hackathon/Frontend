@@ -6,19 +6,18 @@ interface Answer {
     author: string;
     date: string;
     time: string;
-    content: string;
+    contents: string;
     likes: number;
     comments: number;
 }
 
 interface AnswerSlideProps {
-    backgroundImg: string;
     answers: Answer[];
 }
 
-const AnswerSlide = ({ backgroundImg, answers }: AnswerSlideProps ) => {
+const AnswerSlide = ({  answers }: AnswerSlideProps ) => {
     return (
-        <SlideWrapper backgroundImg={backgroundImg}>
+        <SlideWrapper>
             <AnswerGrid answers={answers} />
         </SlideWrapper>
     )
@@ -26,10 +25,9 @@ const AnswerSlide = ({ backgroundImg, answers }: AnswerSlideProps ) => {
 
 export default AnswerSlide;
 
-const SlideWrapper = styled.section<{backgroundImg: string}>`
+const SlideWrapper = styled.section`
     padding: 40px 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
 `;
