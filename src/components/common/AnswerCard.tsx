@@ -10,11 +10,13 @@ interface AnswerListProps {
     content: string;
     likes: number;
     comments : number;
+    width?: string;
+    height?: string;
 }
 
-const AnswerCard = ({ author, date, time, content, likes, comments } : AnswerListProps) => {
+const AnswerCard = ({ author, date, time, content, likes, comments, width, height } : AnswerListProps) => {
     return (
-        <AnswerContainer>
+        <AnswerContainer $width={width} $height={height}>
             <AnswerWrapper>
                 <CardHeader>
                     {/* TODO: author 아이디와 현재 로그인한 아이디와 동일하다면 (나) 표시) */}
@@ -47,12 +49,14 @@ const AnswerCard = ({ author, date, time, content, likes, comments } : AnswerLis
 
 export default AnswerCard;
 
-const AnswerContainer = styled.article`
+const AnswerContainer = styled.article<{ $width?: string; $height?: string}>`
   background: #DECBA1;
   font-family: Gowun Batang;
   font-weight: 400;
   word-wrap: break-word;
   font-size: 12px;
+  width: ${({ $width }) => $width || "172px"};
+  height: ${({ $height }) => $height || "248px"};
 `;
 
 const AnswerWrapper = styled.div`
@@ -65,6 +69,7 @@ const CardHeader = styled.header`
     padding:12px;
 `;
 
+/* TODO: 스크롤바 수정 필요*/
 const CardContent = styled.section`
   width: 142px;
   height: 150px;
@@ -73,11 +78,12 @@ const CardContent = styled.section`
   justify-content: center;
   align-items: center;
   gap: 10px;
-  display: inline-flex;
+  display: flex;
 
   &::-webkit-scrollbar {
-
+    
   }
+
   `;
 
 const Info = styled.p`

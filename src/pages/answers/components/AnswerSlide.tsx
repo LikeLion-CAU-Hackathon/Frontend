@@ -1,16 +1,25 @@
 import styled from "styled-components";
-import Footer from "../../../components/common/Footer";
 import AnswerGrid from "./AnswerGrid";
+
+interface Answer {
+    id: number;
+    author: string;
+    date: string;
+    time: string;
+    content: string;
+    likes: number;
+    comments: number;
+}
 
 interface AnswerSlideProps {
     backgroundImg: string;
+    answers: Answer[];
 }
 
-const AnswerSlide = ({ backgroundImg }: AnswerSlideProps ) => {
+const AnswerSlide = ({ backgroundImg, answers }: AnswerSlideProps ) => {
     return (
         <SlideWrapper backgroundImg={backgroundImg}>
-            <AnswerGrid />
-            <Footer />
+            <AnswerGrid answers={answers} />
         </SlideWrapper>
     )
 }
@@ -18,5 +27,9 @@ const AnswerSlide = ({ backgroundImg }: AnswerSlideProps ) => {
 export default AnswerSlide;
 
 const SlideWrapper = styled.section<{backgroundImg: string}>`
-    background: url(${({backgroundImg}) => backgroundImg } no-repeat center/cover;);
+    padding: 20px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
 `;
