@@ -152,3 +152,4 @@ const SliderWrapper = styled.section`
     }
   }
 `;
+

@@ -31,14 +31,23 @@
 .featureCard {
   position: relative;
   background: #f0d6aa;
-  border-radius: 8px;
   padding: 20px 18px;
   margin: 0 auto;
-  width: min(520px, 90%);
-  box-shadow:
-    0 18px 24px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  width: min(280px, 90%);
+  height: 35%;
+  margin-top: 20px;
   font-family: 'Times New Roman', 'Georgia', serif;
+}
+
+.featureCard::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  left: 6px;
+  right: 6px;
+  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  pointer-events: none;
 }
 
 .cardHeader {
@@ -46,7 +55,8 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 10px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  font-family: 'MaruBuri', 'Times New Roman', 'Georgia', serif;
 }
 
 .cardFrom {
@@ -59,12 +69,34 @@
   margin: 4px 0 0;
 }
 
+.cardLabel {
+  color: inherit;
+  margin-right: 6px;
+}
+
+.cardValue {
+  color: #000;
+}
+
+.cardDivider {
+  width: 120px;
+  height: 1px;
+  background-color: #000;
+  border: none;
+  align-self: center;
+  margin-bottom: 10px;
+}
+
 .closeButton {
   border: none;
   background: transparent;
-  color: #7f6741;
-  font-size: 1rem;
   cursor: pointer;
+  padding: 4px;
+}
+
+.closeButton img {
+  width: 24px;
+  height: 24px;
 }
 
 .cardContent {
@@ -72,20 +104,29 @@
   font-size: 0.95rem;
   line-height: 1.5;
   color: #2c120b;
+  font-family: 'MaruBuri', 'Times New Roman', 'Georgia', serif;
 }
 
 .cardFooter {
   display: flex;
   justify-content: flex-end;
-  margin-top: 12px;
 }
 
 .cardAction {
   border: none;
   background: transparent;
-  color: #9d6a2b;
-  font-size: 0.9rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #000;
+  font-family: 'MaruBuri', 'Times New Roman', 'Georgia', serif;
+  font-size: 15px;
+}
+
+.cardAction img {
+  width: 18px;
+  height: 18px;
 }
 
 .commentSection {
@@ -100,7 +141,7 @@
 
 .sectionTitle {
   text-align: center;
-  color: #d2ae5e;
+  color: #000;
   font-family: 'MaruBuri', serif;
   font-size: 14px;
   font-style: normal;
@@ -172,8 +213,8 @@
 
 .replySubmit {
   position: absolute;
-  right: 42px;
-  bottom: 18px;
+  right: 36px;
+  bottom: 26px;
   width: 42px;
   height: 42px;
   border-radius: 50%;

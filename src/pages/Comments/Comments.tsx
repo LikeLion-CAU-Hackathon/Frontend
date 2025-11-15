@@ -1,5 +1,8 @@
 import styles from './Comments.module.css';
 import sendIcon from '../../assets/images/send.svg';
+import closeIcon from '../../assets/images/Comments/x.svg';
+import heartIcon from '../../assets/images/Comments/heart.svg';
+import commentIcon from '../../assets/images/Comments/comment.svg';
 
 const featuredComment = {
   sender: '잘생긴 루돌프 (나)',
@@ -22,20 +25,28 @@ const Comments = () => {
       <section className={styles.featureCard} aria-label="강조된 댓글 카드">
         <header className={styles.cardHeader}>
           <div>
-            <p className={styles.cardFrom}>Comment by {featuredComment.sender}</p>
-            <p className={styles.cardDate}>{featuredComment.date}</p>
+            <p className={styles.cardFrom}>
+              <span className={styles.cardLabel}>From.</span>
+              <span className={styles.cardValue}>{featuredComment.sender}</span>
+            </p>
+            <p className={styles.cardDate}>
+              <span className={styles.cardLabel}>Date:</span>
+              <span className={styles.cardValue}>{featuredComment.date}</span>
+            </p>
           </div>
           <button className={styles.closeButton} type="button" aria-label="카드 닫기">
-            ✕
+            <img src={closeIcon} alt="Close" />
           </button>
         </header>
+        <div className={styles.cardDivider} aria-hidden="true">
+        </div>
         <p className={styles.cardContent}>{featuredComment.content}</p>
         <footer className={styles.cardFooter}>
           <button className={styles.cardAction} type="button" aria-label="좋아요">
-            ♡ 99
+            <img src={heartIcon} alt="Like" /> 99
           </button>
           <button className={styles.cardAction} type="button" aria-label="댓글 보기">
-            💬 12
+            <img src={commentIcon} alt="Comments" /> 12
           </button>
         </footer>
       </section>
@@ -58,7 +69,6 @@ const Comments = () => {
         <form className={styles.replyBar} aria-label="댓글 입력" onSubmit={(event) => event.preventDefault()}>
           <input
             className={styles.replyInput}
-            placeholder="따뜻한 메시지를 남겨보세요"
             aria-label="댓글 입력창"
           />
           <button className={styles.replySubmit} type="submit" aria-label="댓글 보내기">
