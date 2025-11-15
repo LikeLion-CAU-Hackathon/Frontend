@@ -14,4 +14,5 @@ const FooterSection = styled.footer`
   font-family: SF Pro;
   font-weight: 400;
   overflow-wrap: break-word; // 자동 줄바꿈
+  z-index:1;
 `
