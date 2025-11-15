@@ -9,3 +9,8 @@ export const getAnswerList = async (questionId: number) => {
     throw error;
   }
 };
+
+export const checkAnswered = async (questionId: number) => {
+  const response = await axiosAPI.get(`/answers/check/${questionId}`);
+  return response.data; 
+};
