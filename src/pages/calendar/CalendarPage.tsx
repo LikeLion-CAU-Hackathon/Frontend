@@ -6,6 +6,7 @@ import LetterPage from './LetterPage';
 import CardGrid from './components/CardGrid';
 import { useNavigate } from 'react-router-dom';
 import { checkAnswered } from '../../apis/answer/answer.api';
+import { isCardOpenableToday } from '../../utils/date';
 
 const CalendarPage = () => {
   const navigate = useNavigate();
@@ -26,9 +27,15 @@ const CalendarPage = () => {
   // 우표 클릭 시 상태 변경 -> 편지지 슬라이딩 
   const handleCardClick = async (id: number) => {
     try {
+      // 오늘 열리는 우표인지 확인 (오늘 기준 전과 후로 나누기)
+      if (!isCardOpenableToday(id)) {
+        alert("오늘의 우표가 아닙니다!");
+        return;
+    }
+
       // checkAnswered API 호출 (카드 id를 questionId로 사용)
       const response = await checkAnswered(id);
-      const isAnswered = response.answered || response; 
+      const isAnswered = response.answered; 
       
       if (isAnswered) {
         navigate(`/answer-list?questionId=${id}`);
@@ -47,10 +54,10 @@ const CalendarPage = () => {
       }
     } catch (error) {
       console.error("답변 확인 중 오류가 발생했습니다: ", error);
-      // 에러 발생 시 기본 동작 (LetterPage 렌더링)
+      // 에러 발생 시 LetterPage 렌더링
       setCards(initialCards => {
         const updatedCards = initialCards.map(card => 
-          card.id === id ? { ...card, isOpened : !card.isOpened} : card
+          card.id === id ? { ...card, isOpened: !card.isOpened} : card
         );
         // 클릭된 우표 저장
         const clickedCard = updatedCards.find((card) => card.id === id);
