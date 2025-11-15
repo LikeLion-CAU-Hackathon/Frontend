@@ -11,6 +11,6 @@ export const getAnswerList = async (questionId: number) => {
 };
 
 export const checkAnswered = async (questionId: number) => {
-  const response = await axiosAPI.get(`/answers/check/${questionId}`);
+  const response = await axiosAPI.get(`/answers/list/${questionId}`);
   return response.data; 
 };
