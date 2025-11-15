@@ -2,10 +2,10 @@ import styled from "styled-components";
 import letterBg from '../../assets/images/letter_background.png';
 import { useEffect, useState } from "react";
 import { getTodayDate } from "../../utils/date";
-import { getQuestion } from "../../apis/questionAPI";
 import { formatDayToKorean } from "../../utils/dayToKorean";
 import AnswerButton from "../common/button/AnswerButton";
 import { useNavigate } from "react-router-dom";
+import { getQuestion } from "../../apis/question/question.api";
 
 interface LetterContentProps {
     isOpened: boolean;
