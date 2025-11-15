@@ -27,7 +27,7 @@ const AnswerSlide = ({ backgroundImg, answers }: AnswerSlideProps ) => {
 export default AnswerSlide;
 
 const SlideWrapper = styled.section<{backgroundImg: string}>`
-    padding: 20px 16px;
+    padding: 40px 16px;
     display: flex;
     align-items: center;
     justify-content: center;

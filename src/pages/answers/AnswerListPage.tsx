@@ -119,6 +119,7 @@ const SliderWrapper = styled.section`
     
     li.slick-active button:before {
       color: white;
+      font-size: 14px;
     }
   }
 `;
