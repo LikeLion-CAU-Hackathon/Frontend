@@ -4,8 +4,12 @@ import { useState } from 'react';
 import type { Card } from '../../types/card';
 import LetterPage from './LetterPage';
 import CardGrid from './components/CardGrid';
+import { useNavigate } from 'react-router-dom';
+import { checkAnswered } from '../../apis/answer/answer.api';
 
 const CalendarPage = () => {
+  const navigate = useNavigate();
+  
   // 4x6 그리드용 24개 카드 
   const [ cards, setCards ] = useState<Card[]>(() => 
     Array.from({ length: 24}, (_, index) => ({
@@ -20,19 +24,43 @@ const CalendarPage = () => {
   const [ selectedCard, setSelectedCard ] = useState<Card | null>(null);
 
   // 우표 클릭 시 상태 변경 -> 편지지 슬라이딩 
-  const handleCardClick = (id: number) => {
-    setCards(initialCards => 
-        initialCards.map(card => 
+  const handleCardClick = async (id: number) => {
+    try {
+      // checkAnswered API 호출 (카드 id를 questionId로 사용)
+      const response = await checkAnswered(id);
+      const isAnswered = response.answered || response; 
+      
+      if (isAnswered) {
+        navigate(`/answer-list?questionId=${id}`);
+      } else {
+        setCards(initialCards => {
+          const updatedCards = initialCards.map(card => 
             card.id === id ? { ...card, isOpened : !card.isOpened} : card
-        )
-    );
-    // 클릭된 우표 저장
-    const clickedCard = cards.find((card) => card.id === id );
-  
-    if(clickedCard) {
-      setSelectedCard(clickedCard);
-   }
-}
+          );
+          // 클릭된 우표 저장
+          const clickedCard = updatedCards.find((card) => card.id === id);
+          if(clickedCard) {
+            setSelectedCard(clickedCard);
+          }
+          return updatedCards;
+        });
+      }
+    } catch (error) {
+      console.error("답변 확인 중 오류가 발생했습니다: ", error);
+      // 에러 발생 시 기본 동작 (LetterPage 렌더링)
+      setCards(initialCards => {
+        const updatedCards = initialCards.map(card => 
+          card.id === id ? { ...card, isOpened : !card.isOpened} : card
+        );
+        // 클릭된 우표 저장
+        const clickedCard = updatedCards.find((card) => card.id === id);
+        if(clickedCard) {
+          setSelectedCard(clickedCard);
+        }
+        return updatedCards;
+      });
+    }
+  }
 
   // 우표 클릭된 순간 배경 overlay 추가
   const isCardOpened = cards.some(card => card.isOpened);
