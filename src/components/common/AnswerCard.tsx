@@ -167,6 +167,7 @@ const CardFooter = styled.footer`
     gap : 8px;
     justify-content: flex-end; 
     padding: 0px 8px;
+    color: #000;
 `; 
 
 const Icon = styled.div`
@@ -174,4 +175,5 @@ const Icon = styled.div`
   align-items: center;
   gap: 4px;
   cursor: pointer;
+  color: #000;
 `;
