@@ -109,5 +109,10 @@ const ButtonSection = styled.section`
   cursor: pointer;
   text-align: center;
   align-items: center;
-  z-index:10;
+  z-index:100000;
+  position: absolute;
 `;
+
+
+
+

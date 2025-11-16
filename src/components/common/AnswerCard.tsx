@@ -1,4 +1,5 @@
 /* 답변 포스트잇 컴포넌트 */
+import { KeyboardEvent, MouseEvent, useRef } from "react";
 import { AiFillHeart, AiOutlineComment, AiOutlineHeart } from "react-icons/ai";
 import styled from "styled-components";
 import { useLike } from "../../hooks/useLike";
@@ -100,7 +101,7 @@ const AnswerContainer = styled.article<{ $width?: string; $height?: string}>`
   word-wrap: break-word;
   font-size: 12px;
   width: ${({ $width }) => $width || "172px"};
-  height: ${({ $height }) => $height || "248px"};
+  height: ${({ $height }) => $height || "242px"};
   cursor: pointer;
 `;
 
@@ -111,7 +112,7 @@ const AnswerWrapper = styled.div`
 `;
 
 const CardHeader = styled.header`
-    padding:12px;
+    padding:9px;
 `;
 
 /* TODO: 스크롤바 수정 필요*/

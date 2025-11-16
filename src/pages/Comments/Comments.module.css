@@ -141,6 +141,13 @@
   min-height: 0;
 }
 
+.statusMessage {
+  text-align: center;
+  color: #7d6441;
+  font-size: 0.9rem;
+  margin: 16px 0;
+}
+
 .sectionTitle {
   text-align: center;
   color: #000;

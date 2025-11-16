@@ -116,10 +116,10 @@ const AnswerListPage = () => {
     }
 
     animationTimeoutRef.current = window.setTimeout(() => {
-      navigate("/comments", { state: { answerId: animationState.answer.id } });
+      navigate("/comments", { state: { answer: animationState.answer, questionTitle } });
       setAnimationState(null);
     }, 650);
-  }, [animationState, navigate]);
+  }, [animationState, navigate, questionTitle]);
 
   const answerChunks = useMemo(() => {
     const chunkSize = 4;
@@ -160,7 +160,7 @@ const AnswerListPage = () => {
   const handleAnswerSelect = (answer: Answer, rect: DOMRect) => {
     const pageRect = pageWrapperRef.current?.getBoundingClientRect();
     if (!pageRect) {
-      navigate("/comments", { state: { answerId: answer.id } });
+      navigate("/comments", { state: { answer, questionTitle } });
       return;
     }
 
