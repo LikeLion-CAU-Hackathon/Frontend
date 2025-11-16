@@ -127,3 +127,4 @@ const ButtonSection = styled.section<{ isOpened?: boolean }>`
     transform 1.5s ease-in-out,
     opacity 0.6s ease-in-out 0.2s;
 `;
+
