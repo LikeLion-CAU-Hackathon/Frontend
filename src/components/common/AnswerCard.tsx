@@ -93,9 +93,9 @@ const AnswerCard = ({
           </Info>
           <Info>
             <Label>Date:</Label>{" "}
-            <Value>
+            <DateValue>
               {date} | {time}
-            </Value>
+            </DateValue>
           </Info>
         </CardHeader>
         <Divider />
@@ -163,26 +163,31 @@ const CardContent = styled.section`
   }
 `;
 
-const Info = styled.p`
-  margin: 0;
-  font-size: 14px;
-  font-family: "Gowun Batang";
-  color: #000;
-
-  &:nth-of-type(2) ${Value} {
-    font-size: 10px;
-  }
-`;
-
 const Label = styled.span`
   font-weight: 700;
   color: #b39a63;
 `;
 
-const Value = styled.span`
-  color: black;
+const BaseValue = styled.span`
+  font-family: "Gowun Batang";
+  color: #000;
   font-weight: 400;
   font-size: 12px;
+`;
+
+const Value = styled(BaseValue)`
+  font-size: 12px;
+`;
+
+const DateValue = styled(BaseValue)`
+  font-size: 12px;
+`;
+
+const Info = styled.p`
+  margin: 0;
+  font-size: 12px;
+  font-family: "Gowun Batang";
+  color: #000;
 `;
 // const Divider = styled.div<{ marginSize?: number }>`
 //   margin: ${({ marginSize }) => `0 ${marginSize}px`};
