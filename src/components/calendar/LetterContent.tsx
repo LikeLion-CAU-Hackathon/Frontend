@@ -1,51 +1,64 @@
 import styled from "styled-components";
-import letterBg from "../../assets/images/letter_background.png";
+import letterBg from '../../assets/images/letter_background.png';
+import { useEffect, useState } from "react";
+import { convertIdToDate, getTodayDate } from "../../utils/date";
 import { formatDayToKorean } from "../../utils/dayToKorean";
 import AnswerButton from "../common/button/AnswerButton";
 import { useNavigate } from "react-router-dom";
+import { getQuestion } from "../../apis/question/question.api";
+import { useQuestionStore } from "../../store/questionStore";
+import type { Card } from "../../types/card";
 
 interface LetterContentProps {
-  isOpened: boolean;
-  question?: string;
-  date?: string | null;
-  sequence?: number;
-  isLoading?: boolean;
-  error?: string | null;
-}
+    isOpened: boolean;
+    card: Card | null;
+    question?: string;
+    date?: string | null;
+    sequence?: number;
+    isLoading?: boolean;
+    error?: string | null;
+    }
 
 const LetterContent = ({
   isOpened,
+  card,
   question,
   date,
   sequence,
   isLoading = false,
   error = null,
 }: LetterContentProps) => {
+  
   const navigate = useNavigate();
+  const [question, setQuestion] = useState<string>("");
+  const setQuestionStore = useQuestionStore((state) => state.setQuestion);
 
-  const headerLabel = sequence ? `${formatDayToKorean(sequence)} 번째 질문` : "오늘의 질문";
-  const formattedDate = date
-    ? new Date(date).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })
-    : "";
+  /* 편지지 제목에 들어갈 날짜 카드 ID로 변경 */
+  const formatDay = card ? formatDayToKorean(card.id) : "";
 
   const rawQuestion = question?.trim() ?? "";
   let questionBody = rawQuestion;
 
-    /* 오늘 날짜에 해당하는 질문 불러오기 */
+    /* 해당 우표 id(=해당하는 날짜)에 해당하는 질문 불러오기 */
     useEffect(() => {
-        if (isOpened) {
-            const fetchQuestion = async () => {
-                try {
-                    const response = await getQuestion(today);
-                    setQuestion(response.content);
-                    // console.log(response)
-                } catch (error) {
-                    console.error("질문을 불러오는데 실패했습니다.", error);
-                }
-            };
-            fetchQuestion();
+        if (!isOpened || !card) return;
+
+        const fetchQ = async () => {
+            const date = convertIdToDate(card.id);
+            const response = await getQuestion(date); 
+            setQuestion(response.content);
+            console.log(response.content);
+
+            // zustand에도 저장
+            setQuestionStore({
+                id: card.id,
+                content: response.content,
+                date: response.date,
+            });
         }
-    }, [isOpened]);
+
+        fetchQ();
+        }, [isOpened, card]);
 
     return (
         <ArticleContainer isOpened={isOpened}>
@@ -69,6 +82,8 @@ const ArticleContainer = styled.article<{ isOpened?: boolean }>`
   box-shadow: 0px 5px 12.476190567016602px rgba(104, 115, 130, 0.24);
   border-radius: 2.08px;
   z-index: 1;
+  position: relative;
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
   font-family: "Gowun Batang", serif;
@@ -110,5 +125,7 @@ const ButtonSection = styled.section`
   cursor: pointer;
   text-align: center;
   align-items: center;
-  z-index:10;
+  z-index: 10;
+  position: relative;
+  pointer-events: auto;
 `;

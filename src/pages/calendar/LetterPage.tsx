@@ -22,6 +22,7 @@ const LetterPage = ({ isOpened, card, question, isLoading, error }: LetterPagePr
         sequence={card?.id}
         isLoading={isLoading}
         error={error}
+        card={card}
       />
     </LetterSection>
   );
@@ -37,6 +38,7 @@ const LetterSection = styled.main`
   z-index: 30;
   justify-content: center;
   align-items: center;
+  pointer-events: none;
 `;
 
 const EnvelopeContainer = styled.div<{ $visible?: boolean }>`

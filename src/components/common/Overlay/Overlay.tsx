@@ -4,10 +4,9 @@ interface OverlayProps {
     isVisible: boolean;
     onClick?: () => void;
     bgColor?: string;
-    disablePointerEvents?: boolean;
 }
 
-const Overlay = ({ isVisible, onClick, bgColor, disablePointerEvents = false } : OverlayProps) => {
+const Overlay = ({ isVisible, onClick, bgColor } : OverlayProps) => {
     return (
         <OverlayBackground
             $isVisible={isVisible}
@@ -27,6 +26,7 @@ const OverlayBackground = styled.div<{ $isVisible: boolean; $bgColor?: string; $
   background: ${({ $bgColor }) => $bgColor || "rgba(0,0,0,0.4)"};
   opacity: ${({ $isVisible}) => ( $isVisible ? 1 : 0)};
   transition: opacity 0.3s ease-in-out; // 편지지 올라오는거랑 맞추기
-  z-index: 0; 
-  pointer-events: ${({ $disablePointerEvents }) => ($disablePointerEvents ? "none" : "auto")};
+  z-index: 1; 
+  pointer-events: ${({ $isVisible }) => ($isVisible ? "auto" : "none")};
 `;
+

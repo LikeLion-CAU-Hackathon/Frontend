@@ -10,19 +10,21 @@ interface AnswerGridProps {
 const AnswerGrid = ({ answers, onAnswerSelect }: AnswerGridProps) => {
   return (
     <GridWrapper>
-      {answers.map((answer) => (
-        <AnswerCard
-          key={answer.id}
-          id={answer.id}
-          author={answer.author}
-          date={answer.date}
-          time={answer.time}
-          contents={answer.contents}
-          likes={answer.likes}
-          comments={answer.comments}
-          onSelect={onAnswerSelect}
-        />
-      ))}
+        {answers.map((answer) => (
+            <AnswerCard
+                key={answer.id}
+                id = {answer.id}
+                author={answer.author}
+                date={answer.date}
+                time={answer.time}
+                contents={answer.contents}
+                likes={answer.likes}
+                comments={answer.comments}
+                liked={answer.liked}
+                onSelect={onAnswerSelect}
+            />
+        ))}
+
     </GridWrapper>
   );
 };

@@ -11,6 +11,7 @@ export interface AnswerCardData {
     contents: string;
     likes: number;
     comments : number;
+    liked?: boolean; // TODO: 새로고침해도 토글 유지 -> zustand로 바꿀지 고민
 }
 
 interface AnswerCardProps extends AnswerCardData {
@@ -19,8 +20,8 @@ interface AnswerCardProps extends AnswerCardData {
     onSelect?: (answer: AnswerCardData, rect: DOMRect) => void;
 }
 
-const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, height, onSelect } : AnswerCardProps) => {
-    const { liked, likeCount, handleLike } = useLike(false, likes, id);
+const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, height, liked: initialLiked } : AnswerListProps) => {
+    const { liked, likeCount, handleLike } = useLike(initialLiked || false, likes, id);
     const cardRef = useRef<HTMLDivElement | null>(null);
 
     const handleCardClick = () => {
@@ -101,13 +102,18 @@ const AnswerContainer = styled.article<{ $width?: string; $height?: string}>`
   font-size: 12px;
   width: ${({ $width }) => $width || "172px"};
   height: ${({ $height }) => $height || "248px"};
+  box-sizing: border-box;
+  padding: 4px;
   cursor: pointer;
+
 `;
 
 const AnswerWrapper = styled.div`
- border: 1px solid #B39A63;
- margin: 4px;
- padding:5px;
+  border: 1px solid #B39A63;
+  box-sizing: border-box;
+  height: 100%;          
+  display: flex;         
+  flex-direction: column; 
 `;
 
 const CardHeader = styled.header`
