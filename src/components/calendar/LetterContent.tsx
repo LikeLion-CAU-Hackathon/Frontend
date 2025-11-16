@@ -111,6 +111,8 @@ const ButtonSection = styled.section`
   align-items: center;
   z-index:100000;
   position: absolute;
+  left: 117px;
+  bottom: 105px;
 `;
 
 
