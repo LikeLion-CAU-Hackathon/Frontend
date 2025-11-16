@@ -22,39 +22,39 @@ export const useCalendar = (navigate: Function) => {
   const today = Number(todayString.split("-")[2]);  
 
   // 오늘 이전 카드들의 만료 상태 확인
-  useEffect(() => {
-    const updateExpiredCards = async () => {
-      const expiredCardsPromises = cards
-        .filter(card => isCardBeforeToday(card.id))
-        .map(async (card) => {
-          try {
-            const response = await checkAnswered(card.id);
-            const isAnswered = response.answered;
-            // 오늘 이전이고 답변하지 않은 경우 만료 처리
-            return {
-              ...card,
-              isExpired: !isAnswered,
-              isAnswered: isAnswered
-            };
-          } catch (error) {
-            console.error(`카드 ${card.id}의 상태 확인 중 오류:`, error);
-            return card;
-          }
-        });
+//   useEffect(() => {
+//     const updateExpiredCards = async () => {
+//       const expiredCardsPromises = cards
+//         .filter(card => isCardBeforeToday(card.id))
+//         .map(async (card) => {
+//           try {
+//             const response = await checkAnswered(card.id);
+//             const isAnswered = response.answered;
+//             // 오늘 이전이고 답변하지 않은 경우 만료 처리
+//             return {
+//               ...card,
+//               isExpired: !isAnswered,
+//               isAnswered: isAnswered
+//             };
+//           } catch (error) {
+//             console.error(`카드 ${card.id}의 상태 확인 중 오류:`, error);
+//             return card;
+//           }
+//         });
 
-      const updatedExpiredCards = await Promise.all(expiredCardsPromises);
+//       const updatedExpiredCards = await Promise.all(expiredCardsPromises);
       
-      setCards(prevCards => {
-        const updatedCards = prevCards.map(card => {
-          const updatedCard = updatedExpiredCards.find(c => c.id === card.id);
-          return updatedCard || card;
-        });
-        return updatedCards;
-      });
-    };
+//       setCards(prevCards => {
+//         const updatedCards = prevCards.map(card => {
+//           const updatedCard = updatedExpiredCards.find(c => c.id === card.id);
+//           return updatedCard || card;
+//         });
+//         return updatedCards;
+//       });
+//     };
 
-    updateExpiredCards();
-  }, []); 
+//     updateExpiredCards();
+//   }, []); 
 
   // 우표 클릭 시 상태 변경 -> 편지지 슬라이딩 
   const handleCardClick = async (id: number) => {
