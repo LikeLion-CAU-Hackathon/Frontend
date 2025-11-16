@@ -48,6 +48,8 @@ const Comments = () => {
     answer?: AnswerCardData | null;
     questionTitle?: string;
     backgroundImg?: string;
+    previousSlide?: number;
+    cardId?: string | number | null;
   };
 
   const answerId = state.answer?.id ?? null;
@@ -253,7 +255,9 @@ const Comments = () => {
             onClick={() => {
               const previousSlide =
                 typeof state.previousSlide === "number" ? state.previousSlide : undefined;
-              navigate("/answer-list", {
+              const cardQuery = state.cardId ?? null;
+              const queryString = cardQuery ? `?cardId=${cardQuery}` : "";
+              navigate(`/answer-list${queryString}`, {
                 state: { previousSlide },
                 replace: true,
               });

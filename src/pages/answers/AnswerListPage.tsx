@@ -135,11 +135,12 @@ const AnswerListPage = () => {
           questionTitle: question,
           backgroundImg: animationState.backgroundImg,
           previousSlide: currentSlide,
+          cardId,
         },
       });
       setAnimationState(null);
     }, 650);
-  }, [animationState, currentSlide, navigate, question]);
+  }, [animationState, cardId, currentSlide, navigate, question]);
 
   // 더미데이터 
   // TODO: 답변 API 불러오기 
@@ -192,6 +193,7 @@ const AnswerListPage = () => {
           questionTitle: question,
           backgroundImg: selectedBackground,
           previousSlide: currentSlide,
+          cardId,
         },
       });
       return;
