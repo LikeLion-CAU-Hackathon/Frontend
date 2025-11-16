@@ -5,6 +5,7 @@ import styles from "./Answer.module.css";
 import { getQuestion } from "../../apis/question/question.api";
 import { getTodayDate } from "../../utils/date";
 import { postAnswerReply } from "../../apis/answer/answer.api";
+import { getMyProfile } from "../../apis/user/user.api";
 import closeIcon from "../../assets/images/Comments/x.svg";
 
 const Answer = () => {
@@ -23,7 +24,8 @@ const Answer = () => {
   const [answerContents, setAnswerContents] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const fromLabel = "From. 중커톤";
+  const [userNickname, setUserNickname] = useState("중커톤");
+  const fromLabel = `From. ${userNickname}`;
 
   useEffect(() => {
     const trimmed = questionText?.trim() ?? "";
@@ -115,6 +117,30 @@ const Answer = () => {
       return `${shortYear}.${month}.${day}`;
     }
     return "";
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchProfile = async () => {
+      try {
+        const profile = await getMyProfile();
+        const nickname =
+          profile?.nickname ??
+          profile?.userNickname ??
+          profile?.name ??
+          profile?.username ??
+          "중커톤";
+        if (isMounted) {
+          setUserNickname(nickname);
+        }
+      } catch (error) {
+        console.error("사용자 닉네임을 가져오지 못했습니다:", error);
+      }
+    };
+    fetchProfile();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const subText = formattedDate ?? fallbackDate;
