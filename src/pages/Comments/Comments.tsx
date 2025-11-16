@@ -102,7 +102,6 @@ const Comments = () => {
         ? data.map((reply: RawReply, index: number) => ({
             id: reply.replyId ?? reply.id ?? index,
             author:
-              reply.userNickname ??
               reply.userName ??
               reply.author ??
               "익명",
