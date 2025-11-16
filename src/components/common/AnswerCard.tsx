@@ -152,11 +152,11 @@ const CardContent = styled.section`
   overflow-y: auto;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   display: flex;
   color: #000;
-  text-align: center;
+  text-align: left;
   font-family: "Gowun Batang", "MaruBuri", serif;
 
   &::-webkit-scrollbar {
@@ -168,6 +168,10 @@ const Info = styled.p`
   font-size: 14px;
   font-family: "Gowun Batang";
   color: #000;
+
+  &:nth-of-type(2) ${Value} {
+    font-size: 10px;
+  }
 `;
 
 const Label = styled.span`
@@ -178,6 +182,7 @@ const Label = styled.span`
 const Value = styled.span`
   color: black;
   font-weight: 400;
+  font-size: 12px;
 `;
 // const Divider = styled.div<{ marginSize?: number }>`
 //   margin: ${({ marginSize }) => `0 ${marginSize}px`};
