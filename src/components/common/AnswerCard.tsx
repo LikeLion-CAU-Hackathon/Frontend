@@ -200,11 +200,12 @@ const Divider = styled.div`
   outline: 1px #b39a63 solid;
   outline-offset: -0.5px;
   margin: 0px 8px;
+  margin-bottom: 20px;
 `;
 
 const CardFooter = styled.footer`
   margin-top: 12px;
-  height: calc(35% - 8px);
+  height: calc(28% - 8px);
   display: flex;
   flex-direction: row;
   gap: 8px;
