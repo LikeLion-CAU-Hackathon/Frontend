@@ -3,14 +3,18 @@ import { BASE_URL } from "../constants/baseURL";
 
 export const axiosAPI = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true,
 });
 
-axiosAPI.interceptors.request.use(
-  (config) => config,
-  (error) => Promise.reject(error)
-);
-
+axiosAPI.interceptors.request.use((config) => {
+    const latestToken = localStorage.getItem('accessToken') || initialToken;
+    if (!config.headers) config.headers = {};
+    if (latestToken) {
+      config.headers.Authorization = `Bearer ${latestToken}`;
+    } else {
+      delete config.headers.Authorization;
+    }
+    return config;
+  });
 axiosAPI.interceptors.response.use(
   (response) => response,
   (error) => {
