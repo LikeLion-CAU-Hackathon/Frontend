@@ -9,7 +9,8 @@ export const isCardOpenableToday = (cardId: number): boolean => {
   const today = getTodayDate(); 
   const [ , month, day] = today.split("-").map(Number);
 
-  if (month !== 12) return false;
+  // TODO: (개발용) 주석 지우기
+  // if (month !== 12) return false;
 
   return day === cardId;
 };
