@@ -28,7 +28,8 @@ const LetterContent = ({ isOpened } : LetterContentProps) => {
             const fetchQuestion = async () => {
                 try {
                     const response = await getQuestion(today);
-                    setQuestion(response.question);
+                    setQuestion(response.content);
+                    // console.log(response)
                 } catch (error) {
                     console.error("질문을 불러오는데 실패했습니다.", error);
                 }
@@ -41,7 +42,7 @@ const LetterContent = ({ isOpened } : LetterContentProps) => {
         <ArticleContainer isOpened={isOpened}>
             <QuestionSection>
                 <QuestionHeader>{formatDay} 번째 질문:</QuestionHeader>
-                <QuestionText>{question}테스트테스트테스트dfdfdsdsdsdssdssdssss</QuestionText>
+                <QuestionText>{question}</QuestionText>
             </QuestionSection>
             <ButtonSection>
                 <AnswerButton width="135px" height="51px" fontSize="16px" borderRadius="12px" onClick={() => navigate("/answer")}/>
@@ -96,4 +97,5 @@ const ButtonSection = styled.section`
   cursor: pointer;
   text-align: center;
   align-items: center;
+
 `;
