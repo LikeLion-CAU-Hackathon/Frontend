@@ -138,6 +138,7 @@ const AnswerWrapper = styled.div`
   margin: 4px;
   padding: 5px 5px;
   height: calc(100% - 8px);
+  color: #b39a63;
 `;
 
 const CardHeader = styled.header`

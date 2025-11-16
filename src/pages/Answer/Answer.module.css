@@ -148,7 +148,6 @@
 }
 
 .answerInput::placeholder {
-  color: rgba(47, 28, 15, 0.5);
 }
 
 .answerInput:focus {
@@ -164,6 +163,7 @@
   min-width: 220px;
   font-size: 17px;
   font-weight: 700;
+  height: calc(100% - 7px);
   cursor: pointer;
   box-shadow: 0 14px 26px rgba(20, 6, 0, 0.25);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
