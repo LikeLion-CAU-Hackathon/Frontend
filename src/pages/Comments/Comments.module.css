@@ -47,6 +47,8 @@
   height: 35%;
   margin-top: 20px;
   font-family: 'Times New Roman', 'Georgia', serif;
+  display: flex;
+  flex-direction: column;
 }
 
 .featureCard::after {
@@ -121,6 +123,8 @@
   position: relative;
   display: flex;
   justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 8px;
   color: #000;
 }
 
@@ -177,7 +181,7 @@
 
 .sectionTitle {
   text-align: center;
-  color: #000;
+  color: #D2AE5E;
   font-family: 'MaruBuri', serif;
   font-size: 14px;
   font-style: normal;

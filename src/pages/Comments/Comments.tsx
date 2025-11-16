@@ -48,8 +48,6 @@ const Comments = () => {
     answer?: AnswerCardData | null;
     questionTitle?: string;
     backgroundImg?: string;
-    previousSlide?: number;
-    cardId?: string | number | null;
   };
 
   const answerId = state.answer?.id ?? null;
@@ -80,7 +78,7 @@ const Comments = () => {
     };
   })();
 
-  const commentPanelTitle = state.questionTitle?.trim() || "Post Script";
+  const commentPanelTitle = "Post Script";
 
   useEffect(() => {
     setLikeCount(state.answer?.likes ?? 0);
@@ -253,14 +251,11 @@ const Comments = () => {
             type="button"
             aria-label="카드 닫기"
             onClick={() => {
-              const previousSlide =
-                typeof state.previousSlide === "number" ? state.previousSlide : undefined;
-              const cardQuery = state.cardId ?? null;
-              const queryString = cardQuery ? `?cardId=${cardQuery}` : "";
-              navigate(`/answer-list${queryString}`, {
-                state: { previousSlide },
-                replace: true,
-              });
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate("/answer-list");
+              }
             }}
           >
             <img src={closeIcon} alt="Close" />
