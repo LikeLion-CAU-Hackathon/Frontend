@@ -17,6 +17,7 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   position: relative;
+  background-size: 393px 852px;
 }
 
 .container > :not(:first-child) {
