@@ -248,9 +248,17 @@ const AnswerListPage = () => {
     },
   }
 
+  const bgList = useMemo(() => slides.map(slide => slide.backgroundImg), [slides]);
+
+
   if (loading) {
     return (
-      <PageWrapper ref={pageWrapperRef} backgroundImg={currentBackgroundImg}>
+      <PageWrapper>
+        <BackgroundStrip index={currentSlide} bgList={bgList}>
+          {bgList.map((src) => (
+            <BackgroundItem key={src} src={src} />
+          ))}
+        </BackgroundStrip>
         <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"} disablePointerEvents />
         <QuestionHeader>로딩 중...</QuestionHeader>
         <Footer />
@@ -259,7 +267,12 @@ const AnswerListPage = () => {
   }
 
   return (
-    <PageWrapper ref={pageWrapperRef} backgroundImg={currentBackgroundImg}>
+    <PageWrapper>
+      <BackgroundStrip index={currentSlide} bgList={bgList}>
+        {bgList.map((src) => (
+          <BackgroundItem key={src} src={src} />
+        ))}
+      </BackgroundStrip>
       <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"} disablePointerEvents />
       <QuestionHeader>{question}</QuestionHeader>
       <SliderWrapper $disabled={Boolean(animationState)}>
@@ -328,16 +341,37 @@ const AnswerListPage = () => {
 
 export default AnswerListPage;
 
-const PageWrapper = styled.main<{ backgroundImg: string }>`
+const PageWrapper = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
   overflow: hidden;
-  background-image: url(${({ backgroundImg }) => backgroundImg});
-  background-position: center center;
   color: #000;
 `;
+
+const BackgroundStrip = styled.div<{ index: number; bgList: string[] }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  
+  /* 슬라이드 개수만큼 가로로 길게 */
+  width: ${({ bgList }) => `${bgList.length * 100}vw`};
+
+  display: flex;
+  transition: transform 0.6s ease-in-out;
+
+  transform: translateX(${({ index }) => `-${index * 100}vw`});
+`;
+
+const BackgroundItem = styled.div<{ src: string }>`
+  flex: 0 0 100vw;
+  height: 100%;
+  background-image: url(${({ src }) => src});
+  background-repeat: repeat;
+`;
+
 
 const QuestionHeader = styled.header`
   color: white;
