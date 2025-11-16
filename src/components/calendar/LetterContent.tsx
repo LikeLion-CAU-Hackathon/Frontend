@@ -20,10 +20,14 @@ const LetterContent = ({
   isLoading = false,
   error = null,
 }: LetterContentProps) => {
-
-  const headerLabel = sequence ? `${formatDayToKorean(sequence)} 번째 질문` : "오늘의 질문";
+  const headerLabel = sequence
+    ? `${formatDayToKorean(sequence)} 번째 질문`
+    : "오늘의 질문";
   const formattedDate = date
-    ? new Date(date).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })
+    ? new Date(date).toLocaleDateString("ko-KR", {
+        month: "long",
+        day: "numeric",
+      })
     : "";
 
   const rawQuestion = question?.trim() ?? "";
@@ -35,16 +39,18 @@ const LetterContent = ({
   })();
 
   return (
-    <ArticleContainer isOpened={isOpened}>
-      <QuestionSection>
-        <QuestionHeader>{headerLabel}</QuestionHeader>
-        {formattedDate && <QuestionDate>{formattedDate}</QuestionDate>}
-        <QuestionText>{displayQuestion}</QuestionText>
-      </QuestionSection>
-      <ButtonSection>
+    <>
+      <ArticleContainer isOpened={isOpened}>
+        <QuestionSection>
+          <QuestionHeader>{headerLabel}</QuestionHeader>
+          {formattedDate && <QuestionDate>{formattedDate}</QuestionDate>}
+          <QuestionText>{displayQuestion}</QuestionText>
+        </QuestionSection>
+      </ArticleContainer>
+      <ButtonSection isOpened={isOpened}>
         <AnswerButton
           width="135px"
-          height="51px"
+          height="48px"
           fontSize="16px"
           borderRadius="12px"
           to="/answer"
@@ -55,7 +61,7 @@ const LetterContent = ({
           }}
         />
       </ButtonSection>
-    </ArticleContainer>
+    </>
   );
 };
 
@@ -73,7 +79,8 @@ const ArticleContainer = styled.article<{ isOpened?: boolean }>`
   font-family: "Gowun Batang", serif;
   padding: 34px;
   gap: 15px;
-  transform: ${({ isOpened }) => (isOpened ? "translateY(-15%)" : "translateY(120%)")};
+  transform: ${({ isOpened }) =>
+    isOpened ? "translateY(-15%)" : "translateY(120%)"};
   opacity: ${({ isOpened }) => (isOpened ? 1 : 0)};
   transition: transform 1.5s ease-in-out, opacity 0.6s ease-in-out;
 `;
@@ -105,13 +112,19 @@ const QuestionText = styled.h2`
   padding: 0 20px;
 `;
 
-const ButtonSection = styled.section`
+const ButtonSection = styled.section<{ isOpened?: boolean }>`
   cursor: pointer;
   text-align: center;
   align-items: center;
-  z-index:100000;
+  z-index: 100000;
   position: absolute;
+  opacity: ${({ isOpened }) => (isOpened ? 1 : 0)};
+  pointer-events: ${({ isOpened }) => (isOpened ? "auto" : "none")};
+  transition: opacity 0.6s ease-in-out 0.2s;
+  transform: ${({ isOpened }) =>
+    isOpened ? "translateY(-15%)" : "translateY(120%)"};
+  transition:
+    transform 1.5s ease-in-out,
+    opacity 0.6s ease-in-out 0.2s;
 `;
-
-
 

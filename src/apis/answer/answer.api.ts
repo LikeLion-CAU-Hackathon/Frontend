@@ -12,13 +12,13 @@ export const getAnswerList = async (questionId: number) => {
 };
 
 export const checkAnswered = async (questionId: number) => {
-  const api = axiosAPI(); 
+  const api = axiosAPI();
   const response = await api.get(`/answers/list/${questionId}`);
   return response.data;
 };
 
 export const postAnswerReply = async (answerId: number, contents: string) => {
-  const api = axiosAPI(); 
+  const api = axiosAPI();
   try {
     const response = await api.post(`/answers/${answerId}`, { contents });
     return response.data;
@@ -29,7 +29,7 @@ export const postAnswerReply = async (answerId: number, contents: string) => {
 };
 
 export const postAnswerComment = async (answerId: number, contents: string) => {
-  const api = axiosAPI(); 
+  const api = axiosAPI();
   try {
     const response = await api.post(`/answers/${answerId}/reply`, {
       text: contents,
@@ -43,7 +43,7 @@ export const postAnswerComment = async (answerId: number, contents: string) => {
 };
 
 export const getAnswerReplies = async (answerId: number) => {
-  const api = axiosAPI(); 
+  const api = axiosAPI();
   try {
     const response = await api.get(`/answers/${answerId}/reply`);
     return response.data;
@@ -54,7 +54,7 @@ export const getAnswerReplies = async (answerId: number) => {
 };
 
 export const getAnswerLikeCount = async (answerId: number) => {
-  const api = axiosAPI(); 
+  const api = axiosAPI();
   try {
     const response = await api.get(`/answers/${answerId}/thumbs/count`);
     return response.data;

@@ -2,7 +2,7 @@ import { axiosAPI } from "../axiosInstance";
 
 export const addLike = async (answerId: number) => {
   try {
-    const api = axiosAPI(); 
+    const api = axiosAPI();
     const response = await api.post(`/answers/${answerId}/thumbs`);
     return response.data;
   } catch (error) {
@@ -13,7 +13,7 @@ export const addLike = async (answerId: number) => {
 
 export const deleteLike = async (answerId: number) => {
   try {
-    const api = axiosAPI(); 
+    const api = axiosAPI();
     const response = await api.delete(`/answers/${answerId}/thumbs`);
     return response.data;
   } catch (error) {

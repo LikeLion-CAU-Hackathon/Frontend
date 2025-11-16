@@ -115,7 +115,9 @@ const CalendarPage = () => {
 
   return (
     <PageContainer isOpened={isCardOpened}>
-      {isCardOpened && <Overlay isVisible={isCardOpened} onClick={handleCloseLetter} />}
+      {isCardOpened && (
+        <Overlay isVisible={isCardOpened} onClick={handleCloseLetter} />
+      )}
       <MainContent>
         <CardGrid cards={cards} onCardClick={handleCardClick} />
       </MainContent>
@@ -133,7 +135,7 @@ const CalendarPage = () => {
 
 export default CalendarPage;
 
-const PageContainer = styled.main<{isOpened : boolean}>`
+const PageContainer = styled.main<{ isOpened: boolean }>`
   display: flex;
   width: 100%;
   height: 100%;

@@ -15,6 +15,46 @@ import closeIcon from "../../assets/images/Comments/x.svg";
 import heartIcon from "../../assets/images/Comments/heart.svg";
 import commentIcon from "../../assets/images/Comments/comment.svg";
 
+const ANSWER_LIST_STATE_KEY = "answerListState";
+
+type StoredAnswerListState = {
+  cardId?: string | null;
+  slide?: number;
+};
+
+const readStoredAnswerListState = (): StoredAnswerListState | null => {
+  try {
+    const raw = sessionStorage.getItem(ANSWER_LIST_STATE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") {
+      return parsed as StoredAnswerListState;
+    }
+  } catch (error) {
+    console.warn("Failed to read stored answer list state", error);
+  }
+  return null;
+};
+
+const storeAnswerListState = (cardId: string | null, slide: number) => {
+  try {
+    sessionStorage.setItem(
+      ANSWER_LIST_STATE_KEY,
+      JSON.stringify({ cardId: cardId ?? null, slide })
+    );
+  } catch (error) {
+    console.warn("Failed to store answer list state", error);
+  }
+};
+
+const clearStoredAnswerListState = () => {
+  try {
+    sessionStorage.removeItem(ANSWER_LIST_STATE_KEY);
+  } catch (error) {
+    console.warn("Failed to clear stored answer list state", error);
+  }
+};
+
 type Answer = AnswerCardData & {
   liked?: boolean;
 };
@@ -48,7 +88,7 @@ const AnswerListPage = () => {
   const animationTimeoutRef = useRef<number | null>(null);
 
   // URL params에서 cardId 가져오기
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const cardId = searchParams.get("cardId") || searchParams.get("questionId");
   const previousSlideParam = (location.state as { previousSlide?: number } | null)?.previousSlide;
 
@@ -115,6 +155,25 @@ const AnswerListPage = () => {
   }, []);
 
   useEffect(() => {
+    const storedState = readStoredAnswerListState();
+    if (!storedState) return;
+    const targetSlide =
+      typeof storedState.slide === "number" && Number.isFinite(storedState.slide)
+        ? storedState.slide
+        : null;
+    const targetCardId =
+      typeof storedState.cardId === "string" && storedState.cardId.length > 0
+        ? storedState.cardId
+        : null;
+
+    if (targetCardId && targetCardId !== cardId) {
+      setSearchParams({ cardId: targetCardId });
+    }
+    if (targetSlide !== null) {
+      setCurrentSlide(Math.max(0, targetSlide));
+    }
+    clearStoredAnswerListState();
+  }, [cardId, setSearchParams]);
     if (typeof previousSlideParam === "number" && Number.isFinite(previousSlideParam)) {
       setCurrentSlide(previousSlideParam);
       navigate(".", { replace: true, state: null });
@@ -129,6 +188,7 @@ const AnswerListPage = () => {
     }
 
     animationTimeoutRef.current = window.setTimeout(() => {
+      persistAnswerListState();
       navigate("/comments", {
         state: {
           answer: animationState.answer,
@@ -183,10 +243,15 @@ const AnswerListPage = () => {
   const currentBackgroundImg =
     slides[currentSlide]?.backgroundImg || slides[0]?.backgroundImg || defaultBackground;
 
+  const persistAnswerListState = () => {
+    storeAnswerListState(cardId, currentSlide);
+  };
+
   const handleAnswerSelect = (answer: Answer, rect: DOMRect) => {
     const selectedBackground = currentBackgroundImg;
     const pageRect = pageWrapperRef.current?.getBoundingClientRect();
     if (!pageRect) {
+      persistAnswerListState();
       navigate("/comments", {
         state: {
           answer,

@@ -12,13 +12,12 @@ import { getNewRefreshToken } from "./auth.ts";
 export const axiosAPI = (initialToken?: string) => {
   const authAxios = axios.create({
     baseURL: BASE_URL,
-    withCredentials: false, 
+    withCredentials: false,
   });
 
   authAxios.interceptors.request.use((config) => {
     const latestAccess = getAccessToken() || initialToken;
 
-    
     if (!config.headers) {
       config.headers = {} as AxiosRequestHeaders;
     }
@@ -32,7 +31,7 @@ export const axiosAPI = (initialToken?: string) => {
     return config;
   });
 
-  // 401 → refreshToken으로 재발급 
+  // 401 → refreshToken으로 재발급
   authAxios.interceptors.response.use(
     (response) => response,
     async (error) => {
@@ -48,10 +47,8 @@ export const axiosAPI = (initialToken?: string) => {
         try {
           const result = await getNewRefreshToken();
 
-          const newAccess =
-            result.accessToken || result.access || null;
-          const newRefresh =
-            result.refreshToken || result.refresh || null;
+          const newAccess = result.accessToken || result.access || null;
+          const newRefresh = result.refreshToken || result.refresh || null;
 
           if (newAccess && newRefresh) {
             setTokens(newAccess, newRefresh);

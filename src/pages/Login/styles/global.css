@@ -9,6 +9,7 @@ html {
   height: 100%;
   box-sizing: border-box;
   background-color: #ffffff;
+  color-scheme: light;
 }
 
 *,
@@ -25,6 +26,12 @@ body {
   justify-content: center;
   align-items: center;
   background-color: #ffffff;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }
 
 #root {
@@ -94,5 +101,3 @@ body {
   font-weight: 700;
   font-display: swap;
 }
-
-

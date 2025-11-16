@@ -49,7 +49,7 @@ const Login = () => {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Likelion Postbox:</h1>
+        <h1 className={styles.title}>Likelion Postbox</h1>
         <h2 className={styles.subtitle}>2025 Advent Calendar</h2>
       </header>
 

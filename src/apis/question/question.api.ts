@@ -1,8 +1,8 @@
 import { axiosAPI } from "../axiosInstance";
 
-export const getQuestion = async (date: string | number ) => {
+export const getQuestion = async (date: string | number) => {
   try {
-    const api = axiosAPI(); 
+    const api = axiosAPI();
 
     const response = await api.get(`/questions/${date}`);
     return response.data;
