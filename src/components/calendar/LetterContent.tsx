@@ -66,6 +66,8 @@ const ArticleContainer = styled.article<{ isOpened?: boolean }>`
   box-shadow: 0px 5px 12.476190567016602px rgba(104, 115, 130, 0.24);
   border-radius: 2.08px;
   z-index: 1;
+  position: relative;
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
   font-family: 'Gowun Batang', serif;
@@ -103,5 +105,7 @@ const ButtonSection = styled.section`
   cursor: pointer;
   text-align: center;
   align-items: center;
-  z-index:10;
+  z-index: 10;
+  position: relative;
+  pointer-events: auto;
 `;

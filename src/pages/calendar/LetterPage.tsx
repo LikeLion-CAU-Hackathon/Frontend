@@ -29,8 +29,9 @@ const LetterSection = styled.main`
   width: 100%;
   display: flex;
   z-index: 30;
- justify-content: center;
+  justify-content: center;
   align-items: center;
+  pointer-events: none;
 `;
 
 const EnvelopeContainer = styled.div<{ $visible?: boolean }>`

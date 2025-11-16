@@ -27,10 +27,13 @@ export const useCalendar = (navigate: Function) => {
     if ( id < today ) {
         alert("답변 기한이 지났어요 😭") // TODO: 모달창으로 변경하기
         return; 
-    }
+    } 
 
-    if ( id > today ) {
+    else if ( id > today ) {
         alert("오늘 날짜의 우표만 열 수 있어요!");
+        // console.log("clicked id:", id);
+        // console.log("today:", today);
+        // console.log("is id > today ?", id > today);
         return;
     }
     
