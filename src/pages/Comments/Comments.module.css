@@ -140,6 +140,8 @@
 .cardAction img {
   width: 18px;
   height: 18px;
+  filter: grayscale(100%) brightness(0%);
+  transition: filter 0.2s ease;
 }
 
 .cardAction:disabled {
