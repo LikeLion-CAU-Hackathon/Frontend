@@ -6,6 +6,7 @@ import { formatDayToKorean } from "../../utils/dayToKorean";
 import AnswerButton from "../common/button/AnswerButton";
 import { useNavigate } from "react-router-dom";
 import { getQuestion } from "../../apis/question/question.api";
+import { useQuestionStore } from "../../store/questionStore";
 
 interface LetterContentProps {
     isOpened: boolean;
@@ -13,6 +14,7 @@ interface LetterContentProps {
 
 const LetterContent = ({ isOpened } : LetterContentProps) => {
     const [question, setQuestion] = useState<string>("");
+    const setQuestionStore = useQuestionStore((state) => state.setQuestion);
 
     const today = getTodayDate();
 
@@ -30,6 +32,14 @@ const LetterContent = ({ isOpened } : LetterContentProps) => {
                     const response = await getQuestion(today);
                     setQuestion(response.content);
                     // console.log(response)
+
+                    // store에 저장해서 questionId로 content 볼 수 있게 변경
+                    setQuestionStore({
+                        id: day,
+                        content: response.content,
+                        date: today,
+                    });
+
                 } catch (error) {
                     console.error("질문을 불러오는데 실패했습니다.", error);
                 }
