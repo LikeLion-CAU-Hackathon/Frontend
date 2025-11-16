@@ -1,4 +1,5 @@
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import type { FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Comments.module.css";
 import sendIcon from "../../assets/images/send.svg";

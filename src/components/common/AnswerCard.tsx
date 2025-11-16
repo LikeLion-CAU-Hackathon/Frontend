@@ -1,5 +1,6 @@
 /* 답변 포스트잇 컴포넌트 */
-import { KeyboardEvent, MouseEvent, useRef } from "react";
+import { useRef } from "react";
+import type { KeyboardEvent, MouseEvent } from "react";
 import { AiFillHeart, AiOutlineComment, AiOutlineHeart } from "react-icons/ai";
 import styled from "styled-components";
 import { useLike } from "../../hooks/useLike";
@@ -74,7 +75,7 @@ const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, 
                     {contents}
                 </CardContent>
                 <CardFooter>
-                    <Icon onClick={handleLike}>
+                    <Icon onClick={handleLikeClick}>
                         {liked ? (
                         <AiFillHeart />
                     ) : (

@@ -1,7 +1,7 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Answer.module.css";
-import tornPaperTexture from "../../assets/images/letters.svg";
 import { getQuestion } from "../../apis/question/question.api";
 import { getTodayDate } from "../../utils/date";
 import { postAnswerReply } from "../../apis/answer/answer.api";
@@ -73,13 +73,6 @@ const Answer = () => {
       isMounted = false;
     };
   }, [questionDate, questionId, questionText]);
-
-  const heading = useMemo(() => {
-    if (typeof questionId === "number" && Number.isFinite(questionId)) {
-      return `${questionId}번째 질문`;
-    }
-    return "질문을 선택해주세요";
-  }, [questionId]);
 
   const body = useMemo(() => {
     if (isQuestionLoading) return "질문을 불러오는 중입니다...";
