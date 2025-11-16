@@ -26,7 +26,7 @@
 }
 
 .commentPanel {
-  background: #f8f4e8;
+  background: rgba(248, 244, 232, 0.85);
   border-radius: 18px 18px 0 0;
   padding: 16px 20px 0;
   display: flex;

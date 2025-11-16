@@ -115,6 +115,7 @@ const AnswerWrapper = styled.div`
 
 const CardHeader = styled.header`
     padding:9px;
+    color: #000;
 `;
 
 /* TODO: 스크롤바 수정 필요*/
@@ -127,6 +128,7 @@ const CardContent = styled.section`
   align-items: center;
   gap: 10px;
   display: flex;
+  color: #000;
 
   &::-webkit-scrollbar {
     
@@ -138,6 +140,7 @@ const Info = styled.p`
   margin: 0;
   font-size: 12px;
   font-family: "Gowun Batang";
+  color: #000;
  `;
 
 const Label = styled.span` 
