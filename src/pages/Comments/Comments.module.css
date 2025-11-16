@@ -161,6 +161,7 @@
   box-shadow: none;
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   min-height: 0;
 }
 
@@ -194,6 +195,7 @@
 .commentItem {
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   padding-bottom: 12px;
+  overflow-wrap: break-word;
 }
 
 .commentMeta {
@@ -207,6 +209,8 @@
   color: #3f2717;
   margin: 0;
   line-height: 1.4;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .replyBar {
