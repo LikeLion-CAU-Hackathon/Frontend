@@ -9,6 +9,6 @@ export interface UserProfile {
 
 export const getMyProfile = async (): Promise<UserProfile> => {
   const api = axiosAPI();
-  const response = await api.get("/members/me");
+  const response = await api.get("/users/nickname");
   return response.data;
 };

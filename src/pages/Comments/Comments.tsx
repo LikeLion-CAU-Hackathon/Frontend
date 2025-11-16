@@ -33,12 +33,22 @@ type RawReply = {
   replyId?: number;
   id?: number;
   userName?: string;
+  userNickname?: string;
+  nickname?: string;
   author?: string;
   createdTime?: string;
   createdAt?: string;
   text?: string;
   contents?: string;
   body?: string;
+  writer?: {
+    nickname?: string;
+    name?: string;
+  };
+  user?: {
+    nickname?: string;
+    name?: string;
+  };
 };
 
 const Comments = () => {
