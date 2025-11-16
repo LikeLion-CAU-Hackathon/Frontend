@@ -10,6 +10,7 @@ interface AnswerGridProps {
         contents: string;
         likes: number;
         comments : number;
+        liked?: boolean;
     }[];
 }
 
@@ -18,6 +19,7 @@ const AnswerGrid = ( { answers }: AnswerGridProps ) => {
     <GridWrapper>
         {answers.map((answer) => (
             <AnswerCard
+                key={answer.id}
                 id = {answer.id}
                 author={answer.author}
                 date={answer.date}
@@ -25,6 +27,7 @@ const AnswerGrid = ( { answers }: AnswerGridProps ) => {
                 contents={answer.contents}
                 likes={answer.likes}
                 comments={answer.comments}
+                liked={answer.liked}
             />
         ))}
     </GridWrapper>

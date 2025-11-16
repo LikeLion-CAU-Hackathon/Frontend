@@ -9,6 +9,7 @@ interface Answer {
     contents: string;
     likes: number;
     comments: number;
+    liked?: boolean;
 }
 
 interface AnswerSlideProps {

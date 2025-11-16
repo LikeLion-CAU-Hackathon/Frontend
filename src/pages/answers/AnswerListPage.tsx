@@ -19,6 +19,7 @@ interface Answer {
   contents: string;
   likes: number;
   comments: number;
+  liked?: boolean;
 }
 
 const AnswerListPage = () => {
@@ -57,15 +58,22 @@ const AnswerListPage = () => {
         console.log("답변 리스트:", answerData);
         
         // 백엔드 응답 형식 변환
-        const mappedData = answerData.map((response: any) => ({
-          id: response.id,
-          author: response.userName,
-          date: response.createdTime.slice(0, 10),
-          time: response.createdTime.slice(11, 16),
-          contents: response.contents,
-          likes: response.likeCount,
-          comments: response.replyCount,
-        }));
+        const mappedData = answerData.map((response: any) => {
+          // localStorage에서 좋아요 상태 확인
+          const likedAnswers = JSON.parse(localStorage.getItem("likedAnswers") || "[]");
+          const isLiked = likedAnswers.includes(response.answerId) || response.liked || false;
+          
+          return {
+            id: response.answerId,
+            author: response.userNicname,
+            date: response.createdTime.slice(0, 10),
+            time: response.createdTime.slice(11, 16),
+            contents: response.contents,
+            likes: response.likeCount,
+            comments: response.replyCount,
+            liked: isLiked,
+          };
+        });
 
         setAnswers(mappedData);
       } catch(error) {

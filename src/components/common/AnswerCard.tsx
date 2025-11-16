@@ -13,10 +13,11 @@ interface AnswerListProps {
     comments : number;
     width?: string;
     height?: string;
+    liked?: boolean; // 새로고침해도 토글 유지
 }
 
-const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, height } : AnswerListProps) => {
-    const { liked, likeCount, handleLike } = useLike(false, likes, id);
+const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, height, liked: initialLiked } : AnswerListProps) => {
+    const { liked, likeCount, handleLike } = useLike(initialLiked || false, likes, id);
 
     return (
         <AnswerContainer $width={width} $height={height}>
