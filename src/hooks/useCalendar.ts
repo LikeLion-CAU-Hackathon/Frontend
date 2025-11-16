@@ -9,6 +9,7 @@ export const useCalendar = (navigate: Function) => {
     Array.from({ length: 24}, (_, index) => ({
         id: index+1,
         image: "", // 각 우표 이미지를 stamp1, stamp2, ... , 로 다운받기
+        date:"",
         isOpened: false,
         isExpired: false,
         isAnswered: false

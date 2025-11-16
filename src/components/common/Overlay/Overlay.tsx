@@ -12,14 +12,14 @@ const Overlay = ({ isVisible, onClick, bgColor } : OverlayProps) => {
             $isVisible={isVisible}
             onClick={onClick}
             $bgColor={bgColor}
-            $disablePointerEvents={disablePointerEvents}
+            // $disablePointerEvents={disablePointerEvents}
         />
     );
 }
 
 export default Overlay;
 
-const OverlayBackground = styled.div<{ $isVisible: boolean; $bgColor?: string; $disablePointerEvents: boolean }>`
+const OverlayBackground = styled.div<{ $isVisible: boolean; $bgColor?: string; }>`
   position: absolute;
   width: 100%;
   height: 100%;

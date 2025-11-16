@@ -2,6 +2,7 @@
 import { AiFillHeart, AiOutlineComment, AiOutlineHeart } from "react-icons/ai";
 import styled from "styled-components";
 import { useLike } from "../../hooks/useLike";
+import { useRef } from "react";
 
 export interface AnswerCardData {
     id: number;
@@ -20,33 +21,33 @@ interface AnswerCardProps extends AnswerCardData {
     onSelect?: (answer: AnswerCardData, rect: DOMRect) => void;
 }
 
-const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, height, liked: initialLiked } : AnswerListProps) => {
+const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, height, liked: initialLiked } : AnswerCardProps) => {
     const { liked, likeCount, handleLike } = useLike(initialLiked || false, likes, id);
     const cardRef = useRef<HTMLDivElement | null>(null);
 
     const handleCardClick = () => {
-        if (!onSelect || !cardRef.current) return;
+        if (!onselect || !cardRef.current) return;
         const rect = cardRef.current.getBoundingClientRect();
-        onSelect({ id, author, date, time, contents, likes: likeCount, comments }, rect);
+        // onSelect({ id, author, date, time, contents, likes: likeCount, comments }, rect);
     };
 
-    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (!onSelect) return;
-        if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            handleCardClick();
-        }
-    };
+    // const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    //     if (!onSelect) return;
+    //     if (event.key === "Enter" || event.key === " ") {
+    //         event.preventDefault();
+    //         handleCardClick();
+    //     }
+    // };
 
-    const handleLikeClick = (event: MouseEvent<HTMLDivElement>) => {
-        event.stopPropagation();
-        handleLike();
-    };
+    // const handleLikeClick = (event: MouseEvent<HTMLDivElement>) => {
+    //     event.stopPropagation();
+    //     handleLike();
+    // };
 
-    const handleCommentClick = (event: MouseEvent<HTMLDivElement>) => {
-        event.stopPropagation();
-        // TODO: 댓글 보기 이벤트 연결 필요
-    };
+    // const handleCommentClick = (event: MouseEvent<HTMLDivElement>) => {
+    //     event.stopPropagation();
+    //     // TODO: 댓글 보기 이벤트 연결 필요
+    // };
 
     return (
         <AnswerContainer
@@ -54,9 +55,9 @@ const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, 
             $width={width}
             $height={height}
             onClick={handleCardClick}
-            onKeyDown={handleKeyDown}
-            role={onSelect ? "button" : undefined}
-            tabIndex={onSelect ? 0 : undefined}
+            // onKeyDown={handleKeyDown}
+            // role={onSelect ? "button" : undefined}
+            // tabIndex={onSelect ? 0 : undefined}
         >
             <AnswerWrapper>
                 <CardHeader>
@@ -82,7 +83,7 @@ const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, 
                     )}
                     {likeCount}
                     </Icon>
-                    <Icon onClick={handleCommentClick} role="button" aria-label="댓글 보기">
+                    <Icon role="button" aria-label="댓글 보기">
                         <AiOutlineComment /> 
                         {comments}
                     </Icon>

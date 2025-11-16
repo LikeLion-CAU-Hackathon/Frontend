@@ -22,11 +22,11 @@ interface LetterContentProps {
 const LetterContent = ({
   isOpened,
   card,
-  question,
-  date,
-  sequence,
-  isLoading = false,
-  error = null,
+//   question,
+//   date,
+//   sequence,
+//   isLoading = false,
+//   error = null,
 }: LetterContentProps) => {
   
   const navigate = useNavigate();
@@ -36,8 +36,8 @@ const LetterContent = ({
   /* 편지지 제목에 들어갈 날짜 카드 ID로 변경 */
   const formatDay = card ? formatDayToKorean(card.id) : "";
 
-  const rawQuestion = question?.trim() ?? "";
-  let questionBody = rawQuestion;
+//   const rawQuestion = question?.trim() ?? "";
+//   let questionBody = rawQuestion;
 
     /* 해당 우표 id(=해당하는 날짜)에 해당하는 질문 불러오기 */
     useEffect(() => {

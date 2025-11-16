@@ -26,9 +26,9 @@ const CalendarPage = () => {
       <LetterPage
         card={selectedCard}
         isOpened={isCardOpened}
-        question={questionText}
-        isLoading={isQuestionLoading}
-        error={questionError}
+        // question={questionText}
+        // isLoading={isQuestionLoading}
+        // error={questionError}
       />
       <Footer />
     </PageContainer>

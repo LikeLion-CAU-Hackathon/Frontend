@@ -6,22 +6,22 @@ import type { Card } from "../../types/card";
 interface LetterPageProps {
   isOpened: boolean;
   card: Card | null;
-  question: string;
-  isLoading: boolean;
-  error: string | null;
+  // question: string;
+  // isLoading: boolean;
+  // error: string | null;
 }
 
-const LetterPage = ({ isOpened, card, question, isLoading, error }: LetterPageProps) => {
+const LetterPage = ({ isOpened, card }: LetterPageProps) => {
   return (
     <LetterSection>
       <EnvelopeContainer $visible={isOpened}>{card && <LetterEnvelope card={card} />}</EnvelopeContainer>
       <LetterContent
         isOpened={isOpened}
-        question={question}
-        date={card?.date}
-        sequence={card?.id}
-        isLoading={isLoading}
-        error={error}
+        // question={question}
+        // date={card?.date}
+        // sequence={card?.id}
+        // isLoading={isLoading}
+        // error={error}
         card={card}
       />
     </LetterSection>
