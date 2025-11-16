@@ -3,7 +3,7 @@ import { AiFillHeart, AiOutlineComment, AiOutlineHeart } from "react-icons/ai";
 import styled from "styled-components";
 import { useLike } from "../../hooks/useLike";
 
-interface AnswerListProps {
+export interface AnswerCardData {
     id: number;
     author: string;
     date: string;
@@ -11,15 +11,52 @@ interface AnswerListProps {
     contents: string;
     likes: number;
     comments : number;
-    width?: string;
-    height?: string;
 }
 
-const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, height } : AnswerListProps) => {
+interface AnswerCardProps extends AnswerCardData {
+    width?: string;
+    height?: string;
+    onSelect?: (answer: AnswerCardData, rect: DOMRect) => void;
+}
+
+const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, height, onSelect } : AnswerCardProps) => {
     const { liked, likeCount, handleLike } = useLike(false, likes, id);
+    const cardRef = useRef<HTMLDivElement | null>(null);
+
+    const handleCardClick = () => {
+        if (!onSelect || !cardRef.current) return;
+        const rect = cardRef.current.getBoundingClientRect();
+        onSelect({ id, author, date, time, contents, likes: likeCount, comments }, rect);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (!onSelect) return;
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            handleCardClick();
+        }
+    };
+
+    const handleLikeClick = (event: MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
+        handleLike();
+    };
+
+    const handleCommentClick = (event: MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
+        // TODO: 댓글 보기 이벤트 연결 필요
+    };
 
     return (
-        <AnswerContainer $width={width} $height={height}>
+        <AnswerContainer
+            ref={cardRef}
+            $width={width}
+            $height={height}
+            onClick={handleCardClick}
+            onKeyDown={handleKeyDown}
+            role={onSelect ? "button" : undefined}
+            tabIndex={onSelect ? 0 : undefined}
+        >
             <AnswerWrapper>
                 <CardHeader>
                     {/* TODO: author 아이디와 현재 로그인한 아이디와 동일하다면 (나) 표시) */}
@@ -44,7 +81,7 @@ const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, 
                     )}
                     {likeCount}
                     </Icon>
-                    <Icon>
+                    <Icon onClick={handleCommentClick} role="button" aria-label="댓글 보기">
                         <AiOutlineComment /> 
                         {comments}
                     </Icon>
@@ -64,6 +101,7 @@ const AnswerContainer = styled.article<{ $width?: string; $height?: string}>`
   font-size: 12px;
   width: ${({ $width }) => $width || "172px"};
   height: ${({ $height }) => $height || "248px"};
+  cursor: pointer;
 `;
 
 const AnswerWrapper = styled.div`
@@ -129,4 +167,8 @@ const CardFooter = styled.footer`
 `; 
 
 const Icon = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
 `;

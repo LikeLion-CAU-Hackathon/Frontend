@@ -1,127 +1,314 @@
+import { useEffect, useMemo, useRef, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import AnswerSlide from "./components/AnswerSlide";
 import styled from "styled-components";
+import { useLocation, useNavigate } from "react-router-dom";
+import AnswerSlide from "./components/AnswerSlide";
 import Footer from "../../components/common/Footer";
-import { useEffect, useState } from "react";
 import Overlay from "../../components/common/Overlay/Overlay";
 import { getAnswerList } from "../../apis/answer/answer.api";
+import type { AnswerCardData } from "../../components/common/AnswerCard";
+import closeIcon from "../../assets/images/Comments/x.svg";
+import heartIcon from "../../assets/images/Comments/heart.svg";
+import commentIcon from "../../assets/images/Comments/comment.svg";
 
-interface Answer {
-  id: number;
-  author: string;
-  date: string;
-  time: string;
-  contents: string;
-  likes: number;
-  comments: number;
+type Answer = AnswerCardData;
+
+interface RelativeRect {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
+type AnimationPhase = "start" | "end";
+
+interface AnimationState {
+  answer: Answer;
+  phase: AnimationPhase;
+  startRect: RelativeRect;
+  targetRect: RelativeRect;
 }
 
 const AnswerListPage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const locationState = (location.state ?? {}) as {
+    questionId?: number;
+    questionText?: string;
+    questionDate?: string;
+  };
+
+  const deriveQuestionId = () => {
+    const params = new URLSearchParams(location.search);
+    const paramId = params.get("questionId");
+    const fallbackId = locationState.questionId;
+    const parsedId = Number(paramId ?? fallbackId ?? 1);
+    return Number.isNaN(parsedId) || parsedId <= 0 ? 1 : parsedId;
+  };
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [questionId, setQuestionId] = useState<number>(() => deriveQuestionId());
+  const [questionTitle, setQuestionTitle] = useState(
+    () => (typeof locationState.questionText === "string" ? locationState.questionText : "")
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [animationState, setAnimationState] = useState<AnimationState | null>(null);
+  const pageWrapperRef = useRef<HTMLElement | null>(null);
+  const animationTimeoutRef = useRef<number | null>(null);
 
-  // TODO: 라우터에서 받을 예정
-  const questionId = 1; 
+  useEffect(() => {
+    const nextId = deriveQuestionId();
+    if (nextId !== questionId) {
+      setQuestionId(nextId);
+      setCurrentSlide(0);
+    }
+    if (typeof locationState.questionText === "string") {
+      setQuestionTitle(locationState.questionText);
+    }
+  }, [location]);
 
-  // 답변 리스트 불러오기 
   useEffect(() => {
     const fetchAnswers = async () => {
+      if (!questionId) return;
+      setIsLoading(true);
+      setFetchError(null);
       try {
         const data = await getAnswerList(questionId);
-        
-        // 백엔드 응답 형식 변환
-        const mappedData = data.map((response: any) => ({
-          id: response.id,
-          author: response.userName,
-          date: response.createdTime.slice(0, 10),
-          time: response.createdTime.slice(11, 16),
-          contents: response.contents,
-          likes: response.likeCount,
-          comments: response.replyCount,
-        }));
-
+        const mappedData: Answer[] = Array.isArray(data)
+          ? data.map((response: any) => ({
+              id: response.answerId ?? response.id,
+              author: response.userName,
+              date: response.createdTime.slice(0, 10),
+              time: response.createdTime.slice(11, 16),
+              contents: response.contents,
+              likes: response.likeCount,
+              comments: response.replyCount,
+            }))
+          : [];
         setAnswers(mappedData);
-      } catch(error) {
+      } catch (error) {
         console.error("답변 리스트를 불러오는 데 오류가 발생했습니다: ", error);
+        setAnswers([]);
+        setFetchError("답변을 불러오지 못했습니다.");
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchAnswers();
   }, [questionId]);
 
-  // 더미데이터 
-  // TODO: 답변 API 불러오기 
-  const allAnswers: Answer[] = [
-    { id: 1, author: "잘생긴 루돌프", date: "DEC 7", time: "18:44", contents: "아ㅓ알ㅇ러알아러아러아아ㅓ아ㅓㅏ랄ㅇ라얼ㅇ러알알ㅇㄹ아알ㅇ라이라이랑랑라리ㅏㄹㅏㄹ아알아러아ㅓ아러ㅏ러아러ㅏㅓㅇㄹ아ㅓㄹㅇ러ㅓㄹ러ㅏㅓㅇ라러ㅏㅓ라ㅓ러라러ㅏ러아ㅓ라러라ㅓ러ㅏㅓㅏ어라얼아러아렁렁라ㅏㅓ알댜ㅏ러야랑ㄹ아러아러아렁어ㅏㅓㄹ아ㅓ랑러앙ㄹ어러아라ㅓ러ㅏ어아ㅓㅏㅇㄹ알알라ㅏ알알", likes: 99, comments: 99 },
-    { id: 2, author: "예쁜 산타", date: "DEC 7", time: "16:24", contents: "2번", likes: 99, comments: 99 },
-    { id: 3, author: "건강한 개발자", date: "DEC 7", time: "12:28", contents: "3번", likes: 19, comments: 9 },
-    { id: 4, author: "무례한 눈사람", date: "DEC 7", time: "11:59", contents: "4번", likes: 2, comments: 5 },
-    { id: 5, author: "잘생긴 산타", date: "DEC 7", time: "13:00", contents: "5번", likes: 2, comments: 0 },
-    { id: 6, author: "건강한 눈사람", date: "DEC 7", time: "14:30", contents: "6번", likes: 4, comments: 1 },
-    { id: 7, author: "크리스마스", date: "DEC 7", time: "14:30", contents: "7번", likes: 3, comments: 1 },
-   
-  ];
+  useEffect(() => {
+    return () => {
+      if (animationTimeoutRef.current) {
+        window.clearTimeout(animationTimeoutRef.current);
+      }
+    };
+  }, []);
 
-  // 4개씩 묶어서 슬라이드 생성 (2x2 그리드)
-  const chunkSize = 4;
-  const answerChunks: Answer[][] = [];
-  for (let i = 0; i < allAnswers.length; i += chunkSize) {
-    answerChunks.push(allAnswers.slice(i, i + chunkSize));
-  }
+  useEffect(() => {
+    if (!animationState || animationState.phase !== "end") return;
 
-  // 배경 이미지 
-  const slides = Array.from({length: answerChunks.length}, (_,i) => ({
-    id: i+1,
-    backgroundImg: new URL(`../../assets/images/background/bg${(i % 10) + 1}.png`, import.meta.url).href,
-  }));
+    if (animationTimeoutRef.current) {
+      window.clearTimeout(animationTimeoutRef.current);
+    }
 
-  const currentBackgroundImg = slides[currentSlide]?.backgroundImg || slides[0]?.backgroundImg;
+    animationTimeoutRef.current = window.setTimeout(() => {
+      navigate("/comments", { state: { answerId: animationState.answer.id } });
+      setAnimationState(null);
+    }, 650);
+  }, [animationState, navigate]);
 
-  const settings = {
-    dots: true,
-    infinite: false,
-    speed: 600,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: false,
-    beforeChange: (_current: number, next: number) => {
-      setCurrentSlide(next);
-    },
-  }
+  const answerChunks = useMemo(() => {
+    const chunkSize = 4;
+    const chunks: Answer[][] = [];
+    for (let i = 0; i < answers.length; i += chunkSize) {
+      chunks.push(answers.slice(i, i + chunkSize));
+    }
+    return chunks;
+  }, [answers]);
 
-  // TODO: 해당 우표의 질문 가져오기 (클릭한 우표 id로)
-  const question = "올해 가장 기억에 남는 크리스마스 선물은 무엇인가요?";
+  useEffect(() => {
+    if (currentSlide > answerChunks.length - 1) {
+      setCurrentSlide(Math.max(0, answerChunks.length - 1));
+    }
+  }, [answerChunks.length, currentSlide]);
+
+  const slides = useMemo(() => {
+    if (answerChunks.length === 0) return [];
+    return answerChunks.map((_, index) => ({
+      id: index + 1,
+      backgroundImg: new URL(`../../assets/images/background/bg${(index % 10) + 1}.png`, import.meta.url).href,
+    }));
+  }, [answerChunks.length]);
+
+  const defaultBackground = new URL("../../assets/images/background/bg1.png", import.meta.url).href;
+  const currentBackgroundImg =
+    slides[currentSlide]?.backgroundImg || slides[0]?.backgroundImg || defaultBackground;
+
+  const totalSlides = answerChunks.length;
+  const canGoPrev = currentSlide > 0;
+  const canGoNext = currentSlide < totalSlides - 1;
+
+  const goToSlide = (index: number) => {
+    if (index < 0 || index >= totalSlides) return;
+    setCurrentSlide(index);
+  };
+
+  const handleAnswerSelect = (answer: Answer, rect: DOMRect) => {
+    const pageRect = pageWrapperRef.current?.getBoundingClientRect();
+    if (!pageRect) {
+      navigate("/comments", { state: { answerId: answer.id } });
+      return;
+    }
+
+    const relativeStart: RelativeRect = {
+      top: rect.top - pageRect.top,
+      left: rect.left - pageRect.left,
+      width: rect.width,
+      height: rect.height,
+    };
+
+    const targetWidth = Math.min(280, pageRect.width * 0.9);
+    const targetHeight = Math.min(pageRect.height * 0.35, 360);
+    const targetLeft = (pageRect.width - targetWidth) / 2;
+    const targetTop = Math.max(20, pageRect.height * 0.08);
+
+    const nextState: AnimationState = {
+      answer,
+      phase: "start",
+      startRect: relativeStart,
+      targetRect: {
+        top: targetTop,
+        left: targetLeft,
+        width: targetWidth,
+        height: targetHeight,
+      },
+    };
+
+    setAnimationState(nextState);
+
+    window.requestAnimationFrame(() => {
+      setAnimationState((prev) => (prev ? { ...prev, phase: "end" } : prev));
+    });
+  };
+
+  const overlayStyle =
+    animationState?.phase === "start"
+      ? animationState.startRect
+      : animationState?.targetRect;
+
+  const questionHeading =
+    questionTitle?.trim() ||
+    `Question #${questionId}`;
 
   return (
-    <PageWrapper backgroundImg={currentBackgroundImg}>
-      <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"}/>
-      <QuestionHeader>{question}</QuestionHeader>
-      <SliderWrapper>
-        <Slider {...settings}>
-          {slides.map((slide, index) => (
-            <AnswerSlide 
-              key={slide.id} 
-              answers={answerChunks[index] || []}
-            />
-          ))}
-        </Slider>
+    <PageWrapper ref={pageWrapperRef} backgroundImg={currentBackgroundImg}>
+      <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"} disablePointerEvents />
+      <QuestionHeader>{questionHeading}</QuestionHeader>
+      <SliderWrapper $disabled={Boolean(animationState)}>
+        {isLoading && <StatusMessage>답변을 불러오는 중입니다...</StatusMessage>}
+        {fetchError && !isLoading && <StatusMessage>{fetchError}</StatusMessage>}
+        {!isLoading && !fetchError && totalSlides === 0 && (
+          <StatusMessage>아직 등록된 답변이 없습니다.</StatusMessage>
+        )}
+        {totalSlides > 0 && !isLoading && (
+          <AnswerSlide
+            answers={answerChunks[currentSlide] || []}
+            onAnswerSelect={handleAnswerSelect}
+          />
+        )}
+        {totalSlides > 1 && !isLoading && (
+          <SlideControls>
+            <NavButton type="button" onClick={() => goToSlide(currentSlide - 1)} disabled={!canGoPrev}>
+              이전
+            </NavButton>
+            <Dots>
+              {slides.map((slide, index) => (
+                <DotButton
+                  key={slide.id}
+                  type="button"
+                  $active={currentSlide === index}
+                  aria-label={`${index + 1}번째 슬라이드`}
+                  onClick={() => goToSlide(index)}
+                />
+              ))}
+            </Dots>
+            <NavButton type="button" onClick={() => goToSlide(currentSlide + 1)} disabled={!canGoNext}>
+              다음
+            </NavButton>
+          </SlideControls>
+        )}
       </SliderWrapper>
-      <Footer />
+      <FooterWrapper>
+        <Footer />
+      </FooterWrapper>
+
+      {animationState && overlayStyle && (
+        <>
+          <AnimatedBackdrop />
+          <AnimatedFadePanel $phase={animationState.phase} />
+          <AnimatedCardOverlay
+            $phase={animationState.phase}
+            style={{
+              top: overlayStyle.top,
+              left: overlayStyle.left,
+              width: overlayStyle.width,
+              height: overlayStyle.height,
+            }}
+          >
+            <AnimatedCardBody $phase={animationState.phase}>
+              <AnimatedCardHeader>
+                <AnimatedHeaderLeft>
+                  <AnimatedInfo>
+                    <AnimatedLabel>From.</AnimatedLabel>
+                    <AnimatedValue>{animationState.answer.author}</AnimatedValue>
+                  </AnimatedInfo>
+                  <AnimatedInfo>
+                    <AnimatedLabel>Date:</AnimatedLabel>
+                    <AnimatedValue>
+                      {animationState.answer.date} | {animationState.answer.time}
+                    </AnimatedValue>
+                  </AnimatedInfo>
+                </AnimatedHeaderLeft>
+                <AnimatedCloseButton aria-hidden="true">
+                  <img src={closeIcon} alt="" />
+                </AnimatedCloseButton>
+              </AnimatedCardHeader>
+              <AnimatedDivider />
+              <AnimatedContent>{animationState.answer.contents}</AnimatedContent>
+              <AnimatedFooter>
+                <AnimatedStat>
+                  <img src={heartIcon} alt="" />
+                  {animationState.answer.likes}
+                </AnimatedStat>
+                <AnimatedStat>
+                  <img src={commentIcon} alt="" />
+                  {animationState.answer.comments}
+                </AnimatedStat>
+              </AnimatedFooter>
+            </AnimatedCardBody>
+          </AnimatedCardOverlay>
+        </>
+      )}
     </PageWrapper>
+  );
+};
 
-  )
-}
+export default AnswerListPage;
 
-export default AnswerListPage
-
-const PageWrapper = styled.main<{backgroundImg: string}>`
+const PageWrapper = styled.main<{ backgroundImg: string }>`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background: url(${({backgroundImg}) => backgroundImg}) no-repeat center;
+  overflow: hidden;
+  background: url(${({ backgroundImg }) => backgroundImg}) no-repeat center;
   background-attachment: fixed;
 `;
 
@@ -130,16 +317,33 @@ const QuestionHeader = styled.header`
   font-size: 24px;
   font-family: Gowun Batang;
   font-weight: 700;
-  word-break: keep-all; /* 띄어쓰기 기준으로만 줄 바꿈 */
+  word-break: keep-all;
   padding: 0px 32px;
   margin-top: 70px;
   text-align: center;
-  z-index:1;
+  position: relative;
+  z-index: 1;
 `;
 
-const SliderWrapper = styled.section`
+const SliderWrapper = styled.section<{ $disabled?: boolean }>`
   width: 100%;
   max-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px 48px;
+  pointer-events: ${({ $disabled }) => ($disabled ? "none" : "auto")};
+  opacity: ${({ $disabled }) => ($disabled ? 0.4 : 1)};
+  position: relative;
+  z-index: 1;
+`;
+
+const SlideControls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`;
 
     li button:before {
       color: rgba(255, 255, 255, 0.5);
@@ -151,4 +355,164 @@ const SliderWrapper = styled.section`
       font-size: 14px;
     }
   }
+`;
+
+const Dots = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+const DotButton = styled.button<{ $active: boolean }>`
+  width: ${({ $active }) => ($active ? "12px" : "8px")};
+  height: ${({ $active }) => ($active ? "12px" : "8px")};
+  border-radius: 50%;
+  border: none;
+  background: ${({ $active }) => ($active ? "white" : "rgba(255, 255, 255, 0.4)")};
+  cursor: pointer;
+  transition: all 0.2s ease;
+`;
+
+const AnimatedBackdrop = styled.div`
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 10;
+`;
+
+const FooterWrapper = styled.div`
+  width: 100%;
+  position: relative;
+  z-index: 1;
+`;
+
+const AnimatedFadePanel = styled.div<{ $phase: AnimationPhase }>`
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(480px, 95vw);
+  height: clamp(36vh, 45%, 420px);
+  background: #f8f4e8;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+  opacity: ${({ $phase }) => ($phase === "end" ? 1 : 0)};
+  transition: opacity 0.2s ease;
+  z-index: 10;
+  pointer-events: none;
+`;
+
+const AnimatedCardOverlay = styled.div<{ $phase: AnimationPhase }>`
+  position: absolute;
+  z-index: 11;
+  background: ${({ $phase }) => ($phase === "end" ? "#f0d6aa" : "#decba1")};
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  transition:
+    top 0.6s ease,
+    left 0.6s ease,
+    width 0.6s ease,
+    height 0.6s ease,
+    background 0.6s ease;
+  overflow: hidden;
+  pointer-events: none;
+`;
+
+const AnimatedCardBody = styled.div<{ $phase: AnimationPhase }>`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  opacity: ${({ $phase }) => ($phase === "end" ? 1 : 0)};
+  transition: opacity 0.2s ease;
+`;
+
+const AnimatedCardHeader = styled.header`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: 'MaruBuri', 'Times New Roman', 'Georgia', serif;
+`;
+
+const AnimatedHeaderLeft = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const AnimatedInfo = styled.p`
+  margin: 0;
+  font-size: 14px;
+  color: #5c3a1b;
+  display: flex;
+  gap: 6px;
+  font-family: 'MaruBuri', 'Times New Roman', 'Georgia', serif;
+`;
+
+const AnimatedCloseButton = styled.div`
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+`;
+
+const AnimatedLabel = styled.span`
+  font-weight: 700;
+  color: #a3722b;
+`;
+
+const AnimatedValue = styled.span`
+  font-weight: 400;
+`;
+
+const AnimatedDivider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: rgba(163, 114, 43, 0.5);
+`;
+
+const AnimatedContent = styled.p`
+  flex: 1;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #2c120b;
+  overflow-y: auto;
+  font-family: 'MaruBuri', 'Times New Roman', 'Georgia', serif;
+`;
+
+const AnimatedFooter = styled.footer`
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  font-family: 'MaruBuri', 'Times New Roman', 'Georgia', serif;
+`;
+
+const AnimatedStat = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: #2c120b;
+
+  img {
+    width: 18px;
+    height: 18px;
+  }
+`;
+
+const StatusMessage = styled.p`
+  color: #ffffff;
+  font-size: 16px;
+  text-align: center;
+  margin: 24px 0;
 `;
