@@ -1,9 +1,10 @@
 /* 답변 포스트잇 컴포넌트 */
 import { useRef } from "react";
 import type { KeyboardEvent, MouseEvent } from "react";
-import { AiFillHeart, AiOutlineComment, AiOutlineHeart } from "react-icons/ai";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import styled from "styled-components";
 import { useLike } from "../../hooks/useLike";
+import commentIcon from "../../assets/images/Comments/comment.svg";
 
 export interface AnswerCardData {
     id: number;
@@ -85,7 +86,7 @@ const AnswerCard = ({ id, author, date, time, contents, likes, comments, liked =
                     {likeCount}
                     </Icon>
                     <Icon onClick={handleCommentClick} role="button" aria-label="댓글 보기">
-                        <AiOutlineComment /> 
+                        <img src={commentIcon} alt="" />
                         {comments}
                     </Icon>
                 </CardFooter>
@@ -129,6 +130,8 @@ const CardContent = styled.section`
   gap: 10px;
   display: flex;
   color: #000;
+  text-align: center;
+  font-family: "Gowun Batang", "MaruBuri", serif;
 
   &::-webkit-scrollbar {
     

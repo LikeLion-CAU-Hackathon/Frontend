@@ -116,7 +116,13 @@
   font-size: 0.95rem;
   line-height: 1.5;
   color: #2c120b;
-  font-family: 'MaruBuri', 'Times New Roman', 'Georgia', serif;
+  font-family: 'Gowun Batang', 'MaruBuri', serif;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .cardFooter {
@@ -218,6 +224,8 @@
   line-height: 1.4;
   overflow-wrap: break-word;
   white-space: pre-wrap;
+  font-family: 'Gowun Batang', 'MaruBuri', serif;
+  text-align: left;
 }
 
 .replyBar {
