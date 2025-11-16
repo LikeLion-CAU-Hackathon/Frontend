@@ -7,13 +7,19 @@ interface OverlayProps {
 }
 
 const Overlay = ({ isVisible, onClick, bgColor } : OverlayProps) => {
-    return <OverlayBackground $isVisible={isVisible} onClick={onClick} $bgColor={bgColor}
-    />
+    return (
+        <OverlayBackground
+            $isVisible={isVisible}
+            onClick={onClick}
+            $bgColor={bgColor}
+            $disablePointerEvents={disablePointerEvents}
+        />
+    );
 }
 
 export default Overlay;
 
-const OverlayBackground = styled.div<{ $isVisible: boolean; $bgColor?: string }>`
+const OverlayBackground = styled.div<{ $isVisible: boolean; $bgColor?: string; $disablePointerEvents: boolean }>`
   position: absolute;
   width: 100%;
   height: 100%;
@@ -23,3 +29,4 @@ const OverlayBackground = styled.div<{ $isVisible: boolean; $bgColor?: string }>
   z-index: 1; 
   pointer-events: ${({ $isVisible }) => ($isVisible ? "auto" : "none")};
 `;
+

@@ -1,27 +1,34 @@
-/* 우표 클릭시 편지봉투 열리는 페이지  */
-import styled from "styled-components"
+import styled from "styled-components";
 import LetterEnvelope from "./components/LetterEnvelope";
 import LetterContent from "../../components/calendar/LetterContent";
 import type { Card } from "../../types/card";
 
-interface LetterEnvelopeProps {
+interface LetterPageProps {
   isOpened: boolean;
   card: Card | null;
+  question: string;
+  isLoading: boolean;
+  error: string | null;
 }
 
-const LetterPage = ({ isOpened, card }: LetterEnvelopeProps) => {
-
+const LetterPage = ({ isOpened, card, question, isLoading, error }: LetterPageProps) => {
   return (
     <LetterSection>
-        <EnvelopeContainer $visible={isOpened}>
-            {card && <LetterEnvelope card={card} />}
-        </EnvelopeContainer>
-        <LetterContent isOpened={isOpened} card={card}/>
+      <EnvelopeContainer $visible={isOpened}>{card && <LetterEnvelope card={card} />}</EnvelopeContainer>
+      <LetterContent
+        isOpened={isOpened}
+        question={question}
+        date={card?.date}
+        sequence={card?.id}
+        isLoading={isLoading}
+        error={error}
+        card={card}
+      />
     </LetterSection>
-  )
-}
+  );
+};
 
-export default LetterPage
+export default LetterPage;
 
 const LetterSection = styled.main`
   position: absolute;
