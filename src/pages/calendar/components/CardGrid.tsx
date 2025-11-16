@@ -1,0 +1,37 @@
+import styled from "styled-components";
+import type { Card } from "../../../types/card";
+import CalendarCard from "../../../components/calendar/CalendarCard";
+
+interface CardGridProps {
+  cards: Card[];
+  onCardClick: (id: number) => void;
+}
+
+const CardGrid = ( {cards, onCardClick} : CardGridProps) => {
+
+  return (
+    <GridContainer>
+      {cards.map((card) => (
+        <CalendarCard
+          key={card.id}
+          card={card}
+          onClick={() => onCardClick(card.id) }
+        />
+      ))}
+    </GridContainer>
+  )
+}
+
+export default CardGrid;
+
+const GridContainer = styled.section`
+    // display: grid;
+    // grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+   display: flex;
+   flex-wrap: wrap;
+   align-content: center;
+   justify-content: center;
+`;
+
+

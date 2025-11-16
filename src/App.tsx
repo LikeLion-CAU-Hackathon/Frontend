@@ -1,35 +1,26 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import CalendarPage from "./pages/calendar/CalendarPage";
+import "./pages/Login/styles/global.css"; // 전역 스타일 적용
+import FixedScreenLayout from "./components/layout/FixedScreenLayout/FixedScreenLayout";
+import Login from "./pages/Login/Login";
+import Answer from "./pages/Answer/Answer";
+import Comments from "./pages/Comments/Comments";
+import AnswerListPage from "./pages/answers/AnswerListPage";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <FixedScreenLayout>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/answer" element={<Answer />} />
+          <Route path="/comments" element={<Comments />} />
+          <Route path="/answer-list" element={<AnswerListPage />} />
+        </Routes>
+      </Router>
+    </FixedScreenLayout>
+  );
 }
 
-export default App
+export default App;
