@@ -12,10 +12,16 @@
   font-weight: 300;
   line-height: normal;
   background-color: transparent;
-  background-size: auto;
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  position: relative;
+}
+
+.container > :not(:first-child) {
+  position: relative;
+  z-index: 1;
 }
 
 .commentPanel {

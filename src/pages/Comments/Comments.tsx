@@ -11,6 +11,7 @@ import type { AnswerCardData } from "../../components/common/AnswerCard";
 import { getAnswerReplies, getAnswerLikeCount, postAnswerComment } from "../../apis/answer/answer.api";
 import { addLike, deleteLike } from "../../apis/answer/like.api";
 import { toggleStoredLikedAnswer } from "../../utils/likedAnswers";
+import Overlay from "../../components/common/Overlay/Overlay";
 
 const fallbackFeatured = {
   sender: "잘생긴 루돌프 (나)",
@@ -226,6 +227,7 @@ const Comments = () => {
         backgroundImage: `url(${backgroundImage})`,
       }}
     >
+      <Overlay isVisible bgColor="rgba(0,0,0,0.6)" disablePointerEvents />
       <section className={styles.featureCard} aria-label="강조된 댓글 카드">
         <header className={styles.cardHeader}>
           <div>
