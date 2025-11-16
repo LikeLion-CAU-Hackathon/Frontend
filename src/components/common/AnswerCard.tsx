@@ -13,7 +13,7 @@ interface AnswerListProps {
     comments : number;
     width?: string;
     height?: string;
-    liked?: boolean; // 새로고침해도 토글 유지
+    liked?: boolean; // TODO: 새로고침해도 토글 유지 -> zustand로 바꿀지 고민
 }
 
 const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, height, liked: initialLiked } : AnswerListProps) => {

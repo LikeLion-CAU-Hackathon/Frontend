@@ -65,7 +65,7 @@ const AnswerListPage = () => {
           
           return {
             id: response.answerId,
-            author: response.userNicname,
+            author: response.userNickname,
             date: response.createdTime.slice(0, 10),
             time: response.createdTime.slice(11, 16),
             contents: response.contents,
