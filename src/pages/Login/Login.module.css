@@ -19,28 +19,31 @@
   width: 100%;
   margin-top: 24px;
   font-family: 'Times New Roman', 'Georgia', serif;
+  text-align: left;
+  margin-left: 7%;
 }
 
 .title {
   margin: 0;
   color: #fff;
-  text-align: center;
+  text-align: left;
   font-family: 'Libre Baskerville', 'Times New Roman', 'Georgia', serif;
-  font-size: 45px;
+  font-size: 39px;
   font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+  font-weight: 300;
+  letter-spacing: 0.02em;
 }
 
 .subtitle {
   margin-top: 10px;
-  color: #f66;
-  text-align: center;
-  font-family: 'Garamond', 'Times New Roman', 'Georgia', serif;
-  font-size: 24px;
+  color: #fff;
+  text-align: left;
+  font-family: 'Baskerville', 'Times New Roman', 'Georgia', serif;
+  font-size: 20px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 100;
   line-height: normal;
+  letter-spacing: 0.03rem;
 }
 
 .content {
