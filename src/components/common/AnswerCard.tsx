@@ -129,7 +129,7 @@ const CardContent = styled.section`
   display: flex;
 
   &::-webkit-scrollbar {
-    
+    display: none;
   }
 
   `;
