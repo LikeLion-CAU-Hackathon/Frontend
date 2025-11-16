@@ -182,6 +182,7 @@ const QuestionHeader = styled.header`
 const SliderWrapper = styled.section`
   width: 100%;
   max-width: 100vw;
+  z-index:2;
 
     li button:before {
       color: rgba(255, 255, 255, 0.5);
