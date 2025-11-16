@@ -253,9 +253,7 @@ const AnswerListPage = () => {
       <PageWrapper ref={pageWrapperRef} backgroundImg={currentBackgroundImg}>
         <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"} disablePointerEvents />
         <QuestionHeader>로딩 중...</QuestionHeader>
-        <FooterWrapper>
-          <Footer />
-        </FooterWrapper>
+        <Footer />
       </PageWrapper>
     );
   }
