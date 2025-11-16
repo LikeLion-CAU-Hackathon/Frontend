@@ -136,12 +136,14 @@ const AnswerContainer = styled.article<{ $width?: string; $height?: string }>`
 const AnswerWrapper = styled.div`
   border: 1px solid #b39a63;
   margin: 4px;
-  padding: 19px 5px;
+  padding: 5px 5px;
+  height: calc(100% - 8px);
 `;
 
 const CardHeader = styled.header`
-  padding: 9px;
+  padding: 0px 9px;
   color: #000;
+  margin-bottom: 10px;
 `;
 
 /* TODO: 스크롤바 수정 필요*/
@@ -201,6 +203,8 @@ const Divider = styled.div`
 `;
 
 const CardFooter = styled.footer`
+  margin-top: 12px;
+  height: calc(35% - 8px);
   display: flex;
   flex-direction: row;
   gap: 8px;
