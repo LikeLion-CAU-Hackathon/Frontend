@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Card } from "../types/card";
 import { checkAnswered } from "../apis/answer/answer.api";
-import { getTodayDate, isCardOpenableToday } from "../utils/date";
+import { getTodayDate } from "../utils/date";
 
 export const useCalendar = (navigate: Function) => {
   // 4x6 그리드용 24개 카드 
@@ -23,13 +23,8 @@ export const useCalendar = (navigate: Function) => {
 
   // 우표 클릭 시 상태 변경 -> 편지지 슬라이딩 
   const handleCardClick = async (id: number) => {
-    // 날짜 비교해서 다른 모달창 띄우기
-    if ( id < today ) {
-        alert("답변 기한이 지났어요 😭") // TODO: 모달창으로 변경하기
-        return; 
-    } 
 
-    else if ( id > today ) {
+    if ( id > today ) {
         alert("오늘 날짜의 우표만 열 수 있어요!");
         // console.log("clicked id:", id);
         // console.log("today:", today);
@@ -37,19 +32,29 @@ export const useCalendar = (navigate: Function) => {
         return;
     }
     
-    // id = today인 경우 
+    // id <= today인 경우 
     try {
       // checkAnswered API 호출 
       const response = await checkAnswered(id);
     //   console.log(response);
       const isAnswered = response.answered; 
-      
+
+    // 날짜 비교해서 다른 모달창 띄우기
+    if ( id < today ) {
       {/* TODO 답변 완료된 경우 anwer-list로 라우팅 */ }
       if (isAnswered) {
         navigate(`/answer-list?questionId=${id}`);
-        return;
+      } else {
+        alert("답변 기한이 지났어요 😭") // TODO: 모달창으로 변경하기
       }
+       return; 
+    } 
 
+    // id=today & 이미 답변한 상태
+    if (isAnswered) {
+      navigate(`/answer-list?questionId=${id}`);
+      return;
+    }
       // 답변 미완료인 경우 편지지 열기 
         setCards(initialCards => {
           const updatedCards = initialCards.map(card => 
