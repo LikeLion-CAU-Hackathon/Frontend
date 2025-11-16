@@ -163,6 +163,7 @@ const CardContent = styled.section`
   font-family: "Gowun Batang", "MaruBuri", serif;
 
   &::-webkit-scrollbar {
+    display: none;
   }
 `;
 

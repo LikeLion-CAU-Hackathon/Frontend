@@ -7,7 +7,7 @@ import Footer from "../../components/common/Footer";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Overlay from "../../components/common/Overlay/Overlay";
 import { getAnswerList } from "../../apis/answer/answer.api";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { getQuestion } from "../../apis/question/question.api";
 import { convertIdToDate } from "../../utils/date";
 import type { AnswerCardData } from "../../components/common/AnswerCard";
@@ -78,6 +78,7 @@ interface AnimationState {
 
 const AnswerListPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,6 +90,7 @@ const AnswerListPage = () => {
   // URL params에서 cardId 가져오기
   const [searchParams, setSearchParams] = useSearchParams();
   const cardId = searchParams.get("cardId") || searchParams.get("questionId");
+  const previousSlideParam = (location.state as { previousSlide?: number } | null)?.previousSlide;
 
   // cardId로 질문과 답변 리스트 불러오기
   useEffect(() => {
@@ -172,6 +174,11 @@ const AnswerListPage = () => {
     }
     clearStoredAnswerListState();
   }, [cardId, setSearchParams]);
+    if (typeof previousSlideParam === "number" && Number.isFinite(previousSlideParam)) {
+      setCurrentSlide(previousSlideParam);
+      navigate(".", { replace: true, state: null });
+    }
+  }, [navigate, previousSlideParam]);
 
   useEffect(() => {
     if (!animationState || animationState.phase !== "end") return;
@@ -187,6 +194,7 @@ const AnswerListPage = () => {
           answer: animationState.answer,
           questionTitle: question,
           backgroundImg: animationState.backgroundImg,
+          previousSlide: currentSlide,
           cardId,
         },
       });
@@ -249,6 +257,7 @@ const AnswerListPage = () => {
           answer,
           questionTitle: question,
           backgroundImg: selectedBackground,
+          previousSlide: currentSlide,
           cardId,
         },
       });
@@ -304,20 +313,31 @@ const AnswerListPage = () => {
     },
   }
 
+  const bgList = useMemo(() => slides.map(slide => slide.backgroundImg), [slides]);
+
+
   if (loading) {
     return (
-      <PageWrapper ref={pageWrapperRef} backgroundImg={currentBackgroundImg}>
+      <PageWrapper>
+        <BackgroundStrip index={currentSlide} bgList={bgList}>
+          {bgList.map((src) => (
+            <BackgroundItem key={src} src={src} />
+          ))}
+        </BackgroundStrip>
         <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"} disablePointerEvents />
         <QuestionHeader>로딩 중...</QuestionHeader>
-        <FooterWrapper>
-          <Footer />
-        </FooterWrapper>
+        <Footer />
       </PageWrapper>
     );
   }
 
   return (
-    <PageWrapper ref={pageWrapperRef} backgroundImg={currentBackgroundImg}>
+    <PageWrapper>
+      <BackgroundStrip index={currentSlide} bgList={bgList}>
+        {bgList.map((src) => (
+          <BackgroundItem key={src} src={src} />
+        ))}
+      </BackgroundStrip>
       <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"} disablePointerEvents />
       <QuestionHeader>{question}</QuestionHeader>
       <SliderWrapper $disabled={Boolean(animationState)}>
@@ -331,9 +351,7 @@ const AnswerListPage = () => {
           ))}
         </Slider>
       </SliderWrapper>
-      <FooterWrapper>
-        <Footer />
-      </FooterWrapper>
+      <Footer />
 
       {animationState && overlayStyle && (
         <>
@@ -388,18 +406,37 @@ const AnswerListPage = () => {
 
 export default AnswerListPage;
 
-const PageWrapper = styled.main<{ backgroundImg: string }>`
-  position: relative;
+const PageWrapper = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
   overflow: hidden;
-  background: url(${({ backgroundImg }) => backgroundImg}) no-repeat center;
-  background-attachment: fixed;
   color: #000;
-  color-scheme: light;
 `;
+
+const BackgroundStrip = styled.div<{ index: number; bgList: string[] }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  
+  /* 슬라이드 개수만큼 가로로 길게 */
+  width: ${({ bgList }) => `${bgList.length * 100}vw`};
+
+  display: flex;
+  transition: transform 0.6s ease-in-out;
+
+  transform: translateX(${({ index }) => `-${index * 100}vw`});
+`;
+
+const BackgroundItem = styled.div<{ src: string }>`
+  flex: 0 0 100vw;
+  height: 100%;
+  background-image: url(${({ src }) => src});
+
+`;
+
 
 const QuestionHeader = styled.header`
   color: white;
@@ -429,12 +466,6 @@ const SliderWrapper = styled.section<{ $disabled?: boolean }>`
     color: white;
     font-size: 14px;
   }
-`;
-
-const FooterWrapper = styled.div`
-  width: 100%;
-  position: relative;
-  z-index: 1;
 `;
 
 const AnimatedBackdrop = styled.div`

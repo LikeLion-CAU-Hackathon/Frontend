@@ -49,20 +49,16 @@ const CalendarPage = () => {
     };
 
     // accessToken과 refreshToken 추출
-    const accessToken =
-      extractToken(hash, "accessToken") || extractToken(hash, "access_token");
+    const accessToken = 
+      extractToken(hash, "accessToken") ||
+      extractToken(hash, "access_token");
 
-    const refreshToken =
-      extractToken(hash, "refreshToken") || extractToken(hash, "refresh_token");
+    const refreshToken = 
+      extractToken(hash, "refreshToken") ||
+      extractToken(hash, "refresh_token");
 
-    console.log(
-      "accessToken:",
-      accessToken ? `${accessToken.slice(0, 30)}...` : "NO"
-    );
-    console.log(
-      "refreshToken:",
-      refreshToken ? `${refreshToken.slice(0, 30)}...` : "NO"
-    );
+    console.log("accessToken:", accessToken ? `${accessToken.slice(0, 30)}...` : "NO");
+    console.log("refreshToken:", refreshToken ? `${refreshToken.slice(0, 30)}...` : "NO");
 
     // 토큰이 있으면 저장
     if (accessToken) {
@@ -74,9 +70,9 @@ const CalendarPage = () => {
           console.log("localStorage에 저장중");
           setAccessToken(accessToken);
         }
-
+        
         console.log("토큰 저장");
-
+        
         // URL에서 hash 제거 (토큰을 URL에 남기지 않기 위해)
         navigate(location.pathname + location.search, { replace: true });
       } catch (error) {
