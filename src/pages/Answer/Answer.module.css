@@ -9,12 +9,22 @@
   align-items: stretch;
   color: #2f1c0f;
   text-align: center;
-  background: #decba1;
+  background: #f0d6aa;
   border-radius: 16px;
   border: 1px solid #b39a63;
   box-shadow: 0 24px 36px rgba(12, 6, 0, 0.35);
   font-family: "Gowun Batang", serif;
   position: relative;
+  margin-top: 120px;
+}
+
+.container::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+  border-radius: 12px;
 }
 
 .closeButton {
@@ -100,7 +110,11 @@
   padding: 32px 24px;
   border-radius: 20px;
   border: 1px solid #d8c08a;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.15));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.7),
+    rgba(255, 255, 255, 0.15)
+  );
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.08);
   position: relative;
   overflow: hidden;
@@ -126,7 +140,7 @@
   border: none;
   background: transparent;
   color: #2f1c0f;
-  font-family: 'Gowun Batang', 'Nanum Myeongjo', serif;
+  font-family: "Gowun Batang", "Nanum Myeongjo", serif;
   font-size: 18px;
   line-height: 1.6;
   resize: none;

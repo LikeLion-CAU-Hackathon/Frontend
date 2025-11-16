@@ -17,7 +17,6 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   position: relative;
-  background-size: 393px 852px;
 }
 
 .container > :not(:first-child) {
@@ -26,7 +25,7 @@
 }
 
 .commentPanel {
-  background: rgba(248, 244, 232, 0.85);
+  background: #f8f4e8;
   border-radius: 18px 18px 0 0;
   padding: 16px 20px 0;
   display: flex;
