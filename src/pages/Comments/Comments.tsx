@@ -99,15 +99,33 @@ const Comments = () => {
     try {
       const data = await getAnswerReplies(answerId);
       const mapped: ReplyItem[] = Array.isArray(data)
-        ? data.map((reply: RawReply, index: number) => ({
-            id: reply.replyId ?? reply.id ?? index,
-            author:
+        ? data.map((reply: RawReply, index: number) => {
+            const nickname =
+              reply.userNickname ??
+              reply.nickname ??
               reply.userName ??
               reply.author ??
-              "익명",
-            timestamp: reply.createdTime ?? reply.createdAt ?? "",
-            body: reply.text ?? reply.contents ?? reply.body ?? "",
-          }))
+              (typeof (reply as { writer?: { nickname?: string; name?: string } }).writer?.nickname ===
+              "string"
+                ? (reply as { writer?: { nickname?: string } }).writer!.nickname
+                : undefined) ??
+              (typeof (reply as { writer?: { name?: string } }).writer?.name === "string"
+                ? (reply as { writer?: { name?: string } }).writer!.name
+                : undefined) ??
+              (typeof (reply as { user?: { nickname?: string; name?: string } }).user?.nickname ===
+              "string"
+                ? (reply as { user?: { nickname?: string } }).user!.nickname
+                : undefined) ??
+              (typeof (reply as { user?: { name?: string } }).user?.name === "string"
+                ? (reply as { user?: { name?: string } }).user!.name
+                : undefined);
+            return {
+              id: reply.replyId ?? reply.id ?? index,
+              author: nickname ?? "익명",
+              timestamp: reply.createdTime ?? reply.createdAt ?? "",
+              body: reply.text ?? reply.contents ?? reply.body ?? "",
+            };
+          })
         : [];
       setReplies(mapped);
       setCommentCount(mapped.length);
