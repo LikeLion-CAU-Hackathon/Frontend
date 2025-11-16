@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Card } from "../types/card";
 import { checkAnswered } from "../apis/answer/answer.api";
-import { getTodayDate } from "../utils/date";
+import { getTodayDate, isCardBeforeToday } from "../utils/date";
 
 export const useCalendar = (navigate: Function) => {
   // 4x6 그리드용 24개 카드 
@@ -20,6 +20,41 @@ export const useCalendar = (navigate: Function) => {
   // 오늘 날짜 가져오기
   const todayString = getTodayDate(); 
   const today = Number(todayString.split("-")[2]);  
+
+  // 오늘 이전 카드들의 만료 상태 확인
+  useEffect(() => {
+    const updateExpiredCards = async () => {
+      const expiredCardsPromises = cards
+        .filter(card => isCardBeforeToday(card.id))
+        .map(async (card) => {
+          try {
+            const response = await checkAnswered(card.id);
+            const isAnswered = response.answered;
+            // 오늘 이전이고 답변하지 않은 경우 만료 처리
+            return {
+              ...card,
+              isExpired: !isAnswered,
+              isAnswered: isAnswered
+            };
+          } catch (error) {
+            console.error(`카드 ${card.id}의 상태 확인 중 오류:`, error);
+            return card;
+          }
+        });
+
+      const updatedExpiredCards = await Promise.all(expiredCardsPromises);
+      
+      setCards(prevCards => {
+        const updatedCards = prevCards.map(card => {
+          const updatedCard = updatedExpiredCards.find(c => c.id === card.id);
+          return updatedCard || card;
+        });
+        return updatedCards;
+      });
+    };
+
+    updateExpiredCards();
+  }, []); 
 
   // 우표 클릭 시 상태 변경 -> 편지지 슬라이딩 
   const handleCardClick = async (id: number) => {
