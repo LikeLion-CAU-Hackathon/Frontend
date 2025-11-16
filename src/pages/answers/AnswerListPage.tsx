@@ -7,7 +7,7 @@ import Footer from "../../components/common/Footer";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Overlay from "../../components/common/Overlay/Overlay";
 import { getAnswerList } from "../../apis/answer/answer.api";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { getQuestion } from "../../apis/question/question.api";
 import { convertIdToDate } from "../../utils/date";
 import type { AnswerCardData } from "../../components/common/AnswerCard";
@@ -38,6 +38,7 @@ interface AnimationState {
 
 const AnswerListPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,6 +50,7 @@ const AnswerListPage = () => {
   // URL params에서 cardId 가져오기
   const [searchParams] = useSearchParams();
   const cardId = searchParams.get("cardId") || searchParams.get("questionId");
+  const previousSlideParam = (location.state as { previousSlide?: number } | null)?.previousSlide;
 
   // cardId로 질문과 답변 리스트 불러오기
   useEffect(() => {
@@ -113,6 +115,13 @@ const AnswerListPage = () => {
   }, []);
 
   useEffect(() => {
+    if (typeof previousSlideParam === "number" && Number.isFinite(previousSlideParam)) {
+      setCurrentSlide(previousSlideParam);
+      navigate(".", { replace: true, state: null });
+    }
+  }, [navigate, previousSlideParam]);
+
+  useEffect(() => {
     if (!animationState || animationState.phase !== "end") return;
 
     if (animationTimeoutRef.current) {
@@ -125,11 +134,12 @@ const AnswerListPage = () => {
           answer: animationState.answer,
           questionTitle: question,
           backgroundImg: animationState.backgroundImg,
+          previousSlide: currentSlide,
         },
       });
       setAnimationState(null);
     }, 650);
-  }, [animationState, navigate, question]);
+  }, [animationState, currentSlide, navigate, question]);
 
   // 더미데이터 
   // TODO: 답변 API 불러오기 
@@ -177,7 +187,12 @@ const AnswerListPage = () => {
     const pageRect = pageWrapperRef.current?.getBoundingClientRect();
     if (!pageRect) {
       navigate("/comments", {
-        state: { answer, questionTitle: question, backgroundImg: selectedBackground },
+        state: {
+          answer,
+          questionTitle: question,
+          backgroundImg: selectedBackground,
+          previousSlide: currentSlide,
+        },
       });
       return;
     }
@@ -324,6 +339,8 @@ const PageWrapper = styled.main<{ backgroundImg: string }>`
   overflow: hidden;
   background: url(${({ backgroundImg }) => backgroundImg}) no-repeat center;
   background-attachment: fixed;
+  color: #000;
+  color-scheme: light;
 `;
 
 const QuestionHeader = styled.header`

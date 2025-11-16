@@ -121,6 +121,7 @@
   position: relative;
   display: flex;
   justify-content: flex-end;
+  color: #000;
 }
 
 .cardAction {
@@ -151,7 +152,7 @@
 }
 
 .heartActive {
-  color: #a3321f;
+  color: #000;
 }
 
 .commentSection {

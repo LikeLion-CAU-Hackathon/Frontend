@@ -250,7 +250,14 @@ const Comments = () => {
             className={styles.closeButton}
             type="button"
             aria-label="카드 닫기"
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              const previousSlide =
+                typeof state.previousSlide === "number" ? state.previousSlide : undefined;
+              navigate("/answer-list", {
+                state: { previousSlide },
+                replace: true,
+              });
+            }}
           >
             <img src={closeIcon} alt="Close" />
           </button>
