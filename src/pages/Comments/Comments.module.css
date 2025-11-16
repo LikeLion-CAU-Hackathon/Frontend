@@ -12,6 +12,10 @@
   font-weight: 300;
   line-height: normal;
   background-color: transparent;
+  background-size: auto;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .commentPanel {
@@ -131,6 +135,19 @@
   height: 18px;
 }
 
+.cardAction:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.heartAction {
+  transition: color 0.2s ease;
+}
+
+.heartActive {
+  color: #a3321f;
+}
+
 .commentSection {
   background: transparent;
   border-radius: 0;
@@ -245,4 +262,11 @@
   text-align: center;
   color: #a94438;
   font-size: 0.82rem;
+}
+
+.likeError {
+  margin: 6px 0 0;
+  text-align: right;
+  color: #a94438;
+  font-size: 0.78rem;
 }

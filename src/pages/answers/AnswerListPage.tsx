@@ -33,6 +33,7 @@ interface AnimationState {
   phase: AnimationPhase;
   startRect: RelativeRect;
   targetRect: RelativeRect;
+  backgroundImg: string;
 }
 
 const AnswerListPage = () => {
@@ -119,7 +120,13 @@ const AnswerListPage = () => {
     }
 
     animationTimeoutRef.current = window.setTimeout(() => {
-      navigate("/comments", { state: { answer: animationState.answer, questionTitle: question } });
+      navigate("/comments", {
+        state: {
+          answer: animationState.answer,
+          questionTitle: question,
+          backgroundImg: animationState.backgroundImg,
+        },
+      });
       setAnimationState(null);
     }, 650);
   }, [animationState, navigate, question]);
@@ -166,9 +173,12 @@ const AnswerListPage = () => {
     slides[currentSlide]?.backgroundImg || slides[0]?.backgroundImg || defaultBackground;
 
   const handleAnswerSelect = (answer: Answer, rect: DOMRect) => {
+    const selectedBackground = currentBackgroundImg;
     const pageRect = pageWrapperRef.current?.getBoundingClientRect();
     if (!pageRect) {
-      navigate("/comments", { state: { answer, questionTitle: question } });
+      navigate("/comments", {
+        state: { answer, questionTitle: question, backgroundImg: selectedBackground },
+      });
       return;
     }
 
@@ -194,6 +204,7 @@ const AnswerListPage = () => {
         width: targetWidth,
         height: targetHeight,
       },
+      backgroundImg: selectedBackground,
     };
 
     setAnimationState(nextState);

@@ -5,9 +5,12 @@ import styles from "./Comments.module.css";
 import sendIcon from "../../assets/images/send.svg";
 import closeIcon from "../../assets/images/Comments/x.svg";
 import heartIcon from "../../assets/images/Comments/heart.svg";
+import heartFilledIcon from "../../assets/images/Comments/heart-filled.svg";
 import commentIcon from "../../assets/images/Comments/comment.svg";
 import type { AnswerCardData } from "../../components/common/AnswerCard";
-import { getAnswerReplies, postAnswerComment } from "../../apis/answer/answer.api";
+import { getAnswerReplies, getAnswerLikeCount, postAnswerComment } from "../../apis/answer/answer.api";
+import { addLike, deleteLike } from "../../apis/answer/like.api";
+import { toggleStoredLikedAnswer } from "../../utils/likedAnswers";
 
 const fallbackFeatured = {
   sender: "잘생긴 루돌프 (나)",
@@ -43,6 +46,7 @@ const Comments = () => {
   const state = (location.state ?? {}) as {
     answer?: AnswerCardData | null;
     questionTitle?: string;
+    backgroundImg?: string;
   };
 
   const answerId = state.answer?.id ?? null;
@@ -52,6 +56,10 @@ const Comments = () => {
   const [replyContents, setReplyContents] = useState("");
   const [isPostingReply, setIsPostingReply] = useState(false);
   const [replyError, setReplyError] = useState<string | null>(null);
+  const [likeCount, setLikeCount] = useState(state.answer?.likes ?? 0);
+  const [isLiked, setIsLiked] = useState<boolean>(Boolean(state.answer?.liked));
+  const [isLikeLoading, setIsLikeLoading] = useState(false);
+  const [likeError, setLikeError] = useState<string | null>(null);
 
   const featuredComment = (() => {
     if (!state.answer) return fallbackFeatured;
@@ -67,6 +75,11 @@ const Comments = () => {
   })();
 
   const commentPanelTitle = state.questionTitle?.trim() || "Post Script";
+
+  useEffect(() => {
+    setLikeCount(state.answer?.likes ?? 0);
+    setIsLiked(Boolean(state.answer?.liked));
+  }, [state.answer]);
 
   const fetchReplies = useCallback(async () => {
     if (!answerId) {
@@ -102,6 +115,31 @@ const Comments = () => {
     void fetchReplies();
   }, [fetchReplies]);
 
+  const fetchLikeCount = useCallback(async () => {
+    if (!answerId) {
+      setLikeCount(0);
+      setIsLiked(false);
+      return;
+    }
+    try {
+      const data = await getAnswerLikeCount(answerId);
+      const derivedCount =
+        typeof data === "number"
+          ? data
+          : data?.likeCount ?? state.answer?.likes ?? 0;
+      setLikeCount(derivedCount);
+      if (typeof data?.liked === "boolean") {
+        setIsLiked(data.liked);
+      }
+    } catch (error) {
+      console.error("좋아요 수를 가져오는 중 오류가 발생했습니다:", error);
+    }
+  }, [answerId, state.answer?.likes]);
+
+  useEffect(() => {
+    void fetchLikeCount();
+  }, [fetchLikeCount]);
+
   const handleReplySubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!answerId) {
@@ -134,6 +172,41 @@ const Comments = () => {
     ? "댓글을 입력해 주세요."
     : "답변을 선택한 후 댓글을 남길 수 있어요.";
 
+  const handleLikeToggle = async () => {
+    if (!answerId || isLikeLoading) return;
+    setIsLikeLoading(true);
+    setLikeError(null);
+    const optimisticLiked = !isLiked;
+    const optimisticDelta = optimisticLiked ? 1 : -1;
+    setIsLiked(optimisticLiked);
+    setLikeCount((prev) => Math.max(0, prev + optimisticDelta));
+    try {
+      const response = isLiked ? await deleteLike(answerId) : await addLike(answerId);
+      const serverLiked =
+        typeof response?.liked === "boolean" ? response.liked : optimisticLiked;
+      const serverCount =
+        typeof response?.likeCount === "number" ? response.likeCount : null;
+      setIsLiked(serverLiked);
+      if (typeof serverCount === "number") {
+        setLikeCount(Math.max(0, serverCount));
+      } else if (serverLiked !== optimisticLiked) {
+        const correctiveDelta = serverLiked ? 1 : -1;
+        setLikeCount((prev) => Math.max(0, prev + correctiveDelta - optimisticDelta));
+      }
+      toggleStoredLikedAnswer(answerId, serverLiked);
+    } catch (error) {
+      console.error("좋아요 처리 중 오류가 발생했습니다:", error);
+      setLikeError("좋아요 요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      setIsLiked((prev) => !prev);
+      setLikeCount((prev) => Math.max(0, prev - optimisticDelta));
+    } finally {
+      setIsLikeLoading(false);
+    }
+  };
+
+  const backgroundImage =
+    state.backgroundImg ?? new URL("../../assets/images/background/bg1.png", import.meta.url).href;
+
   const formatTimestamp = (timestamp: string) => {
     if (!timestamp) return "";
     const parsed = new Date(timestamp);
@@ -147,7 +220,12 @@ const Comments = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+      }}
+    >
       <section className={styles.featureCard} aria-label="강조된 댓글 카드">
         <header className={styles.cardHeader}>
           <div>
@@ -173,13 +251,21 @@ const Comments = () => {
         </div>
         <p className={styles.cardContent}>{featuredComment.content}</p>
         <footer className={styles.cardFooter}>
-          <button className={styles.cardAction} type="button" aria-label="좋아요">
-            <img src={heartIcon} alt="Like" /> {featuredComment.likes}
+          <button
+            className={`${styles.cardAction} ${styles.heartAction} ${isLiked ? styles.heartActive : ""}`}
+            type="button"
+            aria-label="좋아요"
+            onClick={handleLikeToggle}
+            disabled={!answerId || isLikeLoading}
+            aria-pressed={isLiked}
+          >
+            <img src={isLiked ? heartFilledIcon : heartIcon} alt="Like" /> {likeCount}
           </button>
           <button className={styles.cardAction} type="button" aria-label="댓글 보기">
             <img src={commentIcon} alt="Comments" /> {featuredComment.comments}
           </button>
         </footer>
+        {likeError && <p className={styles.likeError}>{likeError}</p>}
       </section>
 
       <section className={styles.commentPanel} aria-label="댓글 영역">

@@ -15,7 +15,7 @@ const FooterSection = styled.footer`
   font-family: SF Pro;
   font-weight: 400;
   z-index: 1;
-  bottom: 28px;
+  bottom: -100px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;

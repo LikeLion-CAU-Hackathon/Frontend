@@ -13,6 +13,7 @@ export interface AnswerCardData {
     contents: string;
     likes: number;
     comments : number;
+    liked?: boolean;
 }
 
 interface AnswerCardProps extends AnswerCardData {
@@ -21,14 +22,14 @@ interface AnswerCardProps extends AnswerCardData {
     onSelect?: (answer: AnswerCardData, rect: DOMRect) => void;
 }
 
-const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, height, onSelect } : AnswerCardProps) => {
-    const { liked, likeCount, handleLike } = useLike(false, likes, id);
+const AnswerCard = ({ id, author, date, time, contents, likes, comments, liked = false, width, height, onSelect } : AnswerCardProps) => {
+    const { liked: isLiked, likeCount, handleLike } = useLike(liked, likes, id);
     const cardRef = useRef<HTMLDivElement | null>(null);
 
     const handleCardClick = () => {
         if (!onSelect || !cardRef.current) return;
         const rect = cardRef.current.getBoundingClientRect();
-        onSelect({ id, author, date, time, contents, likes: likeCount, comments }, rect);
+        onSelect({ id, author, date, time, contents, likes: likeCount, comments, liked: isLiked }, rect);
     };
 
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -76,7 +77,7 @@ const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, 
                 </CardContent>
                 <CardFooter>
                     <Icon onClick={handleLikeClick}>
-                        {liked ? (
+                        {isLiked ? (
                         <AiFillHeart />
                     ) : (
                         <AiOutlineHeart />

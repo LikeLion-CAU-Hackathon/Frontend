@@ -20,6 +20,7 @@ const AnswerGrid = ({ answers, onAnswerSelect }: AnswerGridProps) => {
           contents={answer.contents}
           likes={answer.likes}
           comments={answer.comments}
+          liked={answer.liked}
           onSelect={onAnswerSelect}
         />
       ))}

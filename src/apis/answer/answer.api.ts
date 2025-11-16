@@ -47,3 +47,13 @@ export const getAnswerReplies = async (answerId: number) => {
     throw error;
   }
 };
+
+export const getAnswerLikeCount = async (answerId: number) => {
+  try {
+    const response = await axiosAPI.get(`/answers/${answerId}/thumbs/count`);
+    return response.data;
+  } catch (error) {
+    console.error("좋아요 수를 가져오는 데 실패했습니다.", error);
+    throw error;
+  }
+};
