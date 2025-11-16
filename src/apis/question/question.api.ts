@@ -1,6 +1,6 @@
 import { axiosAPI } from "../axiosInstance";
 
-export const getQuestion = async (date: string) => {
+export const getQuestion = async (date: string | number ) => {
   try {
     const api = axiosAPI(); 
 
