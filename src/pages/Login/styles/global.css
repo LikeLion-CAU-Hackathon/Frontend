@@ -26,6 +26,12 @@ body {
   justify-content: center;
   align-items: center;
   background-color: #ffffff;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }
 
 #root {
@@ -95,4 +101,3 @@ body {
   font-weight: 700;
   font-display: swap;
 }
-

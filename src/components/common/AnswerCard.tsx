@@ -136,7 +136,7 @@ const AnswerContainer = styled.article<{ $width?: string; $height?: string }>`
 const AnswerWrapper = styled.div`
   border: 1px solid #b39a63;
   margin: 4px;
-  padding: 5px;
+  padding: 19px 5px;
 `;
 
 const CardHeader = styled.header`
