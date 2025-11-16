@@ -25,6 +25,19 @@ export const postAnswerReply = async (answerId: number, contents: string) => {
   }
 };
 
+export const postAnswerComment = async (answerId: number, contents: string) => {
+  try {
+    const response = await axiosAPI.post(`/answers/${answerId}/reply`, {
+      text: contents,
+      contents,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("댓글을 전송하는 데 실패했습니다.", error);
+    throw error;
+  }
+};
+
 export const getAnswerReplies = async (answerId: number) => {
   try {
     const response = await axiosAPI.get(`/answers/${answerId}/reply`);

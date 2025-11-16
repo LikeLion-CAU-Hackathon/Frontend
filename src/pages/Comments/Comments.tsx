@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Comments.module.css";
 import sendIcon from "../../assets/images/send.svg";
@@ -6,7 +6,7 @@ import closeIcon from "../../assets/images/Comments/x.svg";
 import heartIcon from "../../assets/images/Comments/heart.svg";
 import commentIcon from "../../assets/images/Comments/comment.svg";
 import type { AnswerCardData } from "../../components/common/AnswerCard";
-import { getAnswerReplies } from "../../apis/answer/answer.api";
+import { getAnswerReplies, postAnswerComment } from "../../apis/answer/answer.api";
 
 const fallbackFeatured = {
   sender: "잘생긴 루돌프 (나)",
@@ -24,6 +24,18 @@ interface ReplyItem {
   body: string;
 }
 
+type RawReply = {
+  replyId?: number;
+  id?: number;
+  userName?: string;
+  author?: string;
+  createdTime?: string;
+  createdAt?: string;
+  text?: string;
+  contents?: string;
+  body?: string;
+};
+
 const Comments = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -36,6 +48,9 @@ const Comments = () => {
   const [replies, setReplies] = useState<ReplyItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [replyContents, setReplyContents] = useState("");
+  const [isPostingReply, setIsPostingReply] = useState(false);
+  const [replyError, setReplyError] = useState<string | null>(null);
 
   const featuredComment = (() => {
     if (!state.answer) return fallbackFeatured;
@@ -52,7 +67,7 @@ const Comments = () => {
 
   const commentPanelTitle = state.questionTitle?.trim() || "Post Script";
 
-  useEffect(() => {
+  const fetchReplies = useCallback(async () => {
     if (!answerId) {
       setReplies([]);
       setIsLoading(false);
@@ -60,30 +75,63 @@ const Comments = () => {
       return;
     }
 
-    const fetchReplies = async () => {
-      setIsLoading(true);
-      setFetchError(null);
-      try {
-        const data = await getAnswerReplies(answerId);
-        const mapped: ReplyItem[] = Array.isArray(data)
-          ? data.map((reply: any) => ({
-              id: reply.replyId ?? reply.id,
-              author: reply.userName ?? reply.author ?? "익명",
-              timestamp: reply.createdTime ?? reply.createdAt ?? "",
-              body: reply.text ?? reply.contents ?? reply.body ?? "",
-            }))
-          : [];
-        setReplies(mapped);
-      } catch (error) {
-        console.error("댓글을 가져오는 중 오류가 발생했습니다:", error);
-        setReplies([]);
-        setFetchError("댓글을 불러오지 못했습니다.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchReplies();
+    setIsLoading(true);
+    setFetchError(null);
+    try {
+      const data = await getAnswerReplies(answerId);
+      const mapped: ReplyItem[] = Array.isArray(data)
+        ? data.map((reply: RawReply, index: number) => ({
+            id: reply.replyId ?? reply.id ?? index,
+            author: reply.userName ?? reply.author ?? "익명",
+            timestamp: reply.createdTime ?? reply.createdAt ?? "",
+            body: reply.text ?? reply.contents ?? reply.body ?? "",
+          }))
+        : [];
+      setReplies(mapped);
+    } catch (error) {
+      console.error("댓글을 가져오는 중 오류가 발생했습니다:", error);
+      setReplies([]);
+      setFetchError("댓글을 불러오지 못했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
   }, [answerId]);
+
+  useEffect(() => {
+    void fetchReplies();
+  }, [fetchReplies]);
+
+  const handleReplySubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!answerId) {
+      setReplyError("댓글을 작성할 답변을 찾을 수 없습니다.");
+      return;
+    }
+    const trimmed = replyContents.trim();
+    if (trimmed.length === 0) {
+      setReplyError("댓글을 입력해 주세요.");
+      return;
+    }
+
+    setIsPostingReply(true);
+    setReplyError(null);
+    try {
+      await postAnswerComment(answerId, trimmed);
+      setReplyContents("");
+      await fetchReplies();
+    } catch (error) {
+      console.error("댓글을 전송하는 중 오류가 발생했습니다:", error);
+      setReplyError("댓글을 전송하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setIsPostingReply(false);
+    }
+  };
+
+  const isReplyInputEmpty = replyContents.trim().length === 0;
+  const isReplyDisabled = !answerId || isPostingReply;
+  const replyPlaceholder = answerId
+    ? "댓글을 입력해 주세요."
+    : "답변을 선택한 후 댓글을 남길 수 있어요.";
 
   const formatTimestamp = (timestamp: string) => {
     if (!timestamp) return "";
@@ -93,7 +141,8 @@ const Comments = () => {
     const day = parsed.getDate();
     const hours = String(parsed.getHours()).padStart(2, "0");
     const minutes = String(parsed.getMinutes()).padStart(2, "0");
-    return `${month} ${day} | ${hours}:${minutes}`;
+    const seconds = String(parsed.getSeconds()).padStart(2, "0");
+    return `${month} ${day} | ${hours}:${minutes}:${seconds}`;
   };
 
   return (
@@ -154,15 +203,34 @@ const Comments = () => {
           )}
         </div>
 
-        <form className={styles.replyBar} aria-label="댓글 입력" onSubmit={(event) => event.preventDefault()}>
+        <form className={styles.replyBar} aria-label="댓글 입력" onSubmit={handleReplySubmit}>
           <input
             className={styles.replyInput}
             aria-label="댓글 입력창"
+            placeholder={replyPlaceholder}
+            value={replyContents}
+            onChange={(event) => {
+              setReplyContents(event.target.value);
+              if (replyError) {
+                setReplyError(null);
+              }
+            }}
+            disabled={isReplyDisabled}
           />
-          <button className={styles.replySubmit} type="submit" aria-label="댓글 보내기">
+          <button
+            className={styles.replySubmit}
+            type="submit"
+            aria-label="댓글 보내기"
+            disabled={isReplyDisabled || isReplyInputEmpty}
+          >
             <img src={sendIcon} alt="Send" />
           </button>
         </form>
+        {replyError && (
+          <p className={styles.replyError} role="alert">
+            {replyError}
+          </p>
+        )}
       </section>
     </div>
   );

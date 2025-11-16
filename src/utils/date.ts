@@ -7,10 +7,32 @@ export const getTodayDate = (): string => {
 // 우표가 오늘 열릴 수 있는지 체크
 export const isCardOpenableToday = (cardId: number): boolean => {
   const today = getTodayDate(); 
-  const [ , month, day] = today.split("-").map(Number);
+  const [ , , day] = today.split("-").map(Number);
 
   // TODO: (개발용) 주석 지우기
   // if (month !== 12) return false;
 
   return day === cardId;
+};
+
+// API 형식에 맞게 변환
+export const convertIdToDate = (id: number): string => {
+  const year = 2025;      
+  const month = 11;    //TODO: 12로 바꾸기      
+  const day = id.toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+// 카드가 오늘 날짜 이후인지 확인
+export const isCardAfterToday = (cardId: number): boolean => {
+  const today = getTodayDate();
+  const [, , day] = today.split("-").map(Number);
+  return cardId > day;
+};
+
+// 카드가 오늘 날짜 이전인지 확인
+export const isCardBeforeToday = (cardId: number): boolean => {
+  const today = getTodayDate();
+  const [, , day] = today.split("-").map(Number);
+  return cardId < day;
 };

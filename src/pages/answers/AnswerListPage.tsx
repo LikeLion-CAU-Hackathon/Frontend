@@ -1,18 +1,23 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import styled from "styled-components";
-import { useLocation, useNavigate } from "react-router-dom";
 import AnswerSlide from "./components/AnswerSlide";
+import styled from "styled-components";
 import Footer from "../../components/common/Footer";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Overlay from "../../components/common/Overlay/Overlay";
 import { getAnswerList } from "../../apis/answer/answer.api";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { getQuestion } from "../../apis/question/question.api";
+import { convertIdToDate } from "../../utils/date";
 import type { AnswerCardData } from "../../components/common/AnswerCard";
 import closeIcon from "../../assets/images/Comments/x.svg";
 import heartIcon from "../../assets/images/Comments/heart.svg";
 import commentIcon from "../../assets/images/Comments/comment.svg";
 
-type Answer = AnswerCardData;
+type Answer = AnswerCardData & {
+  liked?: boolean;
+};
 
 interface RelativeRect {
   top: number;
@@ -31,74 +36,72 @@ interface AnimationState {
 }
 
 const AnswerListPage = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-  const locationState = (location.state ?? {}) as {
-    questionId?: number;
-    questionText?: string;
-    questionDate?: string;
-  };
-
-  const deriveQuestionId = () => {
-    const params = new URLSearchParams(location.search);
-    const paramId = params.get("questionId");
-    const fallbackId = locationState.questionId;
-    const parsedId = Number(paramId ?? fallbackId ?? 1);
-    return Number.isNaN(parsedId) || parsedId <= 0 ? 1 : parsedId;
-  };
-
   const [currentSlide, setCurrentSlide] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
-  const [questionId, setQuestionId] = useState<number>(() => deriveQuestionId());
-  const [questionTitle, setQuestionTitle] = useState(
-    () => (typeof locationState.questionText === "string" ? locationState.questionText : "")
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [question, setQuestion] = useState<string>("");
   const [animationState, setAnimationState] = useState<AnimationState | null>(null);
   const pageWrapperRef = useRef<HTMLElement | null>(null);
   const animationTimeoutRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    const nextId = deriveQuestionId();
-    if (nextId !== questionId) {
-      setQuestionId(nextId);
-      setCurrentSlide(0);
-    }
-    if (typeof locationState.questionText === "string") {
-      setQuestionTitle(locationState.questionText);
-    }
-  }, [location]);
+  // URL params에서 cardId 가져오기
+  const [searchParams] = useSearchParams();
+  const cardId = searchParams.get("cardId") || searchParams.get("questionId");
 
+  // cardId로 질문과 답변 리스트 불러오기
   useEffect(() => {
-    const fetchAnswers = async () => {
-      if (!questionId) return;
-      setIsLoading(true);
-      setFetchError(null);
+    if (!cardId) {
+      console.error("cardId가 없습니다.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchQuestionAndAnswers = async () => {
       try {
-        const data = await getAnswerList(questionId);
-        const mappedData: Answer[] = Array.isArray(data)
-          ? data.map((response: any) => ({
-              id: response.answerId ?? response.id,
-              author: response.userName,
-              date: response.createdTime.slice(0, 10),
-              time: response.createdTime.slice(11, 16),
-              contents: response.contents,
-              likes: response.likeCount,
-              comments: response.replyCount,
-            }))
-          : [];
+        setLoading(true);
+        const cardIdNumber = Number(cardId);
+        
+        // card.id를 날짜로 변환
+        const date = convertIdToDate(cardIdNumber);
+        const questionResponse = await getQuestion(date);
+        console.log("해당 id의 질문:", questionResponse);
+        
+        // 질문 저장
+        setQuestion(questionResponse.content || "");
+
+        // cardId로 답변 리스트 불러오기
+        const answerData = await getAnswerList(cardIdNumber);
+        console.log("답변 리스트:", answerData);
+        
+        // 백엔드 응답 형식 변환
+        const mappedData = answerData.map((response: any) => {
+          // localStorage에서 좋아요 상태 확인
+          const likedAnswers = JSON.parse(localStorage.getItem("likedAnswers") || "[]");
+          const isLiked = likedAnswers.includes(response.answerId) || response.liked || false;
+          
+          return {
+            id: response.answerId,
+            author: response.userNickname,
+            date: response.createdTime.slice(0, 10),
+            time: response.createdTime.slice(11, 16),
+            contents: response.contents,
+            likes: response.likeCount,
+            comments: response.replyCount,
+            liked: isLiked,
+          };
+        });
+
         setAnswers(mappedData);
-      } catch (error) {
-        console.error("답변 리스트를 불러오는 데 오류가 발생했습니다: ", error);
-        setAnswers([]);
-        setFetchError("답변을 불러오지 못했습니다.");
+      } catch(error) {
+        console.error("질문 또는 답변 리스트를 불러오는 데 오류가 발생했습니다: ", error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
-    fetchAnswers();
-  }, [questionId]);
+    
+    fetchQuestionAndAnswers();
+  }, [cardId]);
 
   useEffect(() => {
     return () => {
@@ -116,10 +119,23 @@ const AnswerListPage = () => {
     }
 
     animationTimeoutRef.current = window.setTimeout(() => {
-      navigate("/comments", { state: { answer: animationState.answer, questionTitle } });
+      navigate("/comments", { state: { answer: animationState.answer, questionTitle: question } });
       setAnimationState(null);
     }, 650);
-  }, [animationState, navigate, questionTitle]);
+  }, [animationState, navigate, question]);
+
+  // 더미데이터 
+  // TODO: 답변 API 불러오기 
+  // const allAnswers: Answer[] = [
+  //   { id: 1, author: "잘생긴 루돌프", date: "DEC 7", time: "18:44", contents: "아ㅓ알ㅇ러알아러아러아아ㅓ아ㅓㅏ랄ㅇ라얼ㅇ러알알ㅇㄹ아알ㅇ라이라이랑랑라리ㅏㄹㅏㄹ아알아러아ㅓ아러ㅏ러아러ㅏㅓㅇㄹ아ㅓㄹㅇ러ㅓㄹ러ㅏㅓㅇ라러ㅏㅓ라ㅓ러라러ㅏ러아ㅓ라러라ㅓ러ㅏㅓㅏ어라얼아러아렁렁라ㅏㅓ알댜ㅏ러야랑ㄹ아러아러아렁어ㅏㅓㄹ아ㅓ랑러앙ㄹ어러아라ㅓ러ㅏ어아ㅓㅏㅇㄹ알알라ㅏ알알", likes: 99, comments: 99 },
+  //   { id: 2, author: "예쁜 산타", date: "DEC 7", time: "16:24", contents: "2번", likes: 99, comments: 99 },
+  //   { id: 3, author: "건강한 개발자", date: "DEC 7", time: "12:28", contents: "3번", likes: 19, comments: 9 },
+  //   { id: 4, author: "무례한 눈사람", date: "DEC 7", time: "11:59", contents: "4번", likes: 2, comments: 5 },
+  //   { id: 5, author: "잘생긴 산타", date: "DEC 7", time: "13:00", contents: "5번", likes: 2, comments: 0 },
+  //   { id: 6, author: "건강한 눈사람", date: "DEC 7", time: "14:30", contents: "6번", likes: 4, comments: 1 },
+  //   { id: 7, author: "크리스마스", date: "DEC 7", time: "14:30", contents: "7번", likes: 3, comments: 1 },
+   
+  // ];
 
   const answerChunks = useMemo(() => {
     const chunkSize = 4;
@@ -136,31 +152,23 @@ const AnswerListPage = () => {
     }
   }, [answerChunks.length, currentSlide]);
 
-  const slides = useMemo(() => {
-    if (answerChunks.length === 0) return [];
-    return answerChunks.map((_, index) => ({
-      id: index + 1,
-      backgroundImg: new URL(`../../assets/images/background/bg${(index % 10) + 1}.png`, import.meta.url).href,
-    }));
-  }, [answerChunks.length]);
+  const slides = useMemo(
+    () =>
+      Array.from({ length: answerChunks.length }, (_, i) => ({
+        id: i + 1,
+        backgroundImg: new URL(`../../assets/images/background/bg${(i % 10) + 1}.png`, import.meta.url).href,
+      })),
+    [answerChunks.length]
+  );
 
   const defaultBackground = new URL("../../assets/images/background/bg1.png", import.meta.url).href;
   const currentBackgroundImg =
     slides[currentSlide]?.backgroundImg || slides[0]?.backgroundImg || defaultBackground;
 
-  const totalSlides = answerChunks.length;
-  const canGoPrev = currentSlide > 0;
-  const canGoNext = currentSlide < totalSlides - 1;
-
-  const goToSlide = (index: number) => {
-    if (index < 0 || index >= totalSlides) return;
-    setCurrentSlide(index);
-  };
-
   const handleAnswerSelect = (answer: Answer, rect: DOMRect) => {
     const pageRect = pageWrapperRef.current?.getBoundingClientRect();
     if (!pageRect) {
-      navigate("/comments", { state: { answer, questionTitle } });
+      navigate("/comments", { state: { answer, questionTitle: question } });
       return;
     }
 
@@ -200,47 +208,44 @@ const AnswerListPage = () => {
       ? animationState.startRect
       : animationState?.targetRect;
 
-  const questionHeading =
-    questionTitle?.trim() ||
-    `Question #${questionId}`;
+  const settings = {
+    dots: true,
+    infinite: false,
+    speed: 600,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: false,
+    beforeChange: (_current: number, next: number) => {
+      setCurrentSlide(next);
+    },
+  }
+
+  if (loading) {
+    return (
+      <PageWrapper ref={pageWrapperRef} backgroundImg={currentBackgroundImg}>
+        <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"} disablePointerEvents />
+        <QuestionHeader>로딩 중...</QuestionHeader>
+        <FooterWrapper>
+          <Footer />
+        </FooterWrapper>
+      </PageWrapper>
+    );
+  }
 
   return (
     <PageWrapper ref={pageWrapperRef} backgroundImg={currentBackgroundImg}>
       <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"} disablePointerEvents />
-      <QuestionHeader>{questionHeading}</QuestionHeader>
+      <QuestionHeader>{question}</QuestionHeader>
       <SliderWrapper $disabled={Boolean(animationState)}>
-        {isLoading && <StatusMessage>답변을 불러오는 중입니다...</StatusMessage>}
-        {fetchError && !isLoading && <StatusMessage>{fetchError}</StatusMessage>}
-        {!isLoading && !fetchError && totalSlides === 0 && (
-          <StatusMessage>아직 등록된 답변이 없습니다.</StatusMessage>
-        )}
-        {totalSlides > 0 && !isLoading && (
-          <AnswerSlide
-            answers={answerChunks[currentSlide] || []}
-            onAnswerSelect={handleAnswerSelect}
-          />
-        )}
-        {totalSlides > 1 && !isLoading && (
-          <SlideControls>
-            <NavButton type="button" onClick={() => goToSlide(currentSlide - 1)} disabled={!canGoPrev}>
-              이전
-            </NavButton>
-            <Dots>
-              {slides.map((slide, index) => (
-                <DotButton
-                  key={slide.id}
-                  type="button"
-                  $active={currentSlide === index}
-                  aria-label={`${index + 1}번째 슬라이드`}
-                  onClick={() => goToSlide(index)}
-                />
-              ))}
-            </Dots>
-            <NavButton type="button" onClick={() => goToSlide(currentSlide + 1)} disabled={!canGoNext}>
-              다음
-            </NavButton>
-          </SlideControls>
-        )}
+        <Slider {...settings}>
+          {slides.map((slide, index) => (
+            <AnswerSlide
+              key={slide.id}
+              answers={answerChunks[index] || []}
+              onAnswerSelect={handleAnswerSelect}
+            />
+          ))}
+        </Slider>
       </SliderWrapper>
       <FooterWrapper>
         <Footer />
@@ -295,7 +300,7 @@ const AnswerListPage = () => {
       )}
     </PageWrapper>
   );
-};
+}
 
 export default AnswerListPage;
 
@@ -326,57 +331,24 @@ const QuestionHeader = styled.header`
 const SliderWrapper = styled.section<{ $disabled?: boolean }>`
   width: 100%;
   max-width: 100vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  padding: 0 16px 48px;
+  z-index: 2;
   pointer-events: ${({ $disabled }) => ($disabled ? "none" : "auto")};
-  opacity: ${({ $disabled }) => ($disabled ? 0.4 : 1)};
+
+  .slick-dots li button:before {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 10px;
+  }
+
+  .slick-dots li.slick-active button:before {
+    color: white;
+    font-size: 14px;
+  }
+`;
+
+const FooterWrapper = styled.div`
+  width: 100%;
   position: relative;
   z-index: 1;
-`;
-
-const SlideControls = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
-
-const NavButton = styled.button`
-  padding: 8px 18px;
-  border-radius: 999px;
-  border: none;
-  background: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease, opacity 0.2s ease;
-
-  &:hover:enabled {
-    background: rgba(255, 255, 255, 0.5);
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: default;
-  }
-`;
-
-const Dots = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-const DotButton = styled.button<{ $active: boolean }>`
-  width: ${({ $active }) => ($active ? "12px" : "8px")};
-  height: ${({ $active }) => ($active ? "12px" : "8px")};
-  border-radius: 50%;
-  border: none;
-  background: ${({ $active }) => ($active ? "white" : "rgba(255, 255, 255, 0.4)")};
-  cursor: pointer;
-  transition: all 0.2s ease;
 `;
 
 const AnimatedBackdrop = styled.div`
@@ -384,12 +356,6 @@ const AnimatedBackdrop = styled.div`
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
   z-index: 10;
-`;
-
-const FooterWrapper = styled.div`
-  width: 100%;
-  position: relative;
-  z-index: 1;
 `;
 
 const AnimatedFadePanel = styled.div<{ $phase: AnimationPhase }>`
@@ -515,11 +481,4 @@ const AnimatedStat = styled.span`
     width: 18px;
     height: 18px;
   }
-`;
-
-const StatusMessage = styled.p`
-  color: #ffffff;
-  font-size: 16px;
-  text-align: center;
-  margin: 24px 0;
 `;

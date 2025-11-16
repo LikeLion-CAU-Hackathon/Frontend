@@ -239,3 +239,10 @@
   width: 24px;
   height: 24px;
 }
+
+.replyError {
+  margin: 8px 0 0;
+  text-align: center;
+  color: #a94438;
+  font-size: 0.82rem;
+}
