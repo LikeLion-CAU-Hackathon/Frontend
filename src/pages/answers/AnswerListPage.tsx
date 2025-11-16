@@ -4,10 +4,10 @@ import "slick-carousel/slick/slick-theme.css";
 import AnswerSlide from "./components/AnswerSlide";
 import styled from "styled-components";
 import Footer from "../../components/common/Footer";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Overlay from "../../components/common/Overlay/Overlay";
 import { getAnswerList } from "../../apis/answer/answer.api";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getQuestion } from "../../apis/question/question.api";
 import { convertIdToDate } from "../../utils/date";
 import type { AnswerCardData } from "../../components/common/AnswerCard";
@@ -78,7 +78,6 @@ interface AnimationState {
 
 const AnswerListPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -90,7 +89,6 @@ const AnswerListPage = () => {
   // URL params에서 cardId 가져오기
   const [searchParams, setSearchParams] = useSearchParams();
   const cardId = searchParams.get("cardId") || searchParams.get("questionId");
-  const previousSlideParam = (location.state as { previousSlide?: number } | null)?.previousSlide;
 
   // cardId로 질문과 답변 리스트 불러오기
   useEffect(() => {
@@ -174,11 +172,6 @@ const AnswerListPage = () => {
     }
     clearStoredAnswerListState();
   }, [cardId, setSearchParams]);
-    if (typeof previousSlideParam === "number" && Number.isFinite(previousSlideParam)) {
-      setCurrentSlide(previousSlideParam);
-      navigate(".", { replace: true, state: null });
-    }
-  }, [navigate, previousSlideParam]);
 
   useEffect(() => {
     if (!animationState || animationState.phase !== "end") return;
@@ -194,7 +187,6 @@ const AnswerListPage = () => {
           answer: animationState.answer,
           questionTitle: question,
           backgroundImg: animationState.backgroundImg,
-          previousSlide: currentSlide,
           cardId,
         },
       });
@@ -243,9 +235,9 @@ const AnswerListPage = () => {
   const currentBackgroundImg =
     slides[currentSlide]?.backgroundImg || slides[0]?.backgroundImg || defaultBackground;
 
-  const persistAnswerListState = () => {
+  const persistAnswerListState = useCallback(() => {
     storeAnswerListState(cardId, currentSlide);
-  };
+  }, [cardId, currentSlide]);
 
   const handleAnswerSelect = (answer: Answer, rect: DOMRect) => {
     const selectedBackground = currentBackgroundImg;
@@ -257,7 +249,6 @@ const AnswerListPage = () => {
           answer,
           questionTitle: question,
           backgroundImg: selectedBackground,
-          previousSlide: currentSlide,
           cardId,
         },
       });
