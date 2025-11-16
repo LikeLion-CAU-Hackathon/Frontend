@@ -101,7 +101,11 @@ const Comments = () => {
       const mapped: ReplyItem[] = Array.isArray(data)
         ? data.map((reply: RawReply, index: number) => ({
             id: reply.replyId ?? reply.id ?? index,
-            author: reply.userName ?? reply.author ?? "익명",
+            author:
+              reply.userNickname ??
+              reply.userName ??
+              reply.author ??
+              "익명",
             timestamp: reply.createdTime ?? reply.createdAt ?? "",
             body: reply.text ?? reply.contents ?? reply.body ?? "",
           }))
