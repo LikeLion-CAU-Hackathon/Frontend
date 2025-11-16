@@ -105,7 +105,19 @@ const Answer = () => {
     return `${yy}.${month}.${day}`;
   }, [questionDate]);
 
-  const subText = formattedDate ?? "오늘의 질문에 답을 작성해 보세요.";
+  const fallbackDate = useMemo(() => {
+    const today = getTodayDate();
+    const [yyyy, mm = "", ddRaw = ""] = today.split("-");
+    if (yyyy && mm && ddRaw) {
+      const shortYear = yyyy.slice(-2);
+      const month = mm.padStart(2, "0");
+      const day = ddRaw.slice(0, 2).padStart(2, "0");
+      return `${shortYear}.${month}.${day}`;
+    }
+    return "";
+  }, []);
+
+  const subText = formattedDate ?? fallbackDate;
 
   const handleSubmit = async (event?: FormEvent) => {
     event?.preventDefault();
