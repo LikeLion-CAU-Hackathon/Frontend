@@ -12,6 +12,7 @@ interface CalendarCardProps {
 
 const CalendarCard = ({ card, onClick }: CalendarCardProps) => {
   const isAfterToday = isCardAfterToday(card.id);
+  {/* TODO: 디자인 넘겨주면 각각 이미지 넣기  */}
   const showQuestionMark = isAfterToday;
   const showExpired = card.isExpired;
 
@@ -52,6 +53,7 @@ const ExpiredLabel = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
+  font:2px;
+  padding: 2px;
   color: #ff0000;
-  padding: 4px 8px;
 `
