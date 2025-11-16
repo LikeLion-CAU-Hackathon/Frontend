@@ -27,7 +27,7 @@ const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, 
 
     const handleCardClick = () => {
         if (!onselect || !cardRef.current) return;
-        const rect = cardRef.current.getBoundingClientRect();
+        // const rect = cardRef.current.getBoundingClientRect();
         // onSelect({ id, author, date, time, contents, likes: likeCount, comments }, rect);
     };
 

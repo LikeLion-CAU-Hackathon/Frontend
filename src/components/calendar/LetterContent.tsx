@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import letterBg from '../../assets/images/letter_background.png';
 import { useEffect, useState } from "react";
-import { convertIdToDate, getTodayDate } from "../../utils/date";
+import { convertIdToDate } from "../../utils/date";
 import { formatDayToKorean } from "../../utils/dayToKorean";
 import AnswerButton from "../common/button/AnswerButton";
 import { useNavigate } from "react-router-dom";

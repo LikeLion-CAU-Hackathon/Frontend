@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { Card } from "../types/card";
 import { checkAnswered } from "../apis/answer/answer.api";
-import { getTodayDate, isCardBeforeToday } from "../utils/date";
+import { getTodayDate } from "../utils/date";
 
 export const useCalendar = (navigate: Function) => {
   // 4x6 그리드용 24개 카드 

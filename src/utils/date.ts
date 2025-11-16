@@ -7,7 +7,7 @@ export const getTodayDate = (): string => {
 // 우표가 오늘 열릴 수 있는지 체크
 export const isCardOpenableToday = (cardId: number): boolean => {
   const today = getTodayDate(); 
-  const [ , month, day] = today.split("-").map(Number);
+  const [ , , day] = today.split("-").map(Number);
 
   // TODO: (개발용) 주석 지우기
   // if (month !== 12) return false;
