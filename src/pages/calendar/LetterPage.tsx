@@ -16,7 +16,7 @@ const LetterPage = ({ isOpened, card }: LetterEnvelopeProps) => {
         <EnvelopeContainer $visible={isOpened}>
             {card && <LetterEnvelope card={card} />}
         </EnvelopeContainer>
-        <LetterContent isOpened={isOpened}/>
+        <LetterContent isOpened={isOpened} card={card}/>
     </LetterSection>
   )
 }

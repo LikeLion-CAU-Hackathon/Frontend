@@ -7,6 +7,9 @@ import Footer from "../../components/common/Footer";
 import { useEffect, useState } from "react";
 import Overlay from "../../components/common/Overlay/Overlay";
 import { getAnswerList } from "../../apis/answer/answer.api";
+import { useSearchParams } from "react-router-dom";
+import { getQuestion } from "../../apis/question/question.api";
+import { convertIdToDate } from "../../utils/date";
 
 interface Answer {
   id: number;
@@ -22,18 +25,39 @@ const AnswerListPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [question, setQuestion] = useState<string>("");
 
-  // TODO: 라우터에서 받을 예정
-  const questionId = 1; 
+  // URL params에서 cardId 가져오기
+  const [searchParams] = useSearchParams();
+  const cardId = searchParams.get("cardId") || searchParams.get("questionId");
 
-  // 답변 리스트 불러오기 
+  // cardId로 질문과 답변 리스트 불러오기
   useEffect(() => {
-    const fetchAnswers = async () => {
+    if (!cardId) {
+      console.error("cardId가 없습니다.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchQuestionAndAnswers = async () => {
       try {
-        const data = await getAnswerList(questionId);
+        setLoading(true);
+        const cardIdNumber = Number(cardId);
+        
+        // card.id를 날짜로 변환
+        const date = convertIdToDate(cardIdNumber);
+        const questionResponse = await getQuestion(date);
+        console.log("해당 id의 질문:", questionResponse);
+        
+        // 질문 저장
+        setQuestion(questionResponse.content || "");
+
+        // cardId로 답변 리스트 불러오기
+        const answerData = await getAnswerList(cardIdNumber);
+        console.log("답변 리스트:", answerData);
         
         // 백엔드 응답 형식 변환
-        const mappedData = data.map((response: any) => ({
+        const mappedData = answerData.map((response: any) => ({
           id: response.id,
           author: response.userName,
           date: response.createdTime.slice(0, 10),
@@ -45,30 +69,33 @@ const AnswerListPage = () => {
 
         setAnswers(mappedData);
       } catch(error) {
-        console.error("답변 리스트를 불러오는 데 오류가 발생했습니다: ", error);
+        console.error("질문 또는 답변 리스트를 불러오는 데 오류가 발생했습니다: ", error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchAnswers();
-  }, [questionId]);
+    
+    fetchQuestionAndAnswers();
+  }, [cardId]);
 
   // 더미데이터 
   // TODO: 답변 API 불러오기 
-  const allAnswers: Answer[] = [
-    { id: 1, author: "잘생긴 루돌프", date: "DEC 7", time: "18:44", contents: "아ㅓ알ㅇ러알아러아러아아ㅓ아ㅓㅏ랄ㅇ라얼ㅇ러알알ㅇㄹ아알ㅇ라이라이랑랑라리ㅏㄹㅏㄹ아알아러아ㅓ아러ㅏ러아러ㅏㅓㅇㄹ아ㅓㄹㅇ러ㅓㄹ러ㅏㅓㅇ라러ㅏㅓ라ㅓ러라러ㅏ러아ㅓ라러라ㅓ러ㅏㅓㅏ어라얼아러아렁렁라ㅏㅓ알댜ㅏ러야랑ㄹ아러아러아렁어ㅏㅓㄹ아ㅓ랑러앙ㄹ어러아라ㅓ러ㅏ어아ㅓㅏㅇㄹ알알라ㅏ알알", likes: 99, comments: 99 },
-    { id: 2, author: "예쁜 산타", date: "DEC 7", time: "16:24", contents: "2번", likes: 99, comments: 99 },
-    { id: 3, author: "건강한 개발자", date: "DEC 7", time: "12:28", contents: "3번", likes: 19, comments: 9 },
-    { id: 4, author: "무례한 눈사람", date: "DEC 7", time: "11:59", contents: "4번", likes: 2, comments: 5 },
-    { id: 5, author: "잘생긴 산타", date: "DEC 7", time: "13:00", contents: "5번", likes: 2, comments: 0 },
-    { id: 6, author: "건강한 눈사람", date: "DEC 7", time: "14:30", contents: "6번", likes: 4, comments: 1 },
-    { id: 7, author: "크리스마스", date: "DEC 7", time: "14:30", contents: "7번", likes: 3, comments: 1 },
+  // const allAnswers: Answer[] = [
+  //   { id: 1, author: "잘생긴 루돌프", date: "DEC 7", time: "18:44", contents: "아ㅓ알ㅇ러알아러아러아아ㅓ아ㅓㅏ랄ㅇ라얼ㅇ러알알ㅇㄹ아알ㅇ라이라이랑랑라리ㅏㄹㅏㄹ아알아러아ㅓ아러ㅏ러아러ㅏㅓㅇㄹ아ㅓㄹㅇ러ㅓㄹ러ㅏㅓㅇ라러ㅏㅓ라ㅓ러라러ㅏ러아ㅓ라러라ㅓ러ㅏㅓㅏ어라얼아러아렁렁라ㅏㅓ알댜ㅏ러야랑ㄹ아러아러아렁어ㅏㅓㄹ아ㅓ랑러앙ㄹ어러아라ㅓ러ㅏ어아ㅓㅏㅇㄹ알알라ㅏ알알", likes: 99, comments: 99 },
+  //   { id: 2, author: "예쁜 산타", date: "DEC 7", time: "16:24", contents: "2번", likes: 99, comments: 99 },
+  //   { id: 3, author: "건강한 개발자", date: "DEC 7", time: "12:28", contents: "3번", likes: 19, comments: 9 },
+  //   { id: 4, author: "무례한 눈사람", date: "DEC 7", time: "11:59", contents: "4번", likes: 2, comments: 5 },
+  //   { id: 5, author: "잘생긴 산타", date: "DEC 7", time: "13:00", contents: "5번", likes: 2, comments: 0 },
+  //   { id: 6, author: "건강한 눈사람", date: "DEC 7", time: "14:30", contents: "6번", likes: 4, comments: 1 },
+  //   { id: 7, author: "크리스마스", date: "DEC 7", time: "14:30", contents: "7번", likes: 3, comments: 1 },
    
-  ];
+  // ];
 
   // 4개씩 묶어서 슬라이드 생성 (2x2 그리드)
   const chunkSize = 4;
   const answerChunks: Answer[][] = [];
-  for (let i = 0; i < allAnswers.length; i += chunkSize) {
-    answerChunks.push(allAnswers.slice(i, i + chunkSize));
+  for (let i = 0; i < answers.length; i += chunkSize) {
+    answerChunks.push(answers.slice(i, i + chunkSize));
   }
 
   // 배경 이미지 
@@ -91,8 +118,15 @@ const AnswerListPage = () => {
     },
   }
 
-  // TODO: 해당 우표의 질문 가져오기 (클릭한 우표 id로)
-  const question = "올해 가장 기억에 남는 크리스마스 선물은 무엇인가요?";
+  if (loading) {
+    return (
+      <PageWrapper backgroundImg={currentBackgroundImg}>
+        <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"}/>
+        <QuestionHeader>로딩 중...</QuestionHeader>
+        <Footer />
+      </PageWrapper>
+    );
+  }
 
   return (
     <PageWrapper backgroundImg={currentBackgroundImg}>

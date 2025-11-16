@@ -1,52 +1,48 @@
 import styled from "styled-components";
 import letterBg from '../../assets/images/letter_background.png';
 import { useEffect, useState } from "react";
-import { getTodayDate } from "../../utils/date";
+import { convertIdToDate, getTodayDate } from "../../utils/date";
 import { formatDayToKorean } from "../../utils/dayToKorean";
 import AnswerButton from "../common/button/AnswerButton";
 import { useNavigate } from "react-router-dom";
 import { getQuestion } from "../../apis/question/question.api";
 import { useQuestionStore } from "../../store/questionStore";
+import type { Card } from "../../types/card";
 
 interface LetterContentProps {
     isOpened: boolean;
+    card: Card | null;
     }
 
-const LetterContent = ({ isOpened } : LetterContentProps) => {
+const LetterContent = ({ isOpened, card } : LetterContentProps) => {
     const [question, setQuestion] = useState<string>("");
     const setQuestionStore = useQuestionStore((state) => state.setQuestion);
 
-    const today = getTodayDate();
-
-    /* 편지지 제목에 들어갈 날짜 한글로 포맷팅 */
-    const day = Number(today.split('-')[2]);
-    const formatDay = formatDayToKorean(day);
+    /* 편지지 제목에 들어갈 날짜 카드 ID로 변경 */
+    const formatDay = card ? formatDayToKorean(card.id) : "";
 
     const navigate = useNavigate();
 
-    /* 오늘 날짜에 해당하는 질문 불러오기 */
+    /* 해당 우표 id(=해당하는 날짜)에 해당하는 질문 불러오기 */
     useEffect(() => {
-        if (isOpened) {
-            const fetchQuestion = async () => {
-                try {
-                    const response = await getQuestion(today);
-                    setQuestion(response.content);
-                    // console.log(response)
+        if (!isOpened || !card) return;
 
-                    // store에 저장해서 questionId로 content 볼 수 있게 변경
-                    setQuestionStore({
-                        id: day,
-                        content: response.content,
-                        date: today,
-                    });
+        const fetchQ = async () => {
+            const date = convertIdToDate(card.id);
+            const response = await getQuestion(date); 
+            setQuestion(response.content);
+            console.log(response.content);
 
-                } catch (error) {
-                    console.error("질문을 불러오는데 실패했습니다.", error);
-                }
-            };
-            fetchQuestion();
+            // zustand에도 저장
+            setQuestionStore({
+                id: card.id,
+                content: response.content,
+                date: response.date,
+            });
         }
-    }, [isOpened]);
+
+        fetchQ();
+        }, [isOpened, card]);
 
     return (
         <ArticleContainer isOpened={isOpened}>

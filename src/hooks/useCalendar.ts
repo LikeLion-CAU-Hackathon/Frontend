@@ -2,7 +2,6 @@ import { useState } from "react";
 import type { Card } from "../types/card";
 import { checkAnswered } from "../apis/answer/answer.api";
 import { getTodayDate, isCardOpenableToday } from "../utils/date";
-import { useNavigate } from "react-router-dom";
 
 export const useCalendar = (navigate: Function) => {
   // 4x6 그리드용 24개 카드 
@@ -39,7 +38,8 @@ export const useCalendar = (navigate: Function) => {
     try {
       // checkAnswered API 호출 
       const response = await checkAnswered(id);
-      const isAnswered = response.answered || response; 
+    //   console.log(response);
+      const isAnswered = response.answered; 
       
       {/* TODO 답변 완료된 경우 anwer-list로 라우팅 */ }
       if (isAnswered) {
@@ -60,8 +60,9 @@ export const useCalendar = (navigate: Function) => {
           return updatedCards;
         });
     } catch (error) {
-      console.error("답변 확인 중 오류가 발생했습니다: ", error);
-      // 에러 발생 시 기본 동작 일단 LetterPage 렌더링
+      console.error("편지지 열기에서 오류가 발생했습니다.: ", error);
+
+      // 에러 발생 시 일단 LetterPage 렌더링
       setCards(initialCards => {
         const updatedCards = initialCards.map(card => 
           card.id === id ? { ...card, isOpened : !card.isOpened} : card

@@ -14,3 +14,11 @@ export const isCardOpenableToday = (cardId: number): boolean => {
 
   return day === cardId;
 };
+
+// API 형식에 맞게 변환
+export const convertIdToDate = (id: number): string => {
+  const year = 2025;      
+  const month = 11;    //TODO: 12로 바꾸기      
+  const day = id.toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};

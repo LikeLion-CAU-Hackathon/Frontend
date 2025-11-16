@@ -1,8 +1,9 @@
 import { create } from "zustand";
+import { getTodayDate } from "../utils/date";
 
 
 interface QuestionState {
-    questionId: number | null;
+    questionId: number | null ;
     content: string
     date: string;
     setQuestion: (q: {id:number; content:string; date:string; }) => void;
