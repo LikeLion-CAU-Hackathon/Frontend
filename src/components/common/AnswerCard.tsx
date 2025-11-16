@@ -64,12 +64,16 @@ const AnswerContainer = styled.article<{ $width?: string; $height?: string}>`
   font-size: 12px;
   width: ${({ $width }) => $width || "172px"};
   height: ${({ $height }) => $height || "248px"};
+  box-sizing: border-box;
+  padding: 4px;
 `;
 
 const AnswerWrapper = styled.div`
- border: 1px solid #B39A63;
- margin: 4px;
- padding:5px;
+  border: 1px solid #B39A63;
+  box-sizing: border-box;
+  height: 100%;          
+  display: flex;         
+  flex-direction: column; 
 `;
 
 const CardHeader = styled.header`
