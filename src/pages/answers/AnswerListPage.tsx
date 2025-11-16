@@ -369,7 +369,7 @@ const BackgroundItem = styled.div<{ src: string }>`
   flex: 0 0 100vw;
   height: 100%;
   background-image: url(${({ src }) => src});
-  background-repeat: repeat;
+
 `;
 
 
