@@ -7,98 +7,123 @@ import { useLike } from "../../hooks/useLike";
 import commentIcon from "../../assets/images/Comments/comment.svg";
 
 export interface AnswerCardData {
-    id: number;
-    author: string;
-    date: string;
-    time: string;
-    contents: string;
-    likes: number;
-    comments : number;
-    liked?: boolean;
+  id: number;
+  author: string;
+  date: string;
+  time: string;
+  contents: string;
+  likes: number;
+  comments: number;
+  liked?: boolean;
 }
 
 interface AnswerCardProps extends AnswerCardData {
-    width?: string;
-    height?: string;
-    onSelect?: (answer: AnswerCardData, rect: DOMRect) => void;
+  width?: string;
+  height?: string;
+  onSelect?: (answer: AnswerCardData, rect: DOMRect) => void;
 }
 
-const AnswerCard = ({ id, author, date, time, contents, likes, comments, liked = false, width, height, onSelect } : AnswerCardProps) => {
-    const { liked: isLiked, likeCount, handleLike } = useLike(liked, likes, id);
-    const cardRef = useRef<HTMLDivElement | null>(null);
+const AnswerCard = ({
+  id,
+  author,
+  date,
+  time,
+  contents,
+  likes,
+  comments,
+  liked = false,
+  width,
+  height,
+  onSelect,
+}: AnswerCardProps) => {
+  const { liked: isLiked, likeCount, handleLike } = useLike(liked, likes, id);
+  const cardRef = useRef<HTMLDivElement | null>(null);
 
-    const handleCardClick = () => {
-        if (!onSelect || !cardRef.current) return;
-        const rect = cardRef.current.getBoundingClientRect();
-        onSelect({ id, author, date, time, contents, likes: likeCount, comments, liked: isLiked }, rect);
-    };
+  const handleCardClick = () => {
+    if (!onSelect || !cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    onSelect(
+      {
+        id,
+        author,
+        date,
+        time,
+        contents,
+        likes: likeCount,
+        comments,
+        liked: isLiked,
+      },
+      rect
+    );
+  };
 
-    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (!onSelect) return;
-        if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            handleCardClick();
-        }
-    };
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!onSelect) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleCardClick();
+    }
+  };
 
-    const handleLikeClick = (event: MouseEvent<HTMLDivElement>) => {
-        event.stopPropagation();
-        handleLike();
-    };
+  const handleLikeClick = (event: MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    handleLike();
+  };
 
-    const handleCommentClick = (event: MouseEvent<HTMLDivElement>) => {
-        event.stopPropagation();
-        // TODO: 댓글 보기 이벤트 연결 필요
-    };
+  const handleCommentClick = (event: MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    // TODO: 댓글 보기 이벤트 연결 필요
+  };
 
-    return (
-        <AnswerContainer
-            ref={cardRef}
-            $width={width}
-            $height={height}
-            onClick={handleCardClick}
-            onKeyDown={handleKeyDown}
-            role={onSelect ? "button" : undefined}
-            tabIndex={onSelect ? 0 : undefined}
-        >
-            <AnswerWrapper>
-                <CardHeader>
-                    {/* TODO: author 아이디와 현재 로그인한 아이디와 동일하다면 (나) 표시) */}
-                <Info>
-                    <Label>From.</Label> <Value>{author}</Value>
-                </Info>
-                <Info>
-                    <Label>Date:</Label> <Value>{date} | {time}</Value>
-                </Info>
-                </CardHeader>
-                <Divider />
-                {/* <Divider marginSize={marginSize}/> */}
-                <CardContent>
-                    {contents}
-                </CardContent>
-                <CardFooter>
-                    <Icon onClick={handleLikeClick}>
-                        {isLiked ? (
-                        <AiFillHeart />
-                    ) : (
-                        <AiOutlineHeart />
-                    )}
-                    {likeCount}
-                    </Icon>
-                    <Icon onClick={handleCommentClick} role="button" aria-label="댓글 보기">
-                        <img src={commentIcon} alt="" />
-                        {comments}
-                    </Icon>
-                </CardFooter>
-            </AnswerWrapper>
-        </AnswerContainer>
-    )
-}
+  return (
+    <AnswerContainer
+      ref={cardRef}
+      $width={width}
+      $height={height}
+      onClick={handleCardClick}
+      onKeyDown={handleKeyDown}
+      role={onSelect ? "button" : undefined}
+      tabIndex={onSelect ? 0 : undefined}
+    >
+      <AnswerWrapper>
+        <CardHeader>
+          {/* TODO: author 아이디와 현재 로그인한 아이디와 동일하다면 (나) 표시) */}
+          <Info>
+            <Label>From.</Label> <Value>{author}</Value>
+          </Info>
+          <Info>
+            <Label>Date:</Label>{" "}
+            <Value>
+              {date} | {time}
+            </Value>
+          </Info>
+        </CardHeader>
+        <Divider />
+        {/* <Divider marginSize={marginSize}/> */}
+        <CardContent>{contents}</CardContent>
+        <CardFooter>
+          <Icon onClick={handleLikeClick}>
+            {isLiked ? <AiFillHeart /> : <AiOutlineHeart />}
+            {likeCount}
+          </Icon>
+          <Icon
+            onClick={handleCommentClick}
+            role="button"
+            aria-label="댓글 보기"
+          >
+            <img src={commentIcon} alt="" />
+            {comments}
+          </Icon>
+        </CardFooter>
+      </AnswerWrapper>
+    </AnswerContainer>
+  );
+};
 
 export default AnswerCard;
 
-const AnswerContainer = styled.article<{ $width?: string; $height?: string}>`
-  background: #DECBA1;
+const AnswerContainer = styled.article<{ $width?: string; $height?: string }>`
+  background: #decba1;
   font-family: Gowun Batang;
   font-weight: 400;
   word-wrap: break-word;
@@ -109,20 +134,21 @@ const AnswerContainer = styled.article<{ $width?: string; $height?: string}>`
 `;
 
 const AnswerWrapper = styled.div`
- border: 1px solid #B39A63;
- margin: 4px;
- padding:5px;
+  border: 1px solid #b39a63;
+  margin: 4px;
+  padding: 5px;
 `;
 
 const CardHeader = styled.header`
-    padding:9px;
-    color: #000;
+  padding: 9px;
+  color: #000;
 `;
 
 /* TODO: 스크롤바 수정 필요*/
 const CardContent = styled.section`
+  margin-left: 5px;
   width: 142px;
-  height: 150px;
+  height: 118px;
   overflow-y: auto;
   flex-direction: column;
   justify-content: center;
@@ -134,25 +160,23 @@ const CardContent = styled.section`
   font-family: "Gowun Batang", "MaruBuri", serif;
 
   &::-webkit-scrollbar {
-    
   }
-
-  `;
+`;
 
 const Info = styled.p`
   margin: 0;
-  font-size: 12px;
+  font-size: 14px;
   font-family: "Gowun Batang";
   color: #000;
- `;
+`;
 
-const Label = styled.span` 
+const Label = styled.span`
   font-weight: 700;
-  color: #b39a63
+  color: #b39a63;
 `;
 
 const Value = styled.span`
-  color: black;       
+  color: black;
   font-weight: 400;
 `;
 // const Divider = styled.div<{ marginSize?: number }>`
@@ -161,20 +185,21 @@ const Value = styled.span`
 // `;
 
 const Divider = styled.div`
- outline: 1px #B39A63 solid;
- outline-offset: -0.50px;
- margin: 0px 8px;
-
+  outline: 1px #b39a63 solid;
+  outline-offset: -0.5px;
+  margin: 0px 8px;
 `;
 
 const CardFooter = styled.footer`
-    display: flex;
-    flex-direction: row;
-    gap : 8px;
-    justify-content: flex-end; 
-    padding: 0px 8px;
-    color: #000;
-`; 
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 0px 8px;
+  color: #000;
+  font-size: 15px;
+  font-family: "Gowun Batang", "MaruBuri", serif;
+`;
 
 const Icon = styled.div`
   display: flex;
@@ -182,4 +207,11 @@ const Icon = styled.div`
   gap: 4px;
   cursor: pointer;
   color: #000;
+  font-size: 15px;
+
+  svg,
+  img {
+    width: 18px;
+    height: 18px;
+  }
 `;
