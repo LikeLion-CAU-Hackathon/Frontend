@@ -46,7 +46,6 @@ const EnvelopeBody = styled.section`
 
 const TopFold = styled.img`
   display: block; 
-  z-index:0;
   margin-bottom: -25px;
   z-index: 1;
   width: 100%;

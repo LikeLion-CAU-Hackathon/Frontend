@@ -31,43 +31,34 @@ const LetterContent = ({
   const rawQuestion = question?.trim() ?? "";
   let questionBody = rawQuestion;
 
-  if (isLoading) {
-    questionBody = "질문을 불러오는 중입니다...";
-  } else if (error) {
-    questionBody = error;
-  } else if (!questionBody) {
-    questionBody = "오늘의 질문이 준비 중입니다.";
-  }
+    /* 오늘 날짜에 해당하는 질문 불러오기 */
+    useEffect(() => {
+        if (isOpened) {
+            const fetchQuestion = async () => {
+                try {
+                    const response = await getQuestion(today);
+                    setQuestion(response.content);
+                    // console.log(response)
+                } catch (error) {
+                    console.error("질문을 불러오는데 실패했습니다.", error);
+                }
+            };
+            fetchQuestion();
+        }
+    }, [isOpened]);
 
-  return (
-    <ArticleContainer isOpened={isOpened}>
-      <QuestionSection>
-        <QuestionHeader>{headerLabel}</QuestionHeader>
-        {formattedDate && <QuestionDate>{formattedDate}</QuestionDate>}
-        <QuestionText>{questionBody}</QuestionText>
-      </QuestionSection>
-      <ButtonSection>
-        <AnswerButton
-          width="135px"
-          height="51px"
-          fontSize="16px"
-          borderRadius="12px"
-          disabled={!sequence || isLoading || !!error}
-          onClick={() => {
-            if (!sequence) return;
-            navigate(`/answer-list?questionId=${sequence}`, {
-              state: {
-                questionId: sequence,
-                questionText: rawQuestion,
-                questionDate: date,
-              },
-            });
-          }}
-        />
-      </ButtonSection>
-    </ArticleContainer>
-  );
-};
+    return (
+        <ArticleContainer isOpened={isOpened}>
+            <QuestionSection>
+                <QuestionHeader>{formatDay} 번째 질문:</QuestionHeader>
+                <QuestionText>{question}</QuestionText>
+            </QuestionSection>
+            <ButtonSection>
+                <AnswerButton width="135px" height="51px" fontSize="16px" borderRadius="12px" onClick={() => navigate("/answer")}/>
+            </ButtonSection>
+        </ArticleContainer>
+    )
+}
 
 export default LetterContent;
 
@@ -119,4 +110,5 @@ const ButtonSection = styled.section`
   cursor: pointer;
   text-align: center;
   align-items: center;
+  z-index:10;
 `;

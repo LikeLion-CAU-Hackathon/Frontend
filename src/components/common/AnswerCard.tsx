@@ -1,8 +1,5 @@
 /* 답변 포스트잇 컴포넌트 */
-
-import { useRef } from "react";
-import type { KeyboardEvent, MouseEvent } from "react";
-import { AiOutlineComment, AiOutlineHeart } from "react-icons/ai";
+import { AiFillHeart, AiOutlineComment, AiOutlineHeart } from "react-icons/ai";
 import styled from "styled-components";
 import { useLike } from "../../hooks/useLike";
 
@@ -76,9 +73,13 @@ const AnswerCard = ({ id, author, date, time, contents, likes, comments, width, 
                     {contents}
                 </CardContent>
                 <CardFooter>
-                    <Icon onClick={handleLikeClick} role="button" aria-label="좋아요">
-                        <AiOutlineHeart color={liked ? "#C35623" : undefined} />
-                        {likeCount} 
+                    <Icon onClick={handleLike}>
+                        {liked ? (
+                        <AiFillHeart />
+                    ) : (
+                        <AiOutlineHeart />
+                    )}
+                    {likeCount}
                     </Icon>
                     <Icon onClick={handleCommentClick} role="button" aria-label="댓글 보기">
                         <AiOutlineComment /> 
