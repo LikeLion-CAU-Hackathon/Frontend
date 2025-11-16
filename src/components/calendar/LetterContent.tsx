@@ -2,7 +2,6 @@ import styled from "styled-components";
 import letterBg from "../../assets/images/letter_background.png";
 import { formatDayToKorean } from "../../utils/dayToKorean";
 import AnswerButton from "../common/button/AnswerButton";
-import { useNavigate } from "react-router-dom";
 
 interface LetterContentProps {
   isOpened: boolean;
@@ -21,7 +20,6 @@ const LetterContent = ({
   isLoading = false,
   error = null,
 }: LetterContentProps) => {
-  const navigate = useNavigate();
 
   const headerLabel = sequence ? `${formatDayToKorean(sequence)} 번째 질문` : "오늘의 질문";
   const formattedDate = date
@@ -29,36 +27,37 @@ const LetterContent = ({
     : "";
 
   const rawQuestion = question?.trim() ?? "";
-  let questionBody = rawQuestion;
+  const displayQuestion = (() => {
+    if (isLoading) return "질문을 불러오는 중입니다...";
+    if (error) return error;
+    if (rawQuestion.length > 0) return rawQuestion;
+    return "오늘의 질문을 준비 중이에요.";
+  })();
 
-    /* 오늘 날짜에 해당하는 질문 불러오기 */
-    useEffect(() => {
-        if (isOpened) {
-            const fetchQuestion = async () => {
-                try {
-                    const response = await getQuestion(today);
-                    setQuestion(response.content);
-                    // console.log(response)
-                } catch (error) {
-                    console.error("질문을 불러오는데 실패했습니다.", error);
-                }
-            };
-            fetchQuestion();
-        }
-    }, [isOpened]);
-
-    return (
-        <ArticleContainer isOpened={isOpened}>
-            <QuestionSection>
-                <QuestionHeader>{formatDay} 번째 질문:</QuestionHeader>
-                <QuestionText>{question}</QuestionText>
-            </QuestionSection>
-            <ButtonSection>
-                <AnswerButton width="135px" height="51px" fontSize="16px" borderRadius="12px" onClick={() => navigate("/answer")}/>
-            </ButtonSection>
-        </ArticleContainer>
-    )
-}
+  return (
+    <ArticleContainer isOpened={isOpened}>
+      <QuestionSection>
+        <QuestionHeader>{headerLabel}</QuestionHeader>
+        {formattedDate && <QuestionDate>{formattedDate}</QuestionDate>}
+        <QuestionText>{displayQuestion}</QuestionText>
+      </QuestionSection>
+      <ButtonSection>
+        <AnswerButton
+          width="135px"
+          height="51px"
+          fontSize="16px"
+          borderRadius="12px"
+          to="/answer"
+          state={{
+            questionId: sequence ?? null,
+            questionText: rawQuestion,
+            questionDate: date ?? null,
+          }}
+        />
+      </ButtonSection>
+    </ArticleContainer>
+  );
+};
 
 export default LetterContent;
 

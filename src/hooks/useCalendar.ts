@@ -2,44 +2,46 @@ import { useState } from "react";
 import type { Card } from "../types/card";
 import { checkAnswered } from "../apis/answer/answer.api";
 import { getTodayDate, isCardOpenableToday } from "../utils/date";
-import { useNavigate } from "react-router-dom";
 
 export const useCalendar = (navigate: Function) => {
-  // 4x6 그리드용 24개 카드 
-  const [ cards, setCards ] = useState<Card[]>(() => 
-    Array.from({ length: 24}, (_, index) => ({
-        id: index+1,
-        image: "", // 각 우표 이미지를 stamp1, stamp2, ... , 로 다운받기
-        isOpened: false,
-        isExpired: false,
-        isAnswered: false
+  const todayString = getTodayDate();
+  const [year, month, day] = todayString.split("-").map(Number);
+  const paddedMonth = String(month).padStart(2, "0");
+  const createCardDate = (dayNumber: number) =>
+    `${year}-${paddedMonth}-${String(dayNumber).padStart(2, "0")}`;
+
+  const [cards, setCards] = useState<Card[]>(() =>
+    Array.from({ length: 24 }, (_, index) => ({
+      id: index + 1,
+      date: createCardDate(index + 1),
+      image: "", // 각 우표 이미지를 stamp1, stamp2, ... , 로 다운받기
+      isOpened: false,
+      isExpired: false,
+      isAnswered: false,
     })));
 
   // 현재 클릭한 우표 
   const [ selectedCard, setSelectedCard ] = useState<Card | null>(null);
   
-  // 오늘 날짜 가져오기
-  const todayString = getTodayDate(); 
-  const today = Number(todayString.split("-")[2]);  
+  const today = day;
 
   // 우표 클릭 시 상태 변경 -> 편지지 슬라이딩 
   const handleCardClick = async (id: number) => {
     // 날짜 비교해서 다른 모달창 띄우기
-    if ( id < today ) {
-        alert("답변 기한이 지났어요 😭") // TODO: 모달창으로 변경하기
-        return; 
-    }
-
-    if ( id > today ) {
-        alert("오늘 날짜의 우표만 열 수 있어요!");
-        return;
+    if (!isCardOpenableToday(id)) {
+      const message = id < today ? "답변 기한이 지났어요 😭" : "오늘 날짜의 우표만 열 수 있어요!";
+      alert(message);
+      return;
     }
     
     // id = today인 경우 
     try {
       // checkAnswered API 호출 
       const response = await checkAnswered(id);
-      const isAnswered = response.answered || response; 
+      const isAnswered =
+        typeof response === "boolean"
+          ? response
+          : Boolean(response && typeof response === "object" && "answered" in response ? (response as any).answered : false);
       
       {/* TODO 답변 완료된 경우 anwer-list로 라우팅 */ }
       if (isAnswered) {
@@ -49,28 +51,24 @@ export const useCalendar = (navigate: Function) => {
 
       // 답변 미완료인 경우 편지지 열기 
         setCards(initialCards => {
-          const updatedCards = initialCards.map(card => 
-            card.id === id ? { ...card, isOpened : !card.isOpened} : card
-          );
-          // 클릭된 우표 저장
-          const clickedCard = updatedCards.find((card) => card.id === id);
-          if(clickedCard) {
-            setSelectedCard(clickedCard);
-          }
+          const updatedCards = initialCards.map(card => ({
+            ...card,
+            isOpened: card.id === id,
+          }));
+          const clickedCard = updatedCards.find((card) => card.id === id) ?? null;
+          setSelectedCard(clickedCard);
           return updatedCards;
         });
     } catch (error) {
       console.error("답변 확인 중 오류가 발생했습니다: ", error);
       // 에러 발생 시 기본 동작 일단 LetterPage 렌더링
       setCards(initialCards => {
-        const updatedCards = initialCards.map(card => 
-          card.id === id ? { ...card, isOpened : !card.isOpened} : card
-        );
-        // 클릭된 우표 저장
-        const clickedCard = updatedCards.find((card) => card.id === id);
-        if(clickedCard) {
-          setSelectedCard(clickedCard);
-        }
+        const updatedCards = initialCards.map(card => ({
+          ...card,
+          isOpened: card.id === id,
+        }));
+        const clickedCard = updatedCards.find((card) => card.id === id) ?? null;
+        setSelectedCard(clickedCard);
         return updatedCards;
       });
     }

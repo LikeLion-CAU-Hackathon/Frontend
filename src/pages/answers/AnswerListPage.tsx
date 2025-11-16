@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import AnswerSlide from "./components/AnswerSlide";
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import AnswerSlide from "./components/AnswerSlide";
@@ -345,15 +343,24 @@ const SlideControls = styled.div`
   gap: 12px;
 `;
 
-    li button:before {
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 10px;
-    }
-    
-    li.slick-active button:before {
-      color: white;
-      font-size: 14px;
-    }
+const NavButton = styled.button`
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease;
+
+  &:hover:enabled {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
   }
 `;
 
