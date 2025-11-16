@@ -108,12 +108,6 @@ const QuestionHeader = styled.header`
   font-weight: 400;
 `;
 
-const QuestionDate = styled.p`
-  margin: 4px 0 12px;
-  font-size: 16px;
-  color: #5c3a1b;
-`;
-
 const QuestionText = styled.h2`
   color: black;
   font-weight: 700;
