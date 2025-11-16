@@ -61,17 +61,20 @@ const Comments = () => {
   const [isLiked, setIsLiked] = useState<boolean>(Boolean(state.answer?.liked));
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [likeError, setLikeError] = useState<string | null>(null);
+  const [commentCount, setCommentCount] = useState(
+    state.answer?.comments ?? fallbackFeatured.comments
+  );
 
   const featuredComment = (() => {
     if (!state.answer) return fallbackFeatured;
-    const { author, date, time, contents, likes, comments } = state.answer;
+    const { author, date, time, contents, likes } = state.answer;
     const formattedDate = `${date.replace(/-/g, ".")} | ${time}`;
     return {
       sender: author,
       date: formattedDate,
       content: contents,
       likes,
-      comments,
+      comments: commentCount,
     };
   })();
 
@@ -80,6 +83,7 @@ const Comments = () => {
   useEffect(() => {
     setLikeCount(state.answer?.likes ?? 0);
     setIsLiked(Boolean(state.answer?.liked));
+    setCommentCount(state.answer?.comments ?? fallbackFeatured.comments);
   }, [state.answer]);
 
   const fetchReplies = useCallback(async () => {
@@ -103,6 +107,7 @@ const Comments = () => {
           }))
         : [];
       setReplies(mapped);
+      setCommentCount(mapped.length);
     } catch (error) {
       console.error("댓글을 가져오는 중 오류가 발생했습니다:", error);
       setReplies([]);
@@ -158,6 +163,7 @@ const Comments = () => {
     try {
       await postAnswerComment(answerId, trimmed);
       setReplyContents("");
+      setCommentCount((prev) => prev + 1);
       await fetchReplies();
     } catch (error) {
       console.error("댓글을 전송하는 중 오류가 발생했습니다:", error);
