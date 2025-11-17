@@ -14,8 +14,8 @@
 
 .buttonImage {
   display: block;
-  width: 385px;
-  height: 87px;
+  width: 100%;
+  height: 100%;
 }
 
 .loginButton:hover {
