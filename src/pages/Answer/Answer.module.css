@@ -100,7 +100,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap:10px;
+  gap:15px;
 }
 
 .paper {
@@ -209,4 +209,5 @@
   justify-content: flex-end;
   flex-shrink: 0;
   min-height: 60px;
+  gap:17px;
 }
