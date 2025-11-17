@@ -174,9 +174,14 @@ const AnswerListPage = () => {
 
   useEffect(() => {
     let cancelled = false;
+    const cardIdNumber =
+      typeof cardId === "string" && cardId.trim().length > 0
+        ? Number(cardId)
+        : NaN;
+    const questionIdParam = Number.isFinite(cardIdNumber) ? cardIdNumber : undefined;
     const fetchProfile = async () => {
       try {
-        const profile = await getMyProfile();
+        const profile = await getMyProfile(questionIdParam);
         const nickname =
           profile?.nickname ??
           profile?.userNickname ??
@@ -199,7 +204,7 @@ const AnswerListPage = () => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [cardId]);
   // 기본 뒤로가기 차단하고 뒤로가기 하면 무조건 캘린더로
   useEffect(() => {
     navigate(`/answer-list?questionId=${cardId}`, { replace: true });

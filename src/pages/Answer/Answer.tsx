@@ -119,11 +119,14 @@ const Answer = () => {
     return "";
   }, []);
 
+  const questionIdForProfile =
+    typeof questionId === "number" && Number.isFinite(questionId) ? questionId : undefined;
+
   useEffect(() => {
     let isMounted = true;
     const fetchProfile = async () => {
       try {
-        const profile = await getMyProfile();
+        const profile = await getMyProfile(questionIdForProfile);
         const nickname =
           profile?.nickname ??
           profile?.userNickname ??
@@ -141,7 +144,7 @@ const Answer = () => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [questionIdForProfile]);
 
   const subText = formattedDate ?? fallbackDate;
 
