@@ -100,21 +100,23 @@ const AnswerCard = ({
         </CardHeader>
         <Divider />
         {/* <Divider marginSize={marginSize}/> */}
-        <CardContent>{contents}</CardContent>
-        <CardFooter>
-          <Icon onClick={handleLikeClick}>
-            {isLiked ? <AiFillHeart /> : <AiOutlineHeart />}
-            {likeCount}
-          </Icon>
-          <Icon
-            onClick={handleCommentClick}
-            role="button"
-            aria-label="댓글 보기"
-          >
-            <img src={commentIcon} alt="" />
-            {comments}
-          </Icon>
-        </CardFooter>
+        <CardSection>
+          <CardContent>{contents}</CardContent>
+          <CardFooter>
+            <Icon onClick={handleLikeClick}>
+              {isLiked ? <AiFillHeart /> : <AiOutlineHeart />}
+              {likeCount}
+            </Icon>
+            <Icon
+              onClick={handleCommentClick}
+              role="button"
+              aria-label="댓글 보기"
+            >
+              <img src={commentIcon} alt="" />
+              {comments}
+            </Icon>
+          </CardFooter>
+        </CardSection>
       </AnswerWrapper>
     </AnswerContainer>
   );
@@ -136,22 +138,20 @@ const AnswerContainer = styled.article<{ $width?: string; $height?: string }>`
 const AnswerWrapper = styled.div`
   border: 1px solid #b39a63;
   margin: 4px;
-  padding: 5px 5px;
+  padding: 10px;
   height: calc(100% - 8px);
   color: #b39a63;
 `;
 
 const CardHeader = styled.header`
-  padding: 0px 9px;
   color: #000;
   margin-bottom: 10px;
 `;
 
 /* TODO: 스크롤바 수정 필요*/
 const CardContent = styled.section`
-  margin-left: 5px;
-  width: 142px;
-  height: 118px;
+  width: 100%;
+  height: 130px;
   overflow-y: auto;
   flex-direction: column;
   justify-content: center;
@@ -201,18 +201,14 @@ const Info = styled.p`
 const Divider = styled.div`
   outline: 1px #b39a63 solid;
   outline-offset: -0.5px;
-  margin: 0px 8px;
   margin-bottom: 20px;
 `;
 
 const CardFooter = styled.footer`
-  margin-top: 12px;
-  height: calc(28% - 8px);
   display: flex;
   flex-direction: row;
   gap: 8px;
   justify-content: flex-end;
-  padding: 0px 8px;
   color: #000;
   font-size: 15px;
   font-family: "Gowun Batang", "MaruBuri", serif;
@@ -231,4 +227,10 @@ const Icon = styled.div`
     width: 18px;
     height: 18px;
   }
+`;
+
+const CardSection = styled.section`
+  display:flex;
+  flex-direction: column;
+  gap:10px;
 `;
