@@ -18,7 +18,6 @@ const LetterPage = ({ isOpened, card, question, isLoading, error }: LetterPagePr
       <LetterContent
         isOpened={isOpened}
         question={question}
-        date={card?.date}
         sequence={card?.id}
         isLoading={isLoading}
         error={error}
@@ -34,12 +33,14 @@ const LetterSection = styled.main`
   bottom: 0;
   width: 100%;
   display: flex;
-  z-index: 30;
+  z-index: 5;
   justify-content: center;
   align-items: center;
+  pointer-events: none;
 `;
 
 const EnvelopeContainer = styled.div<{ $visible?: boolean }>`
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transition: opacity 0.6s ease-in-out 0.2s;
+  pointer-events: none;
 `;

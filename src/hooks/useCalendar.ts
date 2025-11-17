@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Card } from "../types/card";
 import { checkAnswered } from "../apis/answer/answer.api";
-import { getTodayDate, isCardOpenableToday } from "../utils/date";
+import { getTodayDate, isCardAfterToday, isCardBeforeToday, isCardOpenableToday } from "../utils/date";
 
 export const useCalendar = (navigate: Function) => {
   const todayString = getTodayDate();
@@ -22,34 +22,67 @@ export const useCalendar = (navigate: Function) => {
 
   // 현재 클릭한 우표 
   const [ selectedCard, setSelectedCard ] = useState<Card | null>(null);
-  
-  const today = day;
+
+  // 각 우표의 answered 여부 초기에 확인
+  useEffect(() => {
+  const loadAnsweredStates = async () => {
+    const updated = await Promise.all(
+      cards.map(async (card) => {
+        // 오늘 이후 날짜는 체크 안해도 됨
+        if (isCardAfterToday(card.id)) {
+          return { ...card, isAnswered: false };
+        }
+        try {
+          const res = await checkAnswered(card.id);
+          const answered =
+            typeof res === "boolean"
+              ? res
+              : Boolean(res && res.answered);
+
+          return { ...card, isAnswered: answered };
+        } catch {
+          return { ...card, isAnswered: false };
+        }
+      })
+    );
+
+    setCards(updated);
+  };
+
+  loadAnsweredStates();
+}, []);
+
 
   // 우표 클릭 시 상태 변경 -> 편지지 슬라이딩 
   const handleCardClick = async (id: number) => {
     // 날짜 비교해서 다른 모달창 띄우기
-    if (!isCardOpenableToday(id)) {
-      const message = id < today ? "답변 기한이 지났어요 😭" : "오늘 날짜의 우표만 열 수 있어요!";
-      alert(message);
+    const card = cards.find( c => c.id === id);
+
+    if (!card) return;
+
+    if (isCardAfterToday(id)) {
+      alert("오늘 날짜의 우표만 열 수 있어요!");
       return;
     }
-    
-    // id = today인 경우 
-    try {
-      // checkAnswered API 호출 
-      const response = await checkAnswered(id);
-      const isAnswered =
-        typeof response === "boolean"
-          ? response
-          : Boolean(response && typeof response === "object" && "answered" in response ? (response as any).answered : false);
-      
-      {/* TODO 답변 완료된 경우 anwer-list로 라우팅 */ }
-      if (isAnswered) {
+
+    if (isCardBeforeToday(id)) {
+      if(!card.isAnswered) {
+        alert("답변 기한이 지났어요");
+        return;
+      }
+      // before + 답변
+      navigate(`/answer-list?questionId=${id}`);
+      return;
+    }
+
+    if (isCardOpenableToday(id)) {
+      if (card.isAnswered) {
         navigate(`/answer-list?questionId=${id}`);
         return;
       }
+    }
 
-      // 답변 미완료인 경우 편지지 열기 
+      // 오늘 + 답변 미완료인 경우 편지지 열기 
         setCards(initialCards => {
           const updatedCards = initialCards.map(card => ({
             ...card,
@@ -58,21 +91,9 @@ export const useCalendar = (navigate: Function) => {
           const clickedCard = updatedCards.find((card) => card.id === id) ?? null;
           setSelectedCard(clickedCard);
           return updatedCards;
-        });
-    } catch (error) {
-      console.error("답변 확인 중 오류가 발생했습니다: ", error);
-      // 에러 발생 시 기본 동작 일단 LetterPage 렌더링
-      setCards(initialCards => {
-        const updatedCards = initialCards.map(card => ({
-          ...card,
-          isOpened: card.id === id,
-        }));
-        const clickedCard = updatedCards.find((card) => card.id === id) ?? null;
-        setSelectedCard(clickedCard);
-        return updatedCards;
-      });
+        }); 
+        return;
     }
-  }
 
   // 우표 클릭된 순간 배경 overlay 추가
   const isCardOpened = cards.some(card => card.isOpened);
