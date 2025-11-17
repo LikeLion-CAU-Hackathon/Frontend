@@ -1,12 +1,11 @@
 .container {
   width: 100%;
-  min-height: 100vh;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 20px;
-  padding: calc(32px + env(safe-area-inset-top, 0px)) 0 calc(120px + env(safe-area-inset-bottom, 0px));
+  padding: 32px 0 0;
   color: #000;
   font-family: "MaruBuri", "Times New Roman", "Georgia", serif;
   font-size: 14px;
@@ -19,7 +18,6 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   position: relative;
-  overflow: hidden;
 }
 
 .container > :not(:first-child) {
@@ -39,7 +37,6 @@
   width: 100%;
   align-self: center;
   min-height: 0;
-  overflow: hidden;
   transform: translateY(100%);
   transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -86,15 +83,13 @@
   background: transparent;
   border-radius: 0;
   padding: 0;
-  padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
   box-shadow: none;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
-  scroll-padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
-  -ms-overflow-style: none; 
-  scrollbar-width: none; 
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .paper::-webkit-scrollbar {
@@ -153,18 +148,17 @@
 
 .replyBar {
   margin-top: auto;
-  width: 100%;
-  margin: 0;
+  width: calc(100% + 40px);
+  margin-left: -20px;
+  margin-right: -20px;
   background: #decba1;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 16px 24px calc(16px + env(safe-area-inset-bottom, 0px));
+  padding: 22px 24px 28px;
   display: flex;
   align-items: stretch;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.15);
-  z-index: 20;
+  position: relative;
+  box-shadow: none;
+}
 }
 
 .replyInput {
@@ -192,7 +186,7 @@
 .replySubmit {
   position: absolute;
   right: 36px;
-  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  bottom: 26px;
   width: 42px;
   height: 42px;
   border-radius: 50%;
