@@ -9,10 +9,13 @@ export interface UserProfile {
 
 export const getMyProfile = async (questionId?: number | string): Promise<UserProfile> => {
   const api = axiosAPI();
-  const config =
-    typeof questionId === "number" || (typeof questionId === "string" && questionId.length > 0)
-      ? { params: { questionId } }
-      : undefined;
-  const response = await api.get("/users/nickname", config);
-  return response.data;
+  const hasQuestionId =
+    typeof questionId === "number" || (typeof questionId === "string" && questionId.length > 0);
+  const endpoint = hasQuestionId
+    ? `/users/nickname/${encodeURIComponent(String(questionId))}`
+    : "/users/nickname";
+
+  const response = await api.get(endpoint);
+  const payload = response?.data?.data ?? response?.data;
+  return payload;
 };

@@ -137,10 +137,10 @@
 }
 
 .commentBody {
-  font-size: 0.9rem;
+  font-size: 16px;
   color: #3f2717;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.5;
   overflow-wrap: break-word;
   white-space: pre-wrap;
   font-family: "MaruBuri", serif;

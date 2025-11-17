@@ -759,7 +759,7 @@ const AnimatedDivider = styled.div`
 const AnimatedContent = styled.p`
   flex: 1;
   margin: 0;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.6;
   color: #2c120b;
   overflow-y: auto;
