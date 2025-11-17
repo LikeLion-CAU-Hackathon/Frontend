@@ -87,6 +87,41 @@ const updateRepliesWithNickname = (replies: ReplyItem[], nickname: string | null
   return changed ? updated : replies;
 };
 
+const monthLabels = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+const formatCardDateLabel = (value?: string | null): string => {
+  if (!value) return "";
+  const trimmed = value.trim();
+  if (trimmed.length === 0) return "";
+  const isoMatch = /^(\d{4})[-/.](\d{2})[-/.](\d{2})/.exec(trimmed);
+  if (isoMatch) {
+    const [, , month, day] = isoMatch;
+    const monthIndex = Number(month) - 1;
+    const label = monthLabels[monthIndex] ?? month.toUpperCase();
+    const dayNumber = Number(day);
+    return `${label} ${Number.isFinite(dayNumber) ? dayNumber : day}`;
+  }
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) {
+    return trimmed;
+  }
+  const month = parsed.toLocaleString("en-US", { month: "short" }).toUpperCase();
+  const day = parsed.getDate();
+  return `${month} ${day}`;
+};
+
+const normalizeFeaturedAnswer = (answer?: AnswerCardData | null): AnswerCardData => {
+  if (answer) {
+    return {
+      ...answer,
+      liked: Boolean(answer.liked),
+      date: formatCardDateLabel(answer.date),
+      time: answer.time ?? "",
+    };
+  }
+  return createFallbackFeatured();
+};
+
 const Comments = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -104,29 +139,14 @@ const Comments = () => {
   const [replyContents, setReplyContents] = useState("");
   const [isPostingReply, setIsPostingReply] = useState(false);
   const [replyError, setReplyError] = useState<string | null>(null);
-  const [featuredAnswer, setFeaturedAnswer] = useState<AnswerCardData>(() => {
-    if (state.answer) {
-      return {
-        ...state.answer,
-        liked: Boolean(state.answer.liked),
-      };
-    }
-    return createFallbackFeatured();
-  });
+  const [featuredAnswer, setFeaturedAnswer] = useState<AnswerCardData>(() => normalizeFeaturedAnswer(state.answer));
   const [isPanelVisible, setIsPanelVisible] = useState(false);
   const [isCardVisible, setIsCardVisible] = useState(false);
 
   const commentPanelTitle = "Post Script";
 
   useEffect(() => {
-    if (state.answer) {
-      setFeaturedAnswer({
-        ...state.answer,
-        liked: Boolean(state.answer.liked),
-      });
-    } else {
-      setFeaturedAnswer(createFallbackFeatured());
-    }
+    setFeaturedAnswer(normalizeFeaturedAnswer(state.answer));
   }, [state.answer]);
 
   const [myNickname, setMyNickname] = useState<string | null>(null);
@@ -322,7 +342,6 @@ const Comments = () => {
     const trimmed = timestamp.trim();
     if (trimmed.length === 0) return "";
 
-    const monthLabels = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
     const tryFormatIso = (value: string): string | null => {
       const isoMatch =
         /^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2})(?::?(\d{2}))?(?::?(\d{2}))?)?$/.exec(value);
