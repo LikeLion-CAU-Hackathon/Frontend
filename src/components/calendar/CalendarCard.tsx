@@ -71,7 +71,7 @@ const CardImage = styled.img`
 const Stamp = styled.img<{ isExpired?: boolean }>`
   position: absolute;
   width: 60px;
-  z-index:1;
+  z-index:0.5;
   top:10px;
   right:16px;
 
