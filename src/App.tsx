@@ -6,7 +6,7 @@ import Login from "./pages/Login/Login";
 import Answer from "./pages/Answer/Answer";
 import Comments from "./pages/Comments/Comments";
 import AnswerListPage from "./pages/answers/AnswerListPage";
-import PrivateRoute from "./components/common/PrivateRoute";
+// import PrivateRoute from "./components/common/PrivateRoute";
 
 function App() {
   return (
@@ -17,11 +17,11 @@ function App() {
           <Route path="/calendar" element={<CalendarPage />} />
 
           { /* 로그인이 안되면 접근 불가능 */}
-          <Route element= {<PrivateRoute />} >
+          {/* <Route element= {<PrivateRoute />} > */}
             <Route path="/answer" element={<Answer />} />
             <Route path="/comments" element={<Comments />} />
             <Route path="/answer-list" element={<AnswerListPage />} />
-          </Route>
+          {/* </Route> */}
         </Routes>
       </Router>
     </FixedScreenLayout>

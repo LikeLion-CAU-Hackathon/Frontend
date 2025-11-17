@@ -259,13 +259,17 @@ const AnswerListPage = () => {
   }, [cardId]);
   // 기본 뒤로가기 차단하고 뒤로가기 하면 무조건 캘린더로
   useEffect(() => {
+    // 현재 URL을 replace하여 history에 남기지 않음
     navigate(`/answer-list?questionId=${cardId}`, { replace: true });
 
+    // history 스택에 추가 엔트리 삽입 (뒤로가기 시 2번 뒤로가기해야 calendar로 가도록)
     window.history.pushState(null, "", window.location.href);
     window.history.pushState(null, "", window.location.href);
 
     const handleBack = () => {
-      navigate("/calendar", { replace: true });
+      // popstate 이벤트가 발생하면 즉시 calendar로 이동
+      // preventDefault는 불가능하므로, navigate를 바로 호출
+      navigate("/calendar", { replace: false });
     };
 
     window.addEventListener("popstate", handleBack);
