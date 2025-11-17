@@ -1,4 +1,4 @@
-@import url("https://cdn.jsdelivr.net/gh/webfontworld/maruburi/MaruBuri.css");
+/* @import url("https://cdn.jsdelivr.net/gh/webfontworld/maruburi/MaruBuri.css"); */
 
 /* 기본 리셋 */
 body,
@@ -43,43 +43,37 @@ body::-webkit-scrollbar {
   background-color: #ffffff;
 }
 
-/* 불필요한 @import 제거 — 충돌 원인이므로 삭제 */
 @font-face {
   font-family: "MaruBuri";
-  src: url("https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-ExtraLight.woff2")
-    format("woff2");
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-ExtraLight.woff2);
   font-weight: 200;
   font-display: swap;
 }
 
 @font-face {
   font-family: "MaruBuri";
-  src: url("https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Light.woff2")
-    format("woff2");
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Light.woff2);
   font-weight: 300;
   font-display: swap;
 }
 
 @font-face {
   font-family: "MaruBuri";
-  src: url("https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2")
-    format("woff2");
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2);
   font-weight: 400;
   font-display: swap;
 }
 
 @font-face {
   font-family: "MaruBuri";
-  src: url("https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-SemiBold.woff2")
-    format("woff2");
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-SemiBold.woff2);
   font-weight: 600;
   font-display: swap;
 }
 
 @font-face {
   font-family: "MaruBuri";
-  src: url("https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Bold.woff2")
-    format("woff2");
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Bold.woff2);
   font-weight: 700;
   font-display: swap;
 }
