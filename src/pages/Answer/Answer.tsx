@@ -8,6 +8,8 @@ import { postAnswerReply } from "../../apis/answer/answer.api";
 import { getMyProfile } from "../../apis/user/user.api";
 import closeIcon from "../../assets/images/Comments/x.svg";
 
+const formatDottedDate = (year: string, month: string, day: string) => `${year}. ${month}. ${day}`;
+
 const Answer = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -96,7 +98,7 @@ const Answer = () => {
       const shortYear = yyyy.slice(-2);
       const month = mm.padStart(2, "0");
       const day = ddRaw.slice(0, 2).padStart(2, "0");
-      return `${shortYear}.${month}.${day}`;
+      return formatDottedDate(shortYear, month, day);
     }
 
     const parsed = new Date(trimmed);
@@ -104,7 +106,7 @@ const Answer = () => {
     const yy = String(parsed.getFullYear()).slice(-2);
     const month = String(parsed.getMonth() + 1).padStart(2, "0");
     const day = String(parsed.getDate()).padStart(2, "0");
-    return `${yy}.${month}.${day}`;
+    return formatDottedDate(yy, month, day);
   }, [questionDate]);
 
   const fallbackDate = useMemo(() => {
@@ -114,7 +116,7 @@ const Answer = () => {
       const shortYear = yyyy.slice(-2);
       const month = mm.padStart(2, "0");
       const day = ddRaw.slice(0, 2).padStart(2, "0");
-      return `${shortYear}.${month}.${day}`;
+      return formatDottedDate(shortYear, month, day);
     }
     return "";
   }, []);
