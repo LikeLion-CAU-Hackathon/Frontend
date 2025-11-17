@@ -1,12 +1,17 @@
 // “YYYY-MM-DD” 형식으로 오늘 날짜 반환
 export const getTodayDate = (): string => {
-    const today = new Date().toISOString().split('T')[0];
-    return today;
-}
+  const today = new Date();
+  return today.toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).replace(/\. /g, "-").replace(".", "");
+};
 
 // 우표가 오늘 열릴 수 있는지 체크
 export const isCardOpenableToday = (cardId: number): boolean => {
   const today = getTodayDate(); 
+  console.log("오늘 날짜", today);
   const [ , , day] = today.split("-").map(Number);
 
   // TODO: (개발용) 주석 지우기
