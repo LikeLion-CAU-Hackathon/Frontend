@@ -698,6 +698,8 @@ const SliderWrapper = styled.section<{ $disabled?: boolean }>`
   max-width: 100vw;
   z-index: 2;
   pointer-events: ${({ $disabled }) => ($disabled ? "none" : "auto")};
+  padding-bottom: 72px; /* keep dots clear of footer */
+  box-sizing: border-box;
 
   .slick-dots li button:before {
     color: rgba(255, 255, 255, 0.5);
