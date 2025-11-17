@@ -76,13 +76,33 @@ interface AnimationState {
   backgroundImg: string;
 }
 
-const shuffleArray = <T,>(array: T[]): T[] => {
+const createSeededRandom = (seed: number) => {
+  let value = seed % 2147483647;
+  if (value <= 0) value += 2147483646;
+  return () => {
+    value = (value * 16807) % 2147483647;
+    return (value - 1) / 2147483646;
+  };
+};
+
+const shuffleWithSeed = <T,>(array: T[], seed: number): T[] => {
+  const random = createSeededRandom(seed);
   const result = [...array];
   for (let i = result.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(random() * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;
+};
+
+const getSeedFromCardId = (value: string | null): number => {
+  if (!value) return 1;
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = Math.imul(31, hash) + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash || 1;
 };
 
 const AnswerListPage = () => {
@@ -99,24 +119,24 @@ const AnswerListPage = () => {
   const [backgroundOffset, setBackgroundOffset] = useState(() => -currentSlide * 100);
   const rafRef = useRef<number | null>(null);
 
+  // URL params에서 cardId 가져오기
+  const [searchParams, setSearchParams] = useSearchParams();
+  const cardId = searchParams.get("cardId") || searchParams.get("questionId");
+
   // 기본 뒤로가기 차단하고 뒤로가기 하면 무조건 캘린더로
   useEffect(() => {
-    navigate(`/answer-list?questionId=${cardId}`, {replace: true});
+    navigate(`/answer-list?questionId=${cardId}`, { replace: true });
 
     window.history.pushState(null, "", window.location.href);
     window.history.pushState(null, "", window.location.href);
 
     const handleBack = () => {
-      navigate("/calendar", { replace : true });
+      navigate("/calendar", { replace: true });
     };
 
     window.addEventListener("popstate", handleBack);
     return () => window.removeEventListener("popstate", handleBack);
-  }, []);
-
-  // URL params에서 cardId 가져오기
-  const [searchParams, setSearchParams] = useSearchParams();
-  const cardId = searchParams.get("cardId") || searchParams.get("questionId");
+  }, [cardId, navigate]);
 
   // cardId로 질문과 답변 리스트 불러오기
   useEffect(() => {
@@ -301,8 +321,8 @@ const AnswerListPage = () => {
     const baseBackgrounds = Array.from({ length: 10 }, (_value, index) =>
       new URL(`../../assets/images/background/bg${index + 1}.png`, import.meta.url).href
     );
-    return shuffleArray(baseBackgrounds);
-  }, []);
+    return shuffleWithSeed(baseBackgrounds, getSeedFromCardId(cardId));
+  }, [cardId]);
 
   const slides = useMemo(
     () =>
