@@ -123,13 +123,33 @@ interface AnimationState {
   backgroundImg: string;
 }
 
-const shuffleArray = <T,>(array: T[]): T[] => {
+const createSeededRandom = (seed: number) => {
+  let value = seed % 2147483647;
+  if (value <= 0) value += 2147483646;
+  return () => {
+    value = (value * 16807) % 2147483647;
+    return (value - 1) / 2147483646;
+  };
+};
+
+const shuffleWithSeed = <T,>(array: T[], seed: number): T[] => {
+  const random = createSeededRandom(seed);
   const result = [...array];
   for (let i = result.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(random() * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;
+};
+
+const getSeedFromCardId = (value: string | null): number => {
+  if (!value) return 1;
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = Math.imul(31, hash) + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash || 1;
 };
 
 const AnswerListPage = () => {
@@ -180,6 +200,20 @@ const AnswerListPage = () => {
       cancelled = true;
     };
   }, []);
+  // 기본 뒤로가기 차단하고 뒤로가기 하면 무조건 캘린더로
+  useEffect(() => {
+    navigate(`/answer-list?questionId=${cardId}`, { replace: true });
+
+    window.history.pushState(null, "", window.location.href);
+    window.history.pushState(null, "", window.location.href);
+
+    const handleBack = () => {
+      navigate("/calendar", { replace: true });
+    };
+
+    window.addEventListener("popstate", handleBack);
+    return () => window.removeEventListener("popstate", handleBack);
+  }, [cardId, navigate]);
 
   // cardId로 질문과 답변 리스트 불러오기
   useEffect(() => {
@@ -302,19 +336,6 @@ const AnswerListPage = () => {
     }, 650);
   }, [animationState, cardId, currentSlide, navigate, question]);
 
-  // 더미데이터 
-  // TODO: 답변 API 불러오기 
-  // const allAnswers: Answer[] = [
-  //   { id: 1, author: "잘생긴 루돌프", date: "DEC 7", time: "18:44", contents: "아ㅓ알ㅇ러알아러아러아아ㅓ아ㅓㅏ랄ㅇ라얼ㅇ러알알ㅇㄹ아알ㅇ라이라이랑랑라리ㅏㄹㅏㄹ아알아러아ㅓ아러ㅏ러아러ㅏㅓㅇㄹ아ㅓㄹㅇ러ㅓㄹ러ㅏㅓㅇ라러ㅏㅓ라ㅓ러라러ㅏ러아ㅓ라러라ㅓ러ㅏㅓㅏ어라얼아러아렁렁라ㅏㅓ알댜ㅏ러야랑ㄹ아러아러아렁어ㅏㅓㄹ아ㅓ랑러앙ㄹ어러아라ㅓ러ㅏ어아ㅓㅏㅇㄹ알알라ㅏ알알", likes: 99, comments: 99 },
-  //   { id: 2, author: "예쁜 산타", date: "DEC 7", time: "16:24", contents: "2번", likes: 99, comments: 99 },
-  //   { id: 3, author: "건강한 개발자", date: "DEC 7", time: "12:28", contents: "3번", likes: 19, comments: 9 },
-  //   { id: 4, author: "무례한 눈사람", date: "DEC 7", time: "11:59", contents: "4번", likes: 2, comments: 5 },
-  //   { id: 5, author: "잘생긴 산타", date: "DEC 7", time: "13:00", contents: "5번", likes: 2, comments: 0 },
-  //   { id: 6, author: "건강한 눈사람", date: "DEC 7", time: "14:30", contents: "6번", likes: 4, comments: 1 },
-  //   { id: 7, author: "크리스마스", date: "DEC 7", time: "14:30", contents: "7번", likes: 3, comments: 1 },
-   
-  // ];
-
   const answerChunks = useMemo(() => {
     const chunkSize = 4;
     const chunks: Answer[][] = [];
@@ -394,8 +415,8 @@ const AnswerListPage = () => {
     const baseBackgrounds = Array.from({ length: 10 }, (_value, index) =>
       new URL(`../../assets/images/background/bg${index + 1}.png`, import.meta.url).href
     );
-    return shuffleArray(baseBackgrounds);
-  }, []);
+    return shuffleWithSeed(baseBackgrounds, getSeedFromCardId(cardId));
+  }, [cardId]);
 
   const slides = useMemo(
     () =>

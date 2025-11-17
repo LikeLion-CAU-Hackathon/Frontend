@@ -18,11 +18,11 @@ const CalendarCard = ({ card, onClick }: CalendarCardProps) => {
   let stampToShow: string | null = null;
   let opacity = 1;
 
-  // TODO1: 오늘인데 답변 안했으면 opacity=0.9로
+  // TODO1: 오늘인데 답변 안했으면 opacity 0.2로 
   if (isCardOpenableToday(card.id)) {
     if(!card.isAnswered) {
       stampToShow = answeredStamp;
-      opacity = 0.4
+      opacity = 0.2;
     } else {
       stampToShow = answeredStamp;
       opacity= 1;
