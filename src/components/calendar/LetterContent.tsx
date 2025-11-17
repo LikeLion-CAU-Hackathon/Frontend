@@ -83,6 +83,7 @@ const ArticleContainer = styled.article<{ isOpened?: boolean }>`
     isOpened ? "translateY(-15%)" : "translateY(120%)"};
   opacity: ${({ isOpened }) => (isOpened ? 1 : 0)};
   transition: transform 1.5s ease-in-out, opacity 0.6s ease-in-out;
+  pointer-events: ${({ isOpened }) => (isOpened ? "auto" : "none")};
 `;
 
 const QuestionSection = styled.section`
