@@ -79,4 +79,5 @@ const ButtonWrapper = styled.button<{$width: string; $height: string; $borderRad
   opacity: 1;
   pointer-events: auto;
   color: black;
+  -webkit-text-fill-color: black;
 `;
