@@ -199,6 +199,12 @@
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}
+
+.paper::-webkit-scrollbar {
+  display: none; 
 }
 
 .statusMessage {
@@ -247,7 +253,7 @@
   line-height: 1.4;
   overflow-wrap: break-word;
   white-space: pre-wrap;
-  font-family: "Gowun Batang", "MaruBuri", serif;
+  font-family: "MaruBuri", serif;
   text-align: left;
 }
 
@@ -275,10 +281,12 @@
   padding: 16px 48px 16px 20px;
   border-radius: 20px;
   border: 1px solid #bea776;
+  font-family: "MaruBuri";
 }
 
 .replyInput::placeholder {
   color: rgba(47, 21, 11, 0.4);
+  font-family: "MaruBuri";
 }
 
 .replyInput:focus {
