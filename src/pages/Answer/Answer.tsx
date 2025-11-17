@@ -154,7 +154,7 @@ const Answer = () => {
     }
 
     if (trimmedContents.length > 120) {
-      setSubmitError("댓글이 너무 길어서 전송에 실패했어요. \n조금만 줄여주세요.");
+      setSubmitError("댓글이 너무 길어서 전송에 실패했어요.");
       return;
     }
 
