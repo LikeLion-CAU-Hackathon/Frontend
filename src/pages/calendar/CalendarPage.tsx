@@ -5,6 +5,7 @@ import LetterPage from "./LetterPage";
 import CardGrid from "./components/CardGrid";
 import { useNavigate, useLocation } from "react-router-dom";
 import Overlay from "../../components/common/Overlay/Overlay";
+import Modal from "../../components/common/Modal/Modal";
 import { useCalendar } from "../../hooks/useCalendar";
 import { getQuestion } from "../../apis/question/question.api";
 import { getTodayDate } from "../../utils/date";
@@ -20,6 +21,8 @@ const CalendarPage = () => {
     isCardOpened,
     handleCardClick,
     handleCloseLetter,
+    modalMessage,
+    closeNoticeModal,
   } = useCalendar(navigate);
 
   const [questionText, setQuestionText] = useState("");
@@ -117,6 +120,13 @@ const CalendarPage = () => {
     <PageContainer isOpened={isCardOpened}>
       {isCardOpened && (
         <Overlay isVisible={isCardOpened} onClick={handleCloseLetter} />
+      )}
+      {modalMessage && (
+        <Modal
+          isOpen={Boolean(modalMessage)}
+          message={modalMessage}
+          onClose={closeNoticeModal}
+        />
       )}
       <MainContent>
         <CardGrid cards={cards} onCardClick={handleCardClick} />
