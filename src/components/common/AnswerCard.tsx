@@ -72,7 +72,7 @@ const AnswerCard = ({
 
   const handleCommentClick = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
-    // TODO: 댓글 보기 이벤트 연결 필요
+    handleCardClick();
   };
 
   return (
