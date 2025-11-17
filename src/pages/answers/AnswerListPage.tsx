@@ -76,6 +76,15 @@ interface AnimationState {
   backgroundImg: string;
 }
 
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+};
+
 const AnswerListPage = () => {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -85,6 +94,10 @@ const AnswerListPage = () => {
   const [animationState, setAnimationState] = useState<AnimationState | null>(null);
   const pageWrapperRef = useRef<HTMLElement | null>(null);
   const animationTimeoutRef = useRef<number | null>(null);
+  const sliderRef = useRef<Slider | null>(null);
+  const sliderWrapperRef = useRef<HTMLDivElement | null>(null);
+  const [backgroundOffset, setBackgroundOffset] = useState(() => -currentSlide * 100);
+  const rafRef = useRef<number | null>(null);
 
   // URL params에서 cardId 가져오기
   const [searchParams, setSearchParams] = useSearchParams();
@@ -222,13 +235,80 @@ const AnswerListPage = () => {
     }
   }, [answerChunks.length, currentSlide]);
 
+  // 슬라이더 위치 추적하여 배경 strip 동기화
+  useEffect(() => {
+    if (!sliderWrapperRef.current || answerChunks.length === 0) return;
+
+    // 슬라이더가 초기화될 때까지 약간 대기
+    const initTimeout = setTimeout(() => {
+      const trackElement = sliderWrapperRef.current?.querySelector('.slick-track') as HTMLElement;
+      if (!trackElement) {
+        // track 요소가 아직 준비되지 않은 경우 초기 offset 설정
+        setBackgroundOffset(-currentSlide * 100);
+        return;
+      }
+
+      const updateBackgroundPosition = () => {
+        if (!sliderWrapperRef.current) return;
+        
+        const track = sliderWrapperRef.current.querySelector('.slick-track') as HTMLElement;
+        if (!track) return;
+
+        const transform = window.getComputedStyle(track).transform;
+        if (!transform || transform === 'none') {
+          // transform이 없으면 currentSlide 기반으로 계산
+          setBackgroundOffset(-currentSlide * 100);
+          rafRef.current = requestAnimationFrame(updateBackgroundPosition);
+          return;
+        }
+
+        // matrix 또는 matrix3d에서 translateX 값 추출
+        const matrix = transform.match(/matrix(?:3d)?\(([^)]+)\)/);
+        if (!matrix) {
+          setBackgroundOffset(-currentSlide * 100);
+          rafRef.current = requestAnimationFrame(updateBackgroundPosition);
+          return;
+        }
+
+        const values = matrix[1].split(',').map(v => parseFloat(v.trim()));
+        // matrix: [a, b, c, d, tx, ty]
+        // matrix3d: [m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44]
+        const translateX = values.length >= 6 ? values[4] : (values.length >= 16 ? values[12] : 0);
+
+        // 슬라이더의 translateX를 vw 단위로 변환
+        const sliderWidth = sliderWrapperRef.current.clientWidth || window.innerWidth;
+        const offsetInVw = (translateX / sliderWidth) * 100;
+
+        setBackgroundOffset(offsetInVw);
+
+        rafRef.current = requestAnimationFrame(updateBackgroundPosition);
+      };
+
+      rafRef.current = requestAnimationFrame(updateBackgroundPosition);
+    }, 100);
+
+    return () => {
+      clearTimeout(initTimeout);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, [answerChunks.length, currentSlide]);
+
+  const backgroundPool = useMemo(() => {
+    const baseBackgrounds = Array.from({ length: 10 }, (_value, index) =>
+      new URL(`../../assets/images/background/bg${index + 1}.png`, import.meta.url).href
+    );
+    return shuffleArray(baseBackgrounds);
+  }, []);
+
   const slides = useMemo(
     () =>
       Array.from({ length: answerChunks.length }, (_, i) => ({
         id: i + 1,
-        backgroundImg: new URL(`../../assets/images/background/bg${(i % 10) + 1}.png`, import.meta.url).href,
+        backgroundImg: backgroundPool[i % backgroundPool.length],
       })),
-    [answerChunks.length]
+    [answerChunks.length, backgroundPool]
   );
 
   const defaultBackground = new URL("../../assets/images/background/bg1.png", import.meta.url).href;
@@ -310,7 +390,7 @@ const AnswerListPage = () => {
   if (loading) {
     return (
       <PageWrapper>
-        <BackgroundStrip index={currentSlide} bgList={bgList}>
+        <BackgroundStrip offset={backgroundOffset} bgList={bgList}>
           {bgList.map((src) => (
             <BackgroundItem key={src} src={src} />
           ))}
@@ -324,15 +404,15 @@ const AnswerListPage = () => {
 
   return (
     <PageWrapper>
-      <BackgroundStrip index={currentSlide} bgList={bgList}>
+      <BackgroundStrip offset={backgroundOffset} bgList={bgList}>
         {bgList.map((src) => (
           <BackgroundItem key={src} src={src} />
         ))}
       </BackgroundStrip>
       <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"} disablePointerEvents />
       <QuestionHeader>{question}</QuestionHeader>
-      <SliderWrapper $disabled={Boolean(animationState)}>
-        <Slider {...settings}>
+      <SliderWrapper ref={sliderWrapperRef} $disabled={Boolean(animationState)}>
+        <Slider ref={sliderRef} {...settings}>
           {slides.map((slide, index) => (
             <AnswerSlide
               key={slide.id}
@@ -406,26 +486,20 @@ const PageWrapper = styled.main`
   color: #000;
 `;
 
-const BackgroundStrip = styled.div<{ index: number; bgList: string[] }>`
+const BackgroundStrip = styled.div<{ offset: number; bgList: string[] }>`
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
-  
-  /* 슬라이드 개수만큼 가로로 길게 */
   width: ${({ bgList }) => `${bgList.length * 100}vw`};
-
   display: flex;
-  transition: transform 0.6s ease-in-out;
-
-  transform: translateX(${({ index }) => `-${index * 100}vw`});
+  transform: translateX(${({ offset }) => `${offset}vw`});
 `;
 
 const BackgroundItem = styled.div<{ src: string }>`
   flex: 0 0 100vw;
   height: 100%;
-  background-image: url(${({ src }) => src});
-
+  background: url(${({ src }) => src}) no-repeat;
 `;
 
 
