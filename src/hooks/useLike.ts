@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addLike, deleteLike } from "../apis/answer/like.api";
 import { toggleStoredLikedAnswer } from "../utils/likedAnswers";
 
@@ -6,7 +6,19 @@ export const useLike = (initialLiked: boolean, initialCount: number, answerId: n
   const [liked, setLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(initialCount);
 
+  useEffect(() => {
+    setLiked(initialLiked);
+  }, [initialLiked]);
+
+  useEffect(() => {
+    setLikeCount(initialCount);
+  }, [initialCount]);
+
   const handleLike = async () => {
+    if (!answerId || answerId <= 0) {
+      return;
+    }
+
     try {
       let response;
 
