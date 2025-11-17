@@ -184,8 +184,14 @@ const Comments = () => {
           profile?.username ??
           null;
         setMyNickname(nickname);
-      } catch (error) {
+      } catch (error: any) {
         console.error("내 프로필 정보를 불러오지 못했습니다:", error);
+        /* 질문 Id가 없을 경우 로그인 페이지로 redirect */
+        if (error.message === "questionId가 존재하지 않습니다.") {
+          navigate("/", { replace: true });   
+          return;
+        }
+
         if (!cancelled) {
           setMyNickname(null);
         }

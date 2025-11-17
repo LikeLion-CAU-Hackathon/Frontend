@@ -1,21 +1,15 @@
-import { axiosAPI } from "../axiosInstance";
+import { authAxios } from "../axiosInstance";
 
-export interface UserProfile {
-  nickname?: string;
-  userNickname?: string;
-  name?: string;
-  username?: string;
-}
+export const getMyProfile = async (questionId?: number | string) => {
+  if (!questionId && questionId !== 0) {
+    throw new Error("questionId가 존재하지 않습니다.");
+  }
 
-export const getMyProfile = async (questionId?: number | string): Promise<UserProfile> => {
-  const api = axiosAPI();
-  const hasQuestionId =
-    typeof questionId === "number" || (typeof questionId === "string" && questionId.length > 0);
-  const endpoint = hasQuestionId
-    ? `/users/nickname/${encodeURIComponent(String(questionId))}`
-    : "/users/nickname";
-
-  const response = await api.get(endpoint);
-  const payload = response?.data?.data ?? response?.data;
-  return payload;
+  try {
+    const response = await authAxios.get(`/users/nickname/${questionId}`);
+    return response.data;
+  } catch (error) {
+    console.error("프로필을 가져오는 데 실패했습니다.", error);
+    throw error;
+  }
 };

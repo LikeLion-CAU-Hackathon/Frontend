@@ -1,65 +1,34 @@
-import { axiosAPI } from "../axiosInstance";
+import { authAxios } from "../axiosInstance";
 
 export const getAnswerList = async (questionId: number) => {
-  const api = axiosAPI();
-  try {
-    const response = await api.get(`/questions/${questionId}/answers`);
-    return response.data;
-  } catch (error) {
-    console.error("해당 질문의 답변내용을 가져오는데 실패했습니다.", error);
-    throw error;
-  }
+  const response = await authAxios.get(`/questions/${questionId}/answers`);
+  return response.data;
 };
 
 export const checkAnswered = async (questionId: number) => {
-  const api = axiosAPI();
-  const response = await api.get(`/answers/list/${questionId}`);
+  const response = await authAxios.get(`/answers/list/${questionId}`);
   return response.data;
 };
 
 export const postAnswerReply = async (answerId: number, contents: string) => {
-  const api = axiosAPI();
-  try {
-    const response = await api.post(`/answers/${answerId}`, { contents });
-    return response.data;
-  } catch (error) {
-    console.error("답변을 전송하는 데 실패했습니다.", error);
-    throw error;
-  }
+  const response = await authAxios.post(`/answers/${answerId}`, { contents });
+  return response.data;
 };
 
 export const postAnswerComment = async (answerId: number, contents: string) => {
-  const api = axiosAPI();
-  try {
-    const response = await api.post(`/answers/${answerId}/reply`, {
-      text: contents,
-      contents,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("댓글을 전송하는 데 실패했습니다.", error);
-    throw error;
-  }
+  const response = await authAxios.post(`/answers/${answerId}/reply`, {
+    text: contents,
+    contents,
+  });
+  return response.data;
 };
 
 export const getAnswerReplies = async (answerId: number) => {
-  const api = axiosAPI();
-  try {
-    const response = await api.get(`/answers/${answerId}/reply`);
-    return response.data;
-  } catch (error) {
-    console.error("댓글 목록을 가져오는 데 실패했습니다.", error);
-    throw error;
-  }
+  const response = await authAxios.get(`/answers/${answerId}/reply`);
+  return response.data;
 };
 
 export const getAnswerLikeCount = async (answerId: number) => {
-  const api = axiosAPI();
-  try {
-    const response = await api.get(`/answers/${answerId}/thumbs/count`);
-    return response.data;
-  } catch (error) {
-    console.error("좋아요 수를 가져오는 데 실패했습니다.", error);
-    throw error;
-  }
+  const response = await authAxios.get(`/answers/${answerId}/thumbs/count`);
+  return response.data;
 };
