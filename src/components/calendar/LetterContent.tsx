@@ -21,14 +21,9 @@ const LetterContent = ({
   error = null,
 }: LetterContentProps) => {
   const headerLabel = sequence
-    ? `${formatDayToKorean(sequence)} 번째 질문`
-    : "오늘의 질문";
-  const formattedDate = date
-    ? new Date(date).toLocaleDateString("ko-KR", {
-        month: "long",
-        day: "numeric",
-      })
-    : "";
+    ? `${formatDayToKorean(sequence)} 번째 질문:`
+    : "오늘의 질문:";
+
 
   const rawQuestion = question?.trim() ?? "";
   const displayQuestion = (() => {
@@ -39,29 +34,26 @@ const LetterContent = ({
   })();
 
   return (
-    <>
       <ArticleContainer isOpened={isOpened}>
         <QuestionSection>
           <QuestionHeader>{headerLabel}</QuestionHeader>
-          {formattedDate && <QuestionDate>{formattedDate}</QuestionDate>}
           <QuestionText>{displayQuestion}</QuestionText>
         </QuestionSection>
-      </ArticleContainer>
-      <ButtonSection isOpened={isOpened}>
-        <AnswerButton
-          width="135px"
-          height="48px"
-          fontSize="16px"
-          borderRadius="12px"
-          to="/answer"
-          state={{
-            questionId: sequence ?? null,
-            questionText: rawQuestion,
-            questionDate: date ?? null,
-          }}
-        />
-      </ButtonSection>
-    </>
+        <ButtonSection isOpened={isOpened}>
+            <AnswerButton
+            width="135px"
+            height="48px"
+            fontSize="16px"
+            borderRadius="12px"
+            to="/answer"
+            state={{
+                questionId: sequence ?? null,
+                questionText: rawQuestion,
+                questionDate: date ?? null,
+            }}
+            />
+        </ButtonSection>
+    </ArticleContainer>
   );
 };
 
@@ -77,12 +69,13 @@ const ArticleContainer = styled.article<{ isOpened?: boolean }>`
   display: flex;
   flex-direction: column;
   font-family: "Gowun Batang", serif;
-  padding: 34px;
+  padding: 34px 22px;
   gap: 15px;
   transform: ${({ isOpened }) =>
     isOpened ? "translateY(-15%)" : "translateY(120%)"};
   opacity: ${({ isOpened }) => (isOpened ? 1 : 0)};
   transition: transform 1.5s ease-in-out, opacity 0.6s ease-in-out;
+  pointer-events: ${({ isOpened }) => (isOpened ? "auto" : "none")};
 `;
 
 const QuestionSection = styled.section`
@@ -99,32 +92,21 @@ const QuestionHeader = styled.header`
   font-weight: 400;
 `;
 
-const QuestionDate = styled.p`
-  margin: 4px 0 12px;
-  font-size: 16px;
-  color: #5c3a1b;
-`;
-
 const QuestionText = styled.h2`
   color: black;
   font-weight: 700;
   font-size: 20px;
-  padding: 0 20px;
+  white-space: normal;
+  word-break: keep-all;
+
 `;
 
 const ButtonSection = styled.section<{ isOpened?: boolean }>`
   cursor: pointer;
   text-align: center;
   align-items: center;
-  z-index: 100000;
-  position: absolute;
-  opacity: ${({ isOpened }) => (isOpened ? 1 : 0)};
+  z-index: 5;
+  position: relative;
   pointer-events: ${({ isOpened }) => (isOpened ? "auto" : "none")};
-  transition: opacity 0.6s ease-in-out 0.2s;
-  transform: ${({ isOpened }) =>
-    isOpened ? "translateY(-15%)" : "translateY(120%)"};
-  transition:
-    transform 1.5s ease-in-out,
-    opacity 0.6s ease-in-out 0.2s;
 `;
 

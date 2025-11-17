@@ -36,6 +36,7 @@ const LetterWrapper = styled.main`
   justify-content: center;
   align-items: center;
   margin-left: -10.4px; // 중앙 정렬이 안되는 이유?
+  pointer-events: none;
 `;
 
 const EnvelopeBody = styled.section`
@@ -49,6 +50,7 @@ const TopFold = styled.img`
   margin-bottom: -25px;
   z-index: 1;
   width: 100%;
+  pointer-events: none;
 `;
 
 const LetterBackground = styled.div`
@@ -58,6 +60,7 @@ const LetterBackground = styled.div`
   border-radius: 4.16px;
   border: 0.39px #781313 solid;
   z-index: 0;
+  pointer-events: none;
 `;
 
 const SideFold = styled.img`
@@ -67,6 +70,7 @@ const SideFold = styled.img`
   display: block;
   height: 230px;
   width: 100%;
+  pointer-events: none;
 `;
 
 const BottomFold = styled.img`
@@ -74,6 +78,7 @@ const BottomFold = styled.img`
   z-index: 4;
   bottom: 0;
   display: block;
+  pointer-events: none;
 `;
 
 const StampSection = styled.section`
@@ -81,4 +86,5 @@ const StampSection = styled.section`
   z-index: 5;
   bottom: 10px;
   right: 23px;
+  pointer-events: auto;
   `;
