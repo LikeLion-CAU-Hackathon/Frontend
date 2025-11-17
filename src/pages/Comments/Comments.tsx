@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Comments.module.css";
@@ -8,6 +8,7 @@ import type { AnswerCardData } from "../../components/common/AnswerCard";
 import AnswerCard from "../../components/common/AnswerCard";
 import { getAnswerReplies, getAnswerLikeCount, postAnswerComment } from "../../apis/answer/answer.api";
 import Overlay from "../../components/common/Overlay/Overlay";
+import { getMyProfile } from "../../apis/user/user.api";
 
 const createFallbackFeatured = (): AnswerCardData => ({
   id: -1,
@@ -24,6 +25,8 @@ const createFallbackFeatured = (): AnswerCardData => ({
 interface ReplyItem {
   id: number;
   author: string;
+  baseAuthor: string;
+  isMine: boolean;
   timestamp: string;
   body: string;
 }
@@ -50,6 +53,40 @@ type RawReply = {
   };
 };
 
+const stripOwnIndicator = (value: string): string => value.replace(/\s*\(나\)\s*$/, "").trim();
+
+const formatAuthorWithOwnership = (rawValue: string | undefined | null, nickname: string | null) => {
+  const trimmed = typeof rawValue === "string" ? rawValue.trim() : "";
+  const withoutIndicator = stripOwnIndicator(trimmed);
+  const baseAuthor = withoutIndicator.length > 0 ? withoutIndicator : "익명";
+  const isMine = Boolean(nickname && baseAuthor === nickname);
+  const displayAuthor = isMine ? `${baseAuthor} (나)` : baseAuthor;
+  return { displayAuthor, baseAuthor, isMine };
+};
+
+const updateRepliesWithNickname = (replies: ReplyItem[], nickname: string | null): ReplyItem[] => {
+  if (!replies.length) {
+    return replies;
+  }
+  let changed = false;
+  const updated = replies.map((reply) => {
+    const { displayAuthor, baseAuthor, isMine } = formatAuthorWithOwnership(
+      reply.baseAuthor || reply.author,
+      nickname
+    );
+    if (
+      reply.author === displayAuthor &&
+      reply.baseAuthor === baseAuthor &&
+      reply.isMine === isMine
+    ) {
+      return reply.baseAuthor ? reply : { ...reply, baseAuthor };
+    }
+    changed = true;
+    return { ...reply, author: displayAuthor, baseAuthor, isMine };
+  });
+  return changed ? updated : replies;
+};
+
 const Comments = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -57,6 +94,7 @@ const Comments = () => {
     answer?: AnswerCardData | null;
     questionTitle?: string;
     backgroundImg?: string;
+    cardId?: number | string | null;
   };
 
   const answerId = state.answer?.id ?? null;
@@ -91,6 +129,56 @@ const Comments = () => {
     }
   }, [state.answer]);
 
+  const [myNickname, setMyNickname] = useState<string | null>(null);
+  const myNicknameRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    myNicknameRef.current = myNickname;
+    setReplies((prev) => updateRepliesWithNickname(prev, myNickname));
+  }, [myNickname]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const resolveQuestionParam = () => {
+      if (typeof state.cardId === "number" && Number.isFinite(state.cardId)) {
+        return state.cardId;
+      }
+      if (typeof state.cardId === "string" && state.cardId.trim().length > 0) {
+        const asNumber = Number(state.cardId);
+        if (Number.isFinite(asNumber)) {
+          return asNumber;
+        }
+        return state.cardId;
+      }
+      return undefined;
+    };
+
+    const fetchProfile = async () => {
+      try {
+        const profile = await getMyProfile(resolveQuestionParam());
+        if (cancelled) return;
+        const nickname =
+          profile?.nickname ??
+          profile?.userNickname ??
+          profile?.name ??
+          profile?.username ??
+          null;
+        setMyNickname(nickname);
+      } catch (error) {
+        console.error("내 프로필 정보를 불러오지 못했습니다:", error);
+        if (!cancelled) {
+          setMyNickname(null);
+        }
+      }
+    };
+
+    fetchProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [state.cardId]);
+
   const fetchReplies = useCallback(async () => {
     if (!answerId) {
       setReplies([]);
@@ -124,9 +212,15 @@ const Comments = () => {
               (typeof (reply as { user?: { name?: string } }).user?.name === "string"
                 ? (reply as { user?: { name?: string } }).user!.name
                 : undefined);
+            const { displayAuthor, baseAuthor, isMine } = formatAuthorWithOwnership(
+              nickname,
+              myNicknameRef.current
+            );
             return {
               id: reply.replyId ?? reply.id ?? index,
-              author: nickname ?? "익명",
+              author: displayAuthor,
+              baseAuthor,
+              isMine,
               timestamp: reply.createdTime ?? reply.createdAt ?? "",
               body: reply.text ?? reply.contents ?? reply.body ?? "",
             };
