@@ -149,7 +149,7 @@
 
 .replyBar {
   margin-top: auto;
-  width: calc(100% + 40px);
+  width: 395px;
   margin-left: -20px;
   margin-right: -20px;
   background: #decba1;
