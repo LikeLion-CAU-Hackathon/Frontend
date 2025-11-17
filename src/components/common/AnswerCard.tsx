@@ -147,7 +147,7 @@ const AnswerWrapper = styled.div`
 
 const CardHeader = styled.header`
   color: #000;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 `;
 
 /* TODO: 스크롤바 수정 필요*/
