@@ -257,25 +257,28 @@ const AnswerListPage = () => {
       cancelled = true;
     };
   }, [cardId]);
+
   // 기본 뒤로가기 차단하고 뒤로가기 하면 무조건 캘린더로
   useEffect(() => {
     // 현재 URL을 replace하여 history에 남기지 않음
-    navigate(`/answer-list?questionId=${cardId}`, { replace: true });
+    if (cardId) {
+      navigate(`/answer-list?questionId=${cardId}`, { replace: true });
+    }
 
-    // history 스택에 추가 엔트리 삽입 (뒤로가기 시 2번 뒤로가기해야 calendar로 가도록)
-    window.history.pushState(null, "", window.location.href);
-    window.history.pushState(null, "", window.location.href);
+    // history에 더미 상태를 추가하여 popstate 이벤트가 발생하도록 함
+    window.history.pushState({ preventBack: true }, "", window.location.href);
 
-    const handleBack = () => {
-      // popstate 이벤트가 발생하면 즉시 calendar로 이동
-      // preventDefault는 불가능하므로, navigate를 바로 호출
-      navigate("/calendar", { replace: false });
+    const handlePopState = () => {
+      // 뒤로가기 시 무조건 캘린더로 이동 (replace로 history 스택 정리)
+      navigate("/calendar", { replace: true });
     };
 
-    window.addEventListener("popstate", handleBack);
-    return () => window.removeEventListener("popstate", handleBack);
+    window.addEventListener("popstate", handlePopState);
+    
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
   }, [cardId, navigate]);
-
   // cardId로 질문과 답변 리스트 불러오기
   useEffect(() => {
     if (!cardId) {
