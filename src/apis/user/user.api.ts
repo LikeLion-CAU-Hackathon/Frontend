@@ -7,8 +7,12 @@ export interface UserProfile {
   username?: string;
 }
 
-export const getMyProfile = async (): Promise<UserProfile> => {
+export const getMyProfile = async (questionId?: number | string): Promise<UserProfile> => {
   const api = axiosAPI();
-  const response = await api.get("/users/nickname");
+  const config =
+    typeof questionId === "number" || (typeof questionId === "string" && questionId.length > 0)
+      ? { params: { questionId } }
+      : undefined;
+  const response = await api.get("/users/nickname", config);
   return response.data;
 };

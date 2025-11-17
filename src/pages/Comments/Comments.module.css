@@ -1,11 +1,12 @@
 .container {
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 20px;
-  padding: 32px 0 0;
+  padding: calc(32px + env(safe-area-inset-top, 0px)) 0 0;
   color: #000;
   font-family: "MaruBuri", "Times New Roman", "Georgia", serif;
   font-size: 14px;
@@ -18,6 +19,7 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   position: relative;
+  overflow: hidden;
 }
 
 .container > :not(:first-child) {
@@ -37,6 +39,7 @@
   width: 100%;
   align-self: center;
   min-height: 0;
+  overflow: hidden;
   transform: translateY(100%);
   transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -88,6 +91,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
+  scroll-padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
   -ms-overflow-style: none; 
   scrollbar-width: none; 
 }
@@ -153,11 +157,13 @@
   margin-right: -20px;
   background: #decba1;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 22px 24px 28px;
+  padding: 16px 24px calc(16px + env(safe-area-inset-bottom, 0px));
   display: flex;
   align-items: stretch;
-  position: relative;
+  position: sticky;
+  bottom: 0;
   box-shadow: none;
+  z-index: 5;
 }
 
 .replyInput {
@@ -185,7 +191,7 @@
 .replySubmit {
   position: absolute;
   right: 36px;
-  bottom: 26px;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -208,4 +214,3 @@
   color: #a94438;
   font-size: 0.82rem;
 }
-
