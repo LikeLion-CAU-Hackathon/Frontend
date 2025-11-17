@@ -153,6 +153,11 @@ const Answer = () => {
       return;
     }
 
+    if (trimmedContents.length > 120) {
+      setSubmitError("댓글이 너무 길어서 전송에 실패했어요. \n조금만 줄여주세요.");
+      return;
+    }
+
     const targetId =
       typeof questionId === "number" && Number.isFinite(questionId) ? questionId : null;
     if (!targetId) {
@@ -169,7 +174,7 @@ const Answer = () => {
       });
     } catch (error) {
       console.error("답변 전송 중 오류가 발생했습니다:", error);
-      setSubmitError("답변을 전송하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      setSubmitError("답변을 전송하지 못했어요. 잠시 후 다시 시도해 주세요.");
     } finally {
       setIsSubmitting(false);
     }
@@ -180,37 +185,46 @@ const Answer = () => {
       <button type="button" className={styles.closeButton} onClick={() => navigate(-1)} aria-label="닫기">
         <img src={closeIcon} alt="닫기" />
       </button>
+      <section className={styles.answerSection}>
       <section className={styles.questionSection}>
         <h2 className={styles.questionTitle}>{body}</h2>
       </section>
 
       <p className={styles.fromText}>{fromLabel}</p>
 
-      <form className={styles.answerSection} aria-label="답변 입력 영역" onSubmit={handleSubmit}>
+      <form className={styles.answerForm} aria-label="답변 입력 영역" onSubmit={handleSubmit}>
         <div className={styles.paper}>
           <textarea
             className={styles.answerInput}
             placeholder="편지 내용을 작성해 주세요."
             value={answerContents}
             onChange={(event) => {
-              setAnswerContents(event.target.value);
-              if (submitError) {
-                setSubmitError(null);
-              }
+                const value = event.target.value;
+
+                if (value.length > 120) {
+                  setSubmitError("댓글이 너무 길어요. 조금만 줄여주세요.");
+                } else {
+                  setSubmitError(null);
+                }
+
+                setAnswerContents(value)
             }}
             aria-label="답변 내용 입력"
             maxLength={500}
             disabled={isSubmitting}
           />
         </div>
+        <div className={styles.footerWrapper}>
         {submitError && <p className={styles.errorMessage}>{submitError}</p>}
         <div className={styles.answerFooter}>
           <p className={styles.questionSubtitle}>{subText}</p>
           <button className={styles.submitButton} type="submit" disabled={isSubmitting}>
             {isSubmitting ? "전송 중..." : "답변하기"}
           </button>
+          </div>
         </div>
       </form>
+      </section>
     </div>
   );
 };

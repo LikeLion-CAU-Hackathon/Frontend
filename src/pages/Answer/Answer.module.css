@@ -13,7 +13,7 @@
   border-radius: 16px;
   border: 1px solid #b39a63;
   box-shadow: 0 24px 36px rgba(12, 6, 0, 0.35);
-  font-family: "Gowun Batang", serif;
+  font-family: "MaruBuri", serif;
   position: relative;
   margin-top: 120px;
 }
@@ -29,8 +29,8 @@
 
 .closeButton {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 12px;
+  right: 12px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -38,8 +38,8 @@
 }
 
 .closeButton img {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
 }
 
 .questionSection {
@@ -48,18 +48,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
   background: transparent;
   border: none;
   box-shadow: none;
   text-align: center;
+  white-space: normal;
+  word-break: keep-all;
 }
 
 .questionSection::after {
   content: "";
   width: 100%;
   border-top: 1px dashed rgba(92, 58, 27, 0.6);
-  margin-top: 12px;
+  margin: 22px;
 }
 
 .questionOrder {
@@ -71,51 +72,54 @@
 
 .questionTitle {
   margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  color: #2f1c0f;
+  font-size: 20px;
+  font-weight: 400;
+  color: black;
   line-height: 1.6;
 }
 
 .fromText {
-  margin: 0;
-  color: #2f1c0f;
+  margin: 0px 0px 10px 0px;
+  color: black;
   font-size: 16px;
+  font-family: MaruBuri;
+  font-weight: 400;
 }
 
-.answerSection {
+.answerForm {
   width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
-  padding-bottom: 32px;
+  gap: 15px;
 }
 
 .answerFooter {
-  margin-top:15%;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap:15px;
 }
 
 .paper {
   width: 100%;
   flex: 1;
   min-height: 220px;
-  padding: 32px 24px;
+  padding: 18px;
   border-radius: 20px;
   border: 1px solid #d8c08a;
   background: none;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.08);
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.paper::-webkit-scrollbar {
+  display: none;
 }
 
 .paperTexture {
@@ -134,11 +138,16 @@
   border: none;
   background: transparent;
   color: #2f1c0f;
-  font-family: "Gowun Batang", "Nanum Myeongjo", serif;
-  font-size: 18px;
+  font-family: "MaruBuri";
+  font-size: 16px;
   line-height: 1.6;
   resize: none;
   z-index: 1;
+  scrollbar-width: none;
+}
+
+.answerInput::-webkit-scrollbar {
+  display: none; 
 }
 
 .answerInput::placeholder {
@@ -156,17 +165,14 @@
   font-size: 17px;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border:none;
 }
 
 .submitButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 28px rgba(20, 6, 0, 0.22);
 }
 
 .submitButton:active {
   transform: translateY(0);
-  box-shadow: 0 8px 16px rgba(20, 6, 0, 0.2);
 }
 
 .submitButton:disabled {
@@ -176,7 +182,7 @@
 
 .questionSubtitle {
   margin: 0;
-  color: #7d6441;
+  color: rgba(0, 0, 0, 0.50);
   font-size: 15px;
   align-self: flex-end;
 }
@@ -184,5 +190,24 @@
 .errorMessage {
   margin: 0;
   color: #a03939;
-  font-size: 14px;
+  font-size: 13px;
+  white-space: pre-line;
+  max-height:20px;
+}
+
+.answerSection {
+  margin: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.footerWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  min-height: 60px;
+  gap:17px;
 }
