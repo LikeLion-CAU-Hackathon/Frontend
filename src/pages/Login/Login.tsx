@@ -35,7 +35,8 @@ const Login = () => {
       setAccessToken(token);
     }
 
-    const redirectParam = params.get("redirect");
+    const redirectParam = params.get("redirect") ?? hashParams.get("redirect");
+
     const redirectPath = redirectParam
       ? redirectParam.startsWith("/")
         ? redirectParam
