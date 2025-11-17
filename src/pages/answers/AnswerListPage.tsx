@@ -76,6 +76,35 @@ interface AnimationState {
   backgroundImg: string;
 }
 
+const createSeededRandom = (seed: number) => {
+  let value = seed % 2147483647;
+  if (value <= 0) value += 2147483646;
+  return () => {
+    value = (value * 16807) % 2147483647;
+    return (value - 1) / 2147483646;
+  };
+};
+
+const shuffleWithSeed = <T,>(array: T[], seed: number): T[] => {
+  const random = createSeededRandom(seed);
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+};
+
+const getSeedFromCardId = (value: string | null): number => {
+  if (!value) return 1;
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = Math.imul(31, hash) + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash || 1;
+};
+
 const AnswerListPage = () => {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -85,10 +114,29 @@ const AnswerListPage = () => {
   const [animationState, setAnimationState] = useState<AnimationState | null>(null);
   const pageWrapperRef = useRef<HTMLElement | null>(null);
   const animationTimeoutRef = useRef<number | null>(null);
+  const sliderRef = useRef<Slider | null>(null);
+  const sliderWrapperRef = useRef<HTMLDivElement | null>(null);
+  const [backgroundOffset, setBackgroundOffset] = useState(() => -currentSlide * 100);
+  const rafRef = useRef<number | null>(null);
 
   // URL params에서 cardId 가져오기
   const [searchParams, setSearchParams] = useSearchParams();
   const cardId = searchParams.get("cardId") || searchParams.get("questionId");
+
+  // 기본 뒤로가기 차단하고 뒤로가기 하면 무조건 캘린더로
+  useEffect(() => {
+    navigate(`/answer-list?questionId=${cardId}`, { replace: true });
+
+    window.history.pushState(null, "", window.location.href);
+    window.history.pushState(null, "", window.location.href);
+
+    const handleBack = () => {
+      navigate("/calendar", { replace: true });
+    };
+
+    window.addEventListener("popstate", handleBack);
+    return () => window.removeEventListener("popstate", handleBack);
+  }, [cardId, navigate]);
 
   // cardId로 질문과 답변 리스트 불러오기
   useEffect(() => {
@@ -194,19 +242,6 @@ const AnswerListPage = () => {
     }, 650);
   }, [animationState, cardId, currentSlide, navigate, question]);
 
-  // 더미데이터 
-  // TODO: 답변 API 불러오기 
-  // const allAnswers: Answer[] = [
-  //   { id: 1, author: "잘생긴 루돌프", date: "DEC 7", time: "18:44", contents: "아ㅓ알ㅇ러알아러아러아아ㅓ아ㅓㅏ랄ㅇ라얼ㅇ러알알ㅇㄹ아알ㅇ라이라이랑랑라리ㅏㄹㅏㄹ아알아러아ㅓ아러ㅏ러아러ㅏㅓㅇㄹ아ㅓㄹㅇ러ㅓㄹ러ㅏㅓㅇ라러ㅏㅓ라ㅓ러라러ㅏ러아ㅓ라러라ㅓ러ㅏㅓㅏ어라얼아러아렁렁라ㅏㅓ알댜ㅏ러야랑ㄹ아러아러아렁어ㅏㅓㄹ아ㅓ랑러앙ㄹ어러아라ㅓ러ㅏ어아ㅓㅏㅇㄹ알알라ㅏ알알", likes: 99, comments: 99 },
-  //   { id: 2, author: "예쁜 산타", date: "DEC 7", time: "16:24", contents: "2번", likes: 99, comments: 99 },
-  //   { id: 3, author: "건강한 개발자", date: "DEC 7", time: "12:28", contents: "3번", likes: 19, comments: 9 },
-  //   { id: 4, author: "무례한 눈사람", date: "DEC 7", time: "11:59", contents: "4번", likes: 2, comments: 5 },
-  //   { id: 5, author: "잘생긴 산타", date: "DEC 7", time: "13:00", contents: "5번", likes: 2, comments: 0 },
-  //   { id: 6, author: "건강한 눈사람", date: "DEC 7", time: "14:30", contents: "6번", likes: 4, comments: 1 },
-  //   { id: 7, author: "크리스마스", date: "DEC 7", time: "14:30", contents: "7번", likes: 3, comments: 1 },
-   
-  // ];
-
   const answerChunks = useMemo(() => {
     const chunkSize = 4;
     const chunks: Answer[][] = [];
@@ -222,13 +257,80 @@ const AnswerListPage = () => {
     }
   }, [answerChunks.length, currentSlide]);
 
+  // 슬라이더 위치 추적하여 배경 strip 동기화
+  useEffect(() => {
+    if (!sliderWrapperRef.current || answerChunks.length === 0) return;
+
+    // 슬라이더가 초기화될 때까지 약간 대기
+    const initTimeout = setTimeout(() => {
+      const trackElement = sliderWrapperRef.current?.querySelector('.slick-track') as HTMLElement;
+      if (!trackElement) {
+        // track 요소가 아직 준비되지 않은 경우 초기 offset 설정
+        setBackgroundOffset(-currentSlide * 100);
+        return;
+      }
+
+      const updateBackgroundPosition = () => {
+        if (!sliderWrapperRef.current) return;
+        
+        const track = sliderWrapperRef.current.querySelector('.slick-track') as HTMLElement;
+        if (!track) return;
+
+        const transform = window.getComputedStyle(track).transform;
+        if (!transform || transform === 'none') {
+          // transform이 없으면 currentSlide 기반으로 계산
+          setBackgroundOffset(-currentSlide * 100);
+          rafRef.current = requestAnimationFrame(updateBackgroundPosition);
+          return;
+        }
+
+        // matrix 또는 matrix3d에서 translateX 값 추출
+        const matrix = transform.match(/matrix(?:3d)?\(([^)]+)\)/);
+        if (!matrix) {
+          setBackgroundOffset(-currentSlide * 100);
+          rafRef.current = requestAnimationFrame(updateBackgroundPosition);
+          return;
+        }
+
+        const values = matrix[1].split(',').map(v => parseFloat(v.trim()));
+        // matrix: [a, b, c, d, tx, ty]
+        // matrix3d: [m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44]
+        const translateX = values.length >= 6 ? values[4] : (values.length >= 16 ? values[12] : 0);
+
+        // 슬라이더의 translateX를 vw 단위로 변환
+        const sliderWidth = sliderWrapperRef.current.clientWidth || window.innerWidth;
+        const offsetInVw = (translateX / sliderWidth) * 100;
+
+        setBackgroundOffset(offsetInVw);
+
+        rafRef.current = requestAnimationFrame(updateBackgroundPosition);
+      };
+
+      rafRef.current = requestAnimationFrame(updateBackgroundPosition);
+    }, 100);
+
+    return () => {
+      clearTimeout(initTimeout);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, [answerChunks.length, currentSlide]);
+
+  const backgroundPool = useMemo(() => {
+    const baseBackgrounds = Array.from({ length: 10 }, (_value, index) =>
+      new URL(`../../assets/images/background/bg${index + 1}.png`, import.meta.url).href
+    );
+    return shuffleWithSeed(baseBackgrounds, getSeedFromCardId(cardId));
+  }, [cardId]);
+
   const slides = useMemo(
     () =>
       Array.from({ length: answerChunks.length }, (_, i) => ({
         id: i + 1,
-        backgroundImg: new URL(`../../assets/images/background/bg${(i % 10) + 1}.png`, import.meta.url).href,
+        backgroundImg: backgroundPool[i % backgroundPool.length],
       })),
-    [answerChunks.length]
+    [answerChunks.length, backgroundPool]
   );
 
   const defaultBackground = new URL("../../assets/images/background/bg1.png", import.meta.url).href;
@@ -310,7 +412,7 @@ const AnswerListPage = () => {
   if (loading) {
     return (
       <PageWrapper>
-        <BackgroundStrip index={currentSlide} bgList={bgList}>
+        <BackgroundStrip offset={backgroundOffset} bgList={bgList}>
           {bgList.map((src) => (
             <BackgroundItem key={src} src={src} />
           ))}
@@ -324,15 +426,15 @@ const AnswerListPage = () => {
 
   return (
     <PageWrapper>
-      <BackgroundStrip index={currentSlide} bgList={bgList}>
+      <BackgroundStrip offset={backgroundOffset} bgList={bgList}>
         {bgList.map((src) => (
           <BackgroundItem key={src} src={src} />
         ))}
       </BackgroundStrip>
       <Overlay isVisible={true} bgColor={"rgba(0,0,0,0.6)"} disablePointerEvents />
       <QuestionHeader>{question}</QuestionHeader>
-      <SliderWrapper $disabled={Boolean(animationState)}>
-        <Slider {...settings}>
+      <SliderWrapper ref={sliderWrapperRef} $disabled={Boolean(animationState)}>
+        <Slider ref={sliderRef} {...settings}>
           {slides.map((slide, index) => (
             <AnswerSlide
               key={slide.id}
@@ -406,26 +508,20 @@ const PageWrapper = styled.main`
   color: #000;
 `;
 
-const BackgroundStrip = styled.div<{ index: number; bgList: string[] }>`
+const BackgroundStrip = styled.div<{ offset: number; bgList: string[] }>`
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
-  
-  /* 슬라이드 개수만큼 가로로 길게 */
   width: ${({ bgList }) => `${bgList.length * 100}vw`};
-
   display: flex;
-  transition: transform 0.6s ease-in-out;
-
-  transform: translateX(${({ index }) => `-${index * 100}vw`});
+  transform: translateX(${({ offset }) => `${offset}vw`});
 `;
 
 const BackgroundItem = styled.div<{ src: string }>`
   flex: 0 0 100vw;
   height: 100%;
-  background-image: url(${({ src }) => src});
-
+  background: url(${({ src }) => src}) no-repeat;
 `;
 
 
