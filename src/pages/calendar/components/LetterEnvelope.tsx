@@ -19,8 +19,9 @@ const LetterEnvelope = ({ card }: LetterEnvelopeProps) => {
       </EnvelopeBody>
       <SideFold src={sideFoldImage} alt="letter side fold" />
       <BottomFold src={bottomFoldImage} alt="letter bottom fold" />
+      { /* TODO: 편지봉투 위에 있으면 opacity=1 */}
       <StampSection>
-        <CalendarCard card={card} onClick={() => {}} />
+        <CalendarCard card={card} onClick={() => {}} isLetterOpen />
       </StampSection>
     </LetterWrapper>
   );

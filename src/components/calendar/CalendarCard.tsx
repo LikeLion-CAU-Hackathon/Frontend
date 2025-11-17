@@ -8,10 +8,11 @@ import expiredStamp from '../../assets/images/stamp/expiredStamp.png'
 
 interface CalendarCardProps {
     card: Card;
+    isLetterOpen?: boolean
     onClick: (id: number ) => void;
 }
 
-const CalendarCard = ({ card, onClick }: CalendarCardProps) => {
+const CalendarCard = ({ card, isLetterOpen, onClick }: CalendarCardProps) => {
   // 기본 
   const answeredStamp = stamps[ (card.id - 1) % stamps.length];
 
@@ -48,7 +49,8 @@ const CalendarCard = ({ card, onClick }: CalendarCardProps) => {
              src={stampToShow}
              alt="stampImage"
              style={{opacity}}
-            isExpired={stampToShow === expiredStamp}
+             isExpired={stampToShow === expiredStamp}
+             isLetterOpen = {isLetterOpen}
           />
         )}
 
@@ -68,7 +70,7 @@ const CardImage = styled.img`
   cursor: pointer;
 `
 
-const Stamp = styled.img<{ isExpired?: boolean }>`
+const Stamp = styled.img<{ isExpired?: boolean; isLetterOpen?: boolean}>`
   position: absolute;
   width: 60px;
   z-index:0.5;
@@ -79,5 +81,11 @@ const Stamp = styled.img<{ isExpired?: boolean }>`
     isExpired &&
     `
     top: 45px;
+    `}
+
+  ${({ isLetterOpen }) =>
+    isLetterOpen &&
+    `
+    opacity: 1 !important; 
     `}
 `
