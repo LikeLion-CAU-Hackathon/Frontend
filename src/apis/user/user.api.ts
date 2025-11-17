@@ -11,8 +11,11 @@ export const getMyProfile = async (questionId?: number | string): Promise<UserPr
   const api = axiosAPI();
   const hasQuestionId =
     typeof questionId === "number" || (typeof questionId === "string" && questionId.length > 0);
-  const endpoint = hasQuestionId ? `/users/nickname/${questionId}` : "/users/nickname";
+  const endpoint = hasQuestionId
+    ? `/users/nickname/${encodeURIComponent(String(questionId))}`
+    : "/users/nickname";
 
   const response = await api.get(endpoint);
-  return response.data;
+  const payload = response?.data?.data ?? response?.data;
+  return payload;
 };
