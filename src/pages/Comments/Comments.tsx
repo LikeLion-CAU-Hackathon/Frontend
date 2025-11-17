@@ -74,6 +74,8 @@ const Comments = () => {
   const [commentCount, setCommentCount] = useState(
     state.answer?.comments ?? fallbackFeatured.comments
   );
+  const [isPanelVisible, setIsPanelVisible] = useState(false);
+  const [isCardVisible, setIsCardVisible] = useState(false);
 
   const featuredComment = (() => {
     if (!state.answer) return fallbackFeatured;
@@ -151,6 +153,16 @@ const Comments = () => {
   useEffect(() => {
     void fetchReplies();
   }, [fetchReplies]);
+
+  // 페이지 마운트 시 애니메이션 시작
+  useEffect(() => {
+      setTimeout(() => {
+    setIsCardVisible(true);
+  }, 200); // 0.5초 뒤 카드 등장
+
+    // commentPanel은 즉시 아래에서 올라오기 시작 (카드 전환과 동시에)
+    setIsPanelVisible(true);
+  }, []);
 
   const fetchLikeCount = useCallback(async () => {
     if (!answerId) {
@@ -265,7 +277,10 @@ const Comments = () => {
       }}
     >
       <Overlay isVisible bgColor="rgba(0,0,0,0.6)" disablePointerEvents />
-      <section className={styles.featureCard} aria-label="강조된 댓글 카드">
+      <section 
+        className={`${styles.featureCard} ${isCardVisible ? styles.featureCardVisible : ''}`} 
+        aria-label="강조된 댓글 카드"
+      >
         <header className={styles.cardHeader}>
           <div>
             <p className={styles.cardFrom}>
@@ -313,7 +328,10 @@ const Comments = () => {
         {likeError && <p className={styles.likeError}>{likeError}</p>}
       </section>
 
-      <section className={styles.commentPanel} aria-label="댓글 영역">
+      <section 
+        className={`${styles.commentPanel} ${isPanelVisible ? styles.commentPanelVisible : ''}`} 
+        aria-label="댓글 영역"
+      >
         <h3 className={styles.sectionTitle}>{commentPanelTitle}</h3>
         <div className={styles.commentSection}>
           {isLoading && <p className={styles.statusMessage}>댓글을 불러오는 중입니다...</p>}
