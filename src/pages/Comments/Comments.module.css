@@ -149,16 +149,27 @@
 
 .replyBar {
   margin-top: auto;
-  width: calc(100% + 40px);
-  margin-left: -20px;
-  margin-right: -20px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
   background: #decba1;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 22px 24px 28px;
+  padding: 22px 20px 28px;
   display: flex;
   align-items: stretch;
   position: relative;
   box-shadow: none;
+  box-sizing: border-box;
+  align-self: center;
+}
+
+@media (min-width: 520px) {
+  .replyBar {
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 22px 24px 28px;
+  }
 }
 
 .replyInput {
