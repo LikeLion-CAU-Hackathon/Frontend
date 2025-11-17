@@ -140,6 +140,8 @@ const AnswerWrapper = styled.div`
   margin: 4px;
   padding: 10px;
   height: calc(100% - 8px);
+  display: flex;
+  flex-direction: column;
   color: #b39a63;
 `;
 
@@ -201,7 +203,7 @@ const Info = styled.p`
 const Divider = styled.div`
   outline: 1px #b39a63 solid;
   outline-offset: -0.5px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 `;
 
 const CardFooter = styled.footer`
@@ -209,6 +211,7 @@ const CardFooter = styled.footer`
   flex-direction: row;
   gap: 8px;
   justify-content: flex-end;
+  margin-top: auto;
   color: #000;
   font-size: 15px;
   font-family: "Gowun Batang", "MaruBuri", serif;
@@ -230,7 +233,8 @@ const Icon = styled.div`
 `;
 
 const CardSection = styled.section`
-  display:flex;
+  display: flex;
   flex-direction: column;
-  gap:10px;
+  flex: 1;
+  gap: 5px;
 `;
