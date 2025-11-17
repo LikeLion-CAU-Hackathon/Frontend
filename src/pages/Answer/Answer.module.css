@@ -118,6 +118,10 @@
   justify-content: center;
 }
 
+.paper::-webkit-scrollbar {
+  display: none;
+}
+
 .paperTexture {
   position: absolute;
   inset: 0;
@@ -139,6 +143,11 @@
   line-height: 1.6;
   resize: none;
   z-index: 1;
+  scrollbar-width: none;
+}
+
+.answerInput::-webkit-scrollbar {
+  display: none; 
 }
 
 .answerInput::placeholder {
@@ -156,6 +165,7 @@
   font-size: 17px;
   font-weight: 700;
   cursor: pointer;
+  border:none;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
