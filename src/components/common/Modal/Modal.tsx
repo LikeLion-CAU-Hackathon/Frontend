@@ -43,7 +43,7 @@ const ModalSection = styled.section`
 
 const Dialog = styled.div`
   width: calc(100% - 48px);
-  max-width: 250px;
+  max-width: 280px;
   background: #DECBA1;
   border-radius: 16px;
   padding: 20px;

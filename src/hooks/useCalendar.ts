@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Card } from "../types/card";
 import { checkAnswered } from "../apis/answer/answer.api";
-import { getTodayDate, isCardAfterToday, isCardBeforeToday, isCardOpenableToday } from "../utils/date";
+import { getTodayDate, isCardAfterToday, isCardBeforeToday, isCardOpenableToday, isOpportunityDay } from "../utils/date";
 
 export const useCalendar = (navigate: Function) => {
   const todayString = getTodayDate();
@@ -83,29 +83,26 @@ export const useCalendar = (navigate: Function) => {
 
     if (!card) return;
 
+    const isOpportunity = isOpportunityDay();
+
     if (isCardAfterToday(id)) {
       openNoticeModal("오늘 날짜의 우표만 열 수 있어요!");
       return;
     }
 
     if (isCardBeforeToday(id)) {
-      if(!card.isAnswered) {
-        openNoticeModal("답변 기한이 지났어요");
+      // 12일이나 24일이면 답변하지 않은 카드도 열 수 있게 추가하기
+      if(!card.isAnswered && !isOpportunity) {
+        openNoticeModal("답변 기한이 지났어요. \n 12일이나 24일에 다시 답변할 수 있어요.");
         return;
       }
-      // before + 답변
-      navigate(`/answer-list?questionId=${id}`);
-      return;
-    }
-
-    if (isCardOpenableToday(id)) {
+      // before + 답변 완료 또는 기회 제공일
       if (card.isAnswered) {
         navigate(`/answer-list?questionId=${id}`);
         return;
       }
-    }
-
-      // 오늘 + 답변 미완료인 경우 편지지 열기 
+      // 12/24일이고 답변하지 않은 경우 편지지 열기
+      if (isOpportunity) {
         setCards(prevCards => {
           const updatedCards = prevCards.map(card => ({
             ...card,
@@ -116,7 +113,29 @@ export const useCalendar = (navigate: Function) => {
           return updatedCards;
         }); 
         return;
+      }
+      return;
     }
+
+    if (isCardOpenableToday(id)) {
+      if (card.isAnswered) {
+        navigate(`/answer-list?questionId=${id}`);
+        return;
+      }
+    }
+
+    // 오늘 + 답변 미완료인 경우 편지지 열기 
+    setCards(prevCards => {
+      const updatedCards = prevCards.map(card => ({
+        ...card,
+        isOpened: card.id === id,
+      }));
+      const clickedCard = updatedCards.find((card) => card.id === id) ?? null;
+      setSelectedCard(clickedCard);
+      return updatedCards;
+    }); 
+    return;
+  }
 
   // 우표 클릭된 순간 배경 overlay 추가
   const isCardOpened = cards.some(card => card.isOpened);
