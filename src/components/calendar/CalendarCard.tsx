@@ -76,8 +76,8 @@ const Stamp = styled.img<{ isExpired?: boolean; isLetterOpen?: boolean}>`
   position: absolute;
   width: 60px;
   z-index:0.5;
-  top:10px;
-  right:16px;
+  top:11px;
+  right:15px;
 
   ${({ isExpired }) =>
     isExpired &&

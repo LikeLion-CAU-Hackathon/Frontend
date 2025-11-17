@@ -39,6 +39,7 @@
   min-height: 0;
   transform: translateY(100%);
   transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+  
 }
 
 .commentPanelVisible {
@@ -159,6 +160,23 @@
   position: relative;
   box-shadow: none;
 }
+
+@media (max-width: 768px) {
+  .replyBar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 16px 20px 24px;
+    background: #decba1;
+    z-index: 999;
+    border-radius: 12px 12px 0 0;
+
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 
 .replyInput {
   flex: 1;
