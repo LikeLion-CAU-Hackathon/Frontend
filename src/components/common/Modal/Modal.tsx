@@ -65,7 +65,7 @@ const Message = styled.p`
 const ActionButton = styled.button`
   border: none;
   border-radius: 999px;
-  padding: 5px 10px;
+  padding: 5px 30px;
   background: black;
   color: #fff;
   font-size: 13px;
