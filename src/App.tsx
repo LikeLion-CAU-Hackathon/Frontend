@@ -14,10 +14,10 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/calendar" element={<CalendarPage />} />
 
           { /* 로그인이 안되면 접근 불가능 */}
           <Route element= {<PrivateRoute />} >
-            <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/answer" element={<Answer />} />
             <Route path="/comments" element={<Comments />} />
             <Route path="/answer-list" element={<AnswerListPage />} />
