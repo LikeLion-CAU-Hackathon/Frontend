@@ -4,23 +4,22 @@ import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Comments.module.css";
 import sendIcon from "../../assets/images/send.svg";
 import closeIcon from "../../assets/images/Comments/x.svg";
-import heartIcon from "../../assets/images/Comments/heart.svg";
-import heartFilledIcon from "../../assets/images/Comments/heart-filled.svg";
-import commentIcon from "../../assets/images/Comments/comment.svg";
 import type { AnswerCardData } from "../../components/common/AnswerCard";
+import AnswerCard from "../../components/common/AnswerCard";
 import { getAnswerReplies, getAnswerLikeCount, postAnswerComment } from "../../apis/answer/answer.api";
-import { addLike, deleteLike } from "../../apis/answer/like.api";
-import { toggleStoredLikedAnswer } from "../../utils/likedAnswers";
 import Overlay from "../../components/common/Overlay/Overlay";
 
-const fallbackFeatured = {
-  sender: "잘생긴 루돌프 (나)",
-  date: "DEC 7 | 18:44",
-  content:
+const createFallbackFeatured = (): AnswerCardData => ({
+  id: -1,
+  author: "잘생긴 루돌프 (나)",
+  date: "DEC 7",
+  time: "18:44",
+  contents:
     "너는 친구들과 산에 스키를 타러 갔다. 첫 번째 날, 너와 그들은 스키장에서부터 보이는 밤하늘 정상까지, 올라갈 수 있는 가장 높은 곳으로 갔다. 네 친구들은 추위에 바로 내려갔다. 너는 혼자 작고 굳은 골짜기에 멈춰 서 있었다.",
   likes: 99,
   comments: 12,
-};
+  liked: false,
+});
 
 interface ReplyItem {
   id: number;
@@ -67,35 +66,29 @@ const Comments = () => {
   const [replyContents, setReplyContents] = useState("");
   const [isPostingReply, setIsPostingReply] = useState(false);
   const [replyError, setReplyError] = useState<string | null>(null);
-  const [likeCount, setLikeCount] = useState(state.answer?.likes ?? 0);
-  const [isLiked, setIsLiked] = useState<boolean>(Boolean(state.answer?.liked));
-  const [isLikeLoading, setIsLikeLoading] = useState(false);
-  const [likeError, setLikeError] = useState<string | null>(null);
-  const [commentCount, setCommentCount] = useState(
-    state.answer?.comments ?? fallbackFeatured.comments
-  );
+  const [featuredAnswer, setFeaturedAnswer] = useState<AnswerCardData>(() => {
+    if (state.answer) {
+      return {
+        ...state.answer,
+        liked: Boolean(state.answer.liked),
+      };
+    }
+    return createFallbackFeatured();
+  });
   const [isPanelVisible, setIsPanelVisible] = useState(false);
   const [isCardVisible, setIsCardVisible] = useState(false);
-
-  const featuredComment = (() => {
-    if (!state.answer) return fallbackFeatured;
-    const { author, date, time, contents, likes } = state.answer;
-    const formattedDate = `${date.replace(/-/g, ".")} | ${time}`;
-    return {
-      sender: author,
-      date: formattedDate,
-      content: contents,
-      likes,
-      comments: commentCount,
-    };
-  })();
 
   const commentPanelTitle = "Post Script";
 
   useEffect(() => {
-    setLikeCount(state.answer?.likes ?? 0);
-    setIsLiked(Boolean(state.answer?.liked));
-    setCommentCount(state.answer?.comments ?? fallbackFeatured.comments);
+    if (state.answer) {
+      setFeaturedAnswer({
+        ...state.answer,
+        liked: Boolean(state.answer.liked),
+      });
+    } else {
+      setFeaturedAnswer(createFallbackFeatured());
+    }
   }, [state.answer]);
 
   const fetchReplies = useCallback(async () => {
@@ -140,7 +133,10 @@ const Comments = () => {
           })
         : [];
       setReplies(mapped);
-      setCommentCount(mapped.length);
+      setFeaturedAnswer((prev) => ({
+        ...prev,
+        comments: mapped.length,
+      }));
     } catch (error) {
       console.error("댓글을 가져오는 중 오류가 발생했습니다:", error);
       setReplies([]);
@@ -166,8 +162,6 @@ const Comments = () => {
 
   const fetchLikeCount = useCallback(async () => {
     if (!answerId) {
-      setLikeCount(0);
-      setIsLiked(false);
       return;
     }
     try {
@@ -176,10 +170,11 @@ const Comments = () => {
         typeof data === "number"
           ? data
           : data?.likeCount ?? state.answer?.likes ?? 0;
-      setLikeCount(derivedCount);
-      if (typeof data?.liked === "boolean") {
-        setIsLiked(data.liked);
-      }
+      setFeaturedAnswer((prev) => ({
+        ...prev,
+        likes: derivedCount,
+        liked: typeof data?.liked === "boolean" ? data.liked : prev.liked,
+      }));
     } catch (error) {
       console.error("좋아요 수를 가져오는 중 오류가 발생했습니다:", error);
     }
@@ -206,7 +201,10 @@ const Comments = () => {
     try {
       await postAnswerComment(answerId, trimmed);
       setReplyContents("");
-      setCommentCount((prev) => prev + 1);
+      setFeaturedAnswer((prev) => ({
+        ...prev,
+        comments: prev.comments + 1,
+      }));
       await fetchReplies();
     } catch (error) {
       console.error("댓글을 전송하는 중 오류가 발생했습니다:", error);
@@ -221,38 +219,6 @@ const Comments = () => {
   const replyPlaceholder = answerId
     ? "댓글을 입력해 주세요."
     : "답변을 선택한 후 댓글을 남길 수 있어요.";
-
-  const handleLikeToggle = async () => {
-    if (!answerId || isLikeLoading) return;
-    setIsLikeLoading(true);
-    setLikeError(null);
-    const optimisticLiked = !isLiked;
-    const optimisticDelta = optimisticLiked ? 1 : -1;
-    setIsLiked(optimisticLiked);
-    setLikeCount((prev) => Math.max(0, prev + optimisticDelta));
-    try {
-      const response = isLiked ? await deleteLike(answerId) : await addLike(answerId);
-      const serverLiked =
-        typeof response?.liked === "boolean" ? response.liked : optimisticLiked;
-      const serverCount =
-        typeof response?.likeCount === "number" ? response.likeCount : null;
-      setIsLiked(serverLiked);
-      if (typeof serverCount === "number") {
-        setLikeCount(Math.max(0, serverCount));
-      } else if (serverLiked !== optimisticLiked) {
-        const correctiveDelta = serverLiked ? 1 : -1;
-        setLikeCount((prev) => Math.max(0, prev + correctiveDelta - optimisticDelta));
-      }
-      toggleStoredLikedAnswer(answerId, serverLiked);
-    } catch (error) {
-      console.error("좋아요 처리 중 오류가 발생했습니다:", error);
-      setLikeError("좋아요 요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.");
-      setIsLiked((prev) => !prev);
-      setLikeCount((prev) => Math.max(0, prev - optimisticDelta));
-    } finally {
-      setIsLikeLoading(false);
-    }
-  };
 
   const backgroundImage =
     state.backgroundImg ?? new URL("../../assets/images/background/bg1.png", import.meta.url).href;
@@ -279,53 +245,27 @@ const Comments = () => {
       <Overlay isVisible bgColor="rgba(0,0,0,0.6)" disablePointerEvents />
       <section 
         className={`${styles.featureCard} ${isCardVisible ? styles.featureCardVisible : ''}`} 
-        aria-label="강조된 댓글 카드"
+        aria-label="애니메이션 댓글 카드"
       >
-        <header className={styles.cardHeader}>
-          <div>
-            <p className={styles.cardFrom}>
-              <span className={styles.cardLabel}>From.</span>
-              <span className={styles.cardValue}>{featuredComment.sender}</span>
-            </p>
-            <p className={styles.cardDate}>
-              <span className={styles.cardLabel}>Date:</span>
-              <span className={styles.cardValue}>{featuredComment.date}</span>
-            </p>
-          </div>
-          <button
-            className={styles.closeButton}
-            type="button"
-            aria-label="카드 닫기"
-            onClick={() => {
-              if (window.history.length > 1) {
-                navigate(-1);
-              } else {
-                navigate("/answer-list");
-              }
-            }}
-          >
-            <img src={closeIcon} alt="Close" />
-          </button>
-        </header>
-        <div className={styles.cardDivider} aria-hidden="true">
-        </div>
-        <p className={styles.cardContent}>{featuredComment.content}</p>
-        <footer className={styles.cardFooter}>
-          <button
-            className={`${styles.cardAction} ${styles.heartAction} ${isLiked ? styles.heartActive : ""}`}
-            type="button"
-            aria-label="좋아요"
-            onClick={handleLikeToggle}
-            disabled={!answerId || isLikeLoading}
-            aria-pressed={isLiked}
-          >
-            <img src={isLiked ? heartFilledIcon : heartIcon} alt="Like" /> {likeCount}
-          </button>
-          <button className={styles.cardAction} type="button" aria-label="댓글 보기">
-            <img src={commentIcon} alt="Comments" /> {featuredComment.comments}
-          </button>
-        </footer>
-        {likeError && <p className={styles.likeError}>{likeError}</p>}
+        <button
+          className={styles.closeButton}
+          type="button"
+          aria-label="카드 닫기"
+          onClick={() => {
+            if (window.history.length > 1) {
+              navigate(-1);
+            } else {
+              navigate("/answer-list");
+            }
+          }}
+        >
+          <img src={closeIcon} alt="Close" />
+        </button>
+        <AnswerCard
+          {...featuredAnswer}
+          width="100%"
+          height="100%"
+        />
       </section>
 
       <section 
