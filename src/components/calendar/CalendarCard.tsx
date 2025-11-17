@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import stampImage from '../../assets/images/stamp.png'
 import type { Card } from '../../types/card'
 import { stamps } from '../../utils/stampLoader';
-import { isCardAfterToday, isCardBeforeToday, isCardOpenableToday } from '../../utils/date';
+import { isCardAfterToday, isCardBeforeToday, isCardOpenableToday, isOpportunityDay } from '../../utils/date';
 import expiredStamp from '../../assets/images/stamp/expiredStamp.png'
 
 interface CalendarCardProps {
@@ -15,6 +15,7 @@ interface CalendarCardProps {
 const CalendarCard = ({ card, isLetterOpen, onClick }: CalendarCardProps) => {
   // 기본 
   const answeredStamp = stamps[ (card.id - 1) % stamps.length];
+  const isOpportunity = isOpportunityDay();
 
   let stampToShow: string | null = null;
   let opacity = 1;
@@ -29,9 +30,15 @@ const CalendarCard = ({ card, isLetterOpen, onClick }: CalendarCardProps) => {
       opacity= 1;
     }
 
-  // TODO2: 오늘 이전인데 답변 안했으면 "expired" 표시
+  // TODO2: 오늘 이전인데 답변 안했으면 "expired" 표시 (오늘이 12일/24일이면 일반 우표 표시)
   }   else if (isCardBeforeToday(card.id) && !card.isAnswered) {
-    stampToShow = expiredStamp;
+    if (isOpportunity) {
+      // 12일이나 24일이면 답변하지 않은 카드도 우표로 변경
+      stampToShow = answeredStamp;
+      opacity = 0.2;
+    } else {
+      stampToShow = expiredStamp;
+    }
 
   // TODO3: 오늘 이전인데 답변 했으면 원래처럼 우표 표시 
   } else if (isCardBeforeToday(card.id) && card.isAnswered) {

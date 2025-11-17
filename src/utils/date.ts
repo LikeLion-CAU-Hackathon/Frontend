@@ -20,6 +20,7 @@ export const isCardOpenableToday = (cardId: number): boolean => {
   return day === cardId;
 };
 
+
 // API 형식에 맞게 변환
 export const convertIdToDate = (id: number): string => {
   const year = 2025;      
@@ -40,4 +41,11 @@ export const isCardBeforeToday = (cardId: number): boolean => {
   const today = getTodayDate();
   const [, , day] = today.split("-").map(Number);
   return cardId < day;
+};
+
+// 오늘이 12일/24일인지 확인 (기회 제공)
+export const isOpportunityDay = (): boolean => {
+  const today = getTodayDate();
+  const [, , day] = today.split("-").map(Number);
+  return day === 12 || day === 24;
 };
