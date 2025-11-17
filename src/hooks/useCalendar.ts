@@ -5,7 +5,7 @@ import { getTodayDate, isCardAfterToday, isCardBeforeToday, isCardOpenableToday 
 
 export const useCalendar = (navigate: Function) => {
   const todayString = getTodayDate();
-  const [year, month, day] = todayString.split("-").map(Number);
+  const [year, month, ] = todayString.split("-").map(Number);
   const paddedMonth = String(month).padStart(2, "0");
   const createCardDate = (dayNumber: number) =>
     `${year}-${paddedMonth}-${String(dayNumber).padStart(2, "0")}`;
