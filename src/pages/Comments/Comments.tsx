@@ -319,8 +319,37 @@ const Comments = () => {
 
   const formatTimestamp = (timestamp: string) => {
     if (!timestamp) return "";
-    const parsed = new Date(timestamp);
-    if (Number.isNaN(parsed.getTime())) return timestamp;
+    const trimmed = timestamp.trim();
+    if (trimmed.length === 0) return "";
+
+    const monthLabels = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    const tryFormatIso = (value: string): string | null => {
+      const isoMatch =
+        /^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2})(?::?(\d{2}))?(?::?(\d{2}))?)?$/.exec(value);
+      if (!isoMatch) return null;
+      const [, , month, day, hour, minute, second] = isoMatch;
+      const monthIndex = Number(month) - 1;
+      const label = monthLabels[monthIndex] ?? month.toUpperCase();
+      const dayNumber = Number(day);
+      const datePart = `${label} ${Number.isFinite(dayNumber) ? dayNumber : day}`;
+      if (hour !== undefined && minute !== undefined) {
+        const hh = hour.padStart(2, "0");
+        const mm = minute.padStart(2, "0");
+        const ss = (second ?? "00").padStart(2, "0");
+        return `${datePart} | ${hh}:${mm}:${ss}`;
+      }
+      return datePart;
+    };
+
+    const isoFormatted = tryFormatIso(trimmed);
+    if (isoFormatted) {
+      return isoFormatted;
+    }
+
+    const parsed = new Date(trimmed);
+    if (Number.isNaN(parsed.getTime())) {
+      return trimmed;
+    }
     const month = parsed.toLocaleString("en-US", { month: "short" }).toUpperCase();
     const day = parsed.getDate();
     const hours = String(parsed.getHours()).padStart(2, "0");
