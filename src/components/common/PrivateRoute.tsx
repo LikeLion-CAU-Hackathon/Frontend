@@ -13,14 +13,14 @@ const PrivateRoute = () => {
   if (location.pathname === "/calendar" && location.hash) {
     return (
       <Navigate
-        to={{ pathname: "/calendar", hash: location.hash }}
-        replace
+        to={`/calendar${location.hash}`} 
+        replace 
       />
     );
   }
 
   // 기본적으로는 로그인 페이지로 보냄
-  return <Navigate to="/" replace />;
+  return <Navigate to="/?redirect=/calendar" replace />;
 };
 
 export default PrivateRoute;
