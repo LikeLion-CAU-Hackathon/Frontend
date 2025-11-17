@@ -18,7 +18,6 @@ const LetterPage = ({ isOpened, card, question, isLoading, error }: LetterPagePr
       <LetterContent
         isOpened={isOpened}
         question={question}
-        date={card?.date}
         sequence={card?.id}
         isLoading={isLoading}
         error={error}
