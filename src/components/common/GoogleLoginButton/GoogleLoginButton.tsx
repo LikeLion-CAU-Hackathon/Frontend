@@ -1,5 +1,5 @@
 import styles from "./GoogleLoginButton.module.css";
-import googleLoginButtonImage from "../../../assets/images/google-login-button.svg";
+import googleLoginButtonImage from "../../../assets/images/google-login-button.png";
 import { GOOGLE_AUTH_URL } from "../../../constants/oauth";
 
 const GoogleLoginButton = () => {

@@ -14,6 +14,7 @@ import type { AnswerCardData } from "../../components/common/AnswerCard";
 import closeIcon from "../../assets/images/Comments/x.svg";
 import heartIcon from "../../assets/images/Comments/heart.svg";
 import commentIcon from "../../assets/images/Comments/comment.svg";
+import { getMyProfile } from "../../apis/user/user.api";
 
 const ANSWER_LIST_STATE_KEY = "answerListState";
 
@@ -57,6 +58,52 @@ const clearStoredAnswerListState = () => {
 
 type Answer = AnswerCardData & {
   liked?: boolean;
+  writerNickname?: string;
+  isMine?: boolean;
+};
+
+const stripOwnIndicator = (name: string): string =>
+  name.replace(/\s*\(나\)\s*$/, "");
+
+const updateAnswerOwnership = (
+  list: Answer[],
+  nickname: string | null
+): Answer[] => {
+  if (!Array.isArray(list) || list.length === 0) {
+    return list;
+  }
+
+  let changed = false;
+  const updated = list.map((answer) => {
+    const baseName =
+      answer.writerNickname ??
+      (typeof answer.author === "string" ? stripOwnIndicator(answer.author) : answer.author);
+
+    if (!baseName) {
+      return answer;
+    }
+
+    const isMine = Boolean(nickname && baseName === nickname);
+    const displayAuthor = isMine ? `${baseName} (나)` : baseName;
+
+    if (
+      answer.author === displayAuthor &&
+      answer.isMine === isMine &&
+      answer.writerNickname === baseName
+    ) {
+      return answer;
+    }
+
+    changed = true;
+    return {
+      ...answer,
+      author: displayAuthor,
+      isMine,
+      writerNickname: baseName,
+    };
+  });
+
+  return changed ? updated : list;
 };
 
 interface RelativeRect {
@@ -112,8 +159,10 @@ const AnswerListPage = () => {
   const [loading, setLoading] = useState(true);
   const [question, setQuestion] = useState<string>("");
   const [animationState, setAnimationState] = useState<AnimationState | null>(null);
+  const [myNickname, setMyNickname] = useState<string | null>(null);
   const pageWrapperRef = useRef<HTMLElement | null>(null);
   const animationTimeoutRef = useRef<number | null>(null);
+  const myNicknameRef = useRef<string | null>(null);
   const sliderRef = useRef<Slider | null>(null);
   const sliderWrapperRef = useRef<HTMLDivElement | null>(null);
   const [backgroundOffset, setBackgroundOffset] = useState(() => -currentSlide * 100);
@@ -123,6 +172,34 @@ const AnswerListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const cardId = searchParams.get("cardId") || searchParams.get("questionId");
 
+  useEffect(() => {
+    let cancelled = false;
+    const fetchProfile = async () => {
+      try {
+        const profile = await getMyProfile();
+        const nickname =
+          profile?.nickname ??
+          profile?.userNickname ??
+          profile?.name ??
+          profile?.username ??
+          null;
+        if (!cancelled) {
+          setMyNickname(nickname);
+        }
+      } catch (error) {
+        console.error("내 프로필 정보를 불러오지 못했습니다:", error);
+        if (!cancelled) {
+          setMyNickname(null);
+        }
+      }
+    };
+
+    fetchProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   // 기본 뒤로가기 차단하고 뒤로가기 하면 무조건 캘린더로
   useEffect(() => {
     navigate(`/answer-list?questionId=${cardId}`, { replace: true });
@@ -165,13 +242,21 @@ const AnswerListPage = () => {
         
         // 백엔드 응답 형식 변환
         const mappedData = answerData.map((response: any) => {
+          const writerNickname =
+            response.userNickname ??
+            response.nickname ??
+            response.userName ??
+            response.author ??
+            "익명";
+
           // localStorage에서 좋아요 상태 확인
           const likedAnswers = JSON.parse(localStorage.getItem("likedAnswers") || "[]");
           const isLiked = likedAnswers.includes(response.answerId) || response.liked || false;
           
           return {
             id: response.answerId,
-            author: response.userNickname,
+            author: writerNickname,
+            writerNickname,
             date: response.createdTime.slice(0, 10),
             time: response.createdTime.slice(11, 16),
             contents: response.contents,
@@ -181,7 +266,8 @@ const AnswerListPage = () => {
           };
         });
 
-        setAnswers(mappedData);
+        const nicknameSnapshot = myNicknameRef.current ?? null;
+        setAnswers(updateAnswerOwnership(mappedData, nicknameSnapshot));
       } catch(error) {
         console.error("질문 또는 답변 리스트를 불러오는 데 오류가 발생했습니다: ", error);
       } finally {
@@ -191,6 +277,14 @@ const AnswerListPage = () => {
     
     fetchQuestionAndAnswers();
   }, [cardId]);
+
+  useEffect(() => {
+    setAnswers((prev) => updateAnswerOwnership(prev, myNickname));
+  }, [myNickname]);
+
+  useEffect(() => {
+    myNicknameRef.current = myNickname;
+  }, [myNickname]);
 
   useEffect(() => {
     return () => {
