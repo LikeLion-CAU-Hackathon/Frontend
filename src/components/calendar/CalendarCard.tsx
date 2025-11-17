@@ -19,12 +19,14 @@ const CalendarCard = ({ card, onClick }: CalendarCardProps) => {
   let opacity = 1;
 
   // TODO1: 오늘인데 답변 안했으면 opacity=0.9로
-  if (isCardOpenableToday(card.id) && !card.isAnswered) {
-    stampToShow = answeredStamp;
-    opacity = 0.6
-
-  } else if (isCardOpenableToday(card.id) && card.isAnswered){
-    stampToShow = answeredStamp;
+  if (isCardOpenableToday(card.id)) {
+    if(!card.isAnswered) {
+      stampToShow = answeredStamp;
+      opacity = 0.4
+    } else {
+      stampToShow = answeredStamp;
+      opacity= 1;
+    }
 
   // TODO2: 오늘 이전인데 답변 안했으면 "expired" 표시
   }   else if (isCardBeforeToday(card.id) && !card.isAnswered) {
