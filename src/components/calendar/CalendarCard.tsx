@@ -1,6 +1,6 @@
 // TODO: stamp 이미지 날짜별 나중에 추가 : stampImages.tsx 생성
 import styled from 'styled-components'
-import stampImage from '../../assets/images/stamp.svg'
+import stampImage from '../../assets/images/stamp.png'
 import type { Card } from '../../types/card'
 import { stamps } from '../../utils/stampLoader';
 import { isCardAfterToday, isCardBeforeToday, isCardOpenableToday } from '../../utils/date';
@@ -68,6 +68,8 @@ const CardSection = styled.section`
 
 const CardImage = styled.img`
   cursor: pointer;
+  widthL 90px;
+  height: 114px;
 `
 
 const Stamp = styled.img<{ isExpired?: boolean; isLetterOpen?: boolean}>`
