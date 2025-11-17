@@ -22,6 +22,15 @@ export const useCalendar = (navigate: Function) => {
 
   // 현재 클릭한 우표 
   const [ selectedCard, setSelectedCard ] = useState<Card | null>(null);
+  const [modalMessage, setModalMessage] = useState<string | null>(null);
+
+  const openNoticeModal = (message: string) => {
+    setModalMessage(message);
+  };
+
+  const closeNoticeModal = () => {
+    setModalMessage(null);
+  };
 
   // 각 우표의 answered 여부 초기에 확인
   useEffect(() => {
@@ -61,13 +70,13 @@ export const useCalendar = (navigate: Function) => {
     if (!card) return;
 
     if (isCardAfterToday(id)) {
-      alert("오늘 날짜의 우표만 열 수 있어요!");
+      openNoticeModal("오늘 날짜의 우표만 열 수 있어요!");
       return;
     }
 
     if (isCardBeforeToday(id)) {
       if(!card.isAnswered) {
-        alert("답변 기한이 지났어요");
+        openNoticeModal("답변 기한이 지났어요");
         return;
       }
       // before + 답변
@@ -110,5 +119,7 @@ export const useCalendar = (navigate: Function) => {
     isCardOpened,
     handleCardClick,
     handleCloseLetter,
+    modalMessage,
+    closeNoticeModal,
   };
 };
