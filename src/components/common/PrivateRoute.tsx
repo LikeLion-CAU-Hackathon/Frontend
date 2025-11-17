@@ -3,24 +3,17 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 // 로그인 시에만 접근 가능하게 루트 설정
 const PrivateRoute = () => {
   const location = useLocation();
-  const isLogin = !!localStorage.getItem("access_token");
+  const token = localStorage.getItem("access_token");
 
-  if (isLogin) {
-    return <Outlet />;
+  // 토큰이 없으면 로그인 페이지로 리다이렉트
+  if (!token) {
+    // 현재 경로를 redirect 파라미터로 전달하여 로그인 후 원래 페이지로 돌아올 수 있게 함
+    const redirectPath = location.pathname + location.search;
+    return <Navigate to={`/?redirect=${encodeURIComponent(redirectPath)}`} replace />;
   }
 
-  // OAuth redirect가 /calendar#token 형태로 들어올 때 해시를 제거하지 않도록 유지
-  if (location.pathname === "/calendar" && location.hash) {
-    return (
-      <Navigate
-        to={`/calendar${location.hash}`} 
-        replace 
-      />
-    );
-  }
-
-  // 기본적으로는 로그인 페이지로 보냄
-  return <Navigate to="/?redirect=/calendar" replace />;
+  // 토큰이 있으면 자식 라우트 렌더링
+  return <Outlet />;
 };
 
 export default PrivateRoute;
