@@ -1,4 +1,4 @@
-import axios, { type AxiosRequestHeaders } from "axios";
+import axios from "axios";
 import { BASE_URL } from "../constants/baseURL";
 import {
   getAccessToken,
@@ -9,73 +9,52 @@ import {
 } from "../utils/token.ts";
 import { getNewRefreshToken } from "./auth.ts";
 
-export const axiosAPI = (initialToken?: string) => {
-  const authAxios = axios.create({
+export const authAxios = axios.create({
     baseURL: BASE_URL,
-    withCredentials: false,
+    withCredentials: true,
   });
 
-  authAxios.interceptors.request.use((config) => {
-    const latestAccess = getAccessToken() || initialToken;
+authAxios.interceptors.request.use((config) => {
+  const token = getAccessToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-    if (!config.headers) {
-      config.headers = {} as AxiosRequestHeaders;
-    }
+authAxios.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    const originalRequest = error.config;
 
-    if (latestAccess) {
-      config.headers.Authorization = `Bearer ${latestAccess}`;
-    } else {
-      delete config.headers.Authorization;
-    }
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      getRefreshToken()
+    ) {
+      originalRequest._retry = true;
 
-    return config;
-  });
+      try {
+        const result = await getNewRefreshToken();
 
-  // 401 → refreshToken으로 재발급
-  authAxios.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-      const originalRequest = error.config || {};
+        const newAccess = result.accessToken;
+        const newRefresh = result.refreshToken;
 
-      if (
-        error.response?.status === 401 &&
-        !originalRequest._retry &&
-        getRefreshToken()
-      ) {
-        originalRequest._retry = true;
-
-        try {
-          const result = await getNewRefreshToken();
-
-          const newAccess = result.accessToken || result.access || null;
-          const newRefresh = result.refreshToken || result.refresh || null;
-
-          if (newAccess && newRefresh) {
-            setTokens(newAccess, newRefresh);
-          } else if (newAccess) {
-            setAccessToken(newAccess);
-          } else {
-            throw new Error("Token refresh failed");
-          }
-
-          if (!originalRequest.headers) {
-            originalRequest.headers = {} as AxiosRequestHeaders;
-          }
-          originalRequest.headers.Authorization = `Bearer ${getAccessToken()}`;
-
-          originalRequest.headers.Authorization = `Bearer ${getAccessToken()}`;
-
-          return axios(originalRequest);
-        } catch (refreshError) {
-          // 강제 로그아웃
-          clearTokens();
-          return Promise.reject(refreshError);
+        if (newAccess && newRefresh) {
+          setTokens(newAccess, newRefresh);
+        } else if (newAccess) {
+          setAccessToken(newAccess);
         }
+
+        originalRequest.headers.Authorization = `Bearer ${getAccessToken()}`;
+
+        return authAxios(originalRequest); 
+      } catch (err) {
+        clearTokens();
+        return Promise.reject(err);
       }
-
-      return Promise.reject(error);
     }
-  );
 
-  return authAxios;
-};
+    return Promise.reject(error);
+  }
+);
