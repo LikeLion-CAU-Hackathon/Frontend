@@ -258,27 +258,27 @@ const AnswerListPage = () => {
     };
   }, [cardId]);
 
-  // 기본 뒤로가기 차단하고 뒤로가기 하면 무조건 캘린더로
-  useEffect(() => {
-    // 현재 URL을 replace하여 history에 남기지 않음
-    if (cardId) {
-      navigate(`/answer-list?questionId=${cardId}`, { replace: true });
-    }
+  // // 기본 뒤로가기 차단하고 뒤로가기 하면 무조건 캘린더로
+  // useEffect(() => {
+  //   // 현재 URL을 replace하여 history에 남기지 않음
+  //   if (cardId) {
+  //     navigate(`/answer-list?questionId=${cardId}`, { replace: true });
+  //   }
 
-    // history에 더미 상태를 추가하여 popstate 이벤트가 발생하도록 함
-    window.history.pushState({ preventBack: true }, "", window.location.href);
+  //   // history에 더미 상태를 추가하여 popstate 이벤트가 발생하도록 함
+  //   window.history.pushState({ preventBack: true }, "", window.location.href);
 
-    const handlePopState = () => {
-      // 뒤로가기 시 무조건 캘린더로 이동 (replace로 history 스택 정리)
-      navigate("/calendar", { replace: true });
-    };
+  //   const handlePopState = () => {
+  //     // 뒤로가기 시 무조건 캘린더로 이동 (replace로 history 스택 정리)
+  //     navigate("/calendar", { replace: true });
+  //   };
 
-    window.addEventListener("popstate", handlePopState);
+  //   window.addEventListener("popstate", handlePopState);
     
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, [cardId, navigate]);
+  //   return () => {
+  //     window.removeEventListener("popstate", handlePopState);
+  //   };
+  // }, [cardId, navigate]);
   // cardId로 질문과 답변 리스트 불러오기
   useEffect(() => {
     if (!cardId) {
