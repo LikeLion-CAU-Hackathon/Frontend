@@ -161,23 +161,6 @@
   box-shadow: none;
 }
 
-@media (max-width: 768px) {
-  .replyBar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    margin: 0;
-    padding: 16px 20px 24px;
-    background: #decba1;
-    z-index: 999;
-    border-radius: 12px 12px 0 0;
-
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-
 .replyInput {
   flex: 1;
   height: 40px;
