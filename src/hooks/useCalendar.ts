@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Card } from "../types/card";
 import { checkAnswered } from "../apis/answer/answer.api";
 import { getTodayDate, isCardAfterToday, isCardBeforeToday, isCardOpenableToday } from "../utils/date";
@@ -7,22 +7,31 @@ export const useCalendar = (navigate: Function) => {
   const todayString = getTodayDate();
   const [year, month, ] = todayString.split("-").map(Number);
   const paddedMonth = String(month).padStart(2, "0");
-  const createCardDate = (dayNumber: number) =>
-    `${year}-${paddedMonth}-${String(dayNumber).padStart(2, "0")}`;
 
-  const [cards, setCards] = useState<Card[]>(() =>
-    Array.from({ length: 24 }, (_, index) => ({
+  const initialCards = useMemo(() => {
+    const createCardDate = (dayNumber: number) =>
+      `${year}-${paddedMonth}-${String(dayNumber).padStart(2, "0")}`;
+
+    return Array.from({ length: 24 }, (_, index) => ({
       id: index + 1,
       date: createCardDate(index + 1),
       image: "", // 각 우표 이미지를 stamp1, stamp2, ... , 로 다운받기
       isOpened: false,
       isExpired: false,
       isAnswered: false,
-    })));
+    }));
+  }, [paddedMonth, year]);
+
+  const [cards, setCards] = useState<Card[]>(initialCards);
+
+  useEffect(() => {
+    setCards(initialCards);
+  }, [initialCards]);
 
   // 현재 클릭한 우표 
   const [ selectedCard, setSelectedCard ] = useState<Card | null>(null);
   const [modalMessage, setModalMessage] = useState<string | null>(null);
+  const [isCalendarLoading, setIsCalendarLoading] = useState(true);
 
   const openNoticeModal = (message: string) => {
     setModalMessage(message);
@@ -34,32 +43,37 @@ export const useCalendar = (navigate: Function) => {
 
   // 각 우표의 answered 여부 초기에 확인
   useEffect(() => {
-  const loadAnsweredStates = async () => {
-    const updated = await Promise.all(
-      cards.map(async (card) => {
-        // 오늘 이후 날짜는 체크 안해도 됨
-        if (isCardAfterToday(card.id)) {
-          return { ...card, isAnswered: false };
-        }
-        try {
-          const res = await checkAnswered(card.id);
-          const answered =
-            typeof res === "boolean"
-              ? res
-              : Boolean(res && res.answered);
+    const loadAnsweredStates = async () => {
+      setIsCalendarLoading(true);
+      try {
+        const updated = await Promise.all(
+          initialCards.map(async (card) => {
+            // 오늘 이후 날짜는 체크 안해도 됨
+            if (isCardAfterToday(card.id)) {
+              return { ...card, isAnswered: false };
+            }
+            try {
+              const res = await checkAnswered(card.id);
+              const answered =
+                typeof res === "boolean"
+                  ? res
+                  : Boolean(res && res.answered);
 
-          return { ...card, isAnswered: answered };
-        } catch {
-          return { ...card, isAnswered: false };
-        }
-      })
-    );
+              return { ...card, isAnswered: answered };
+            } catch {
+              return { ...card, isAnswered: false };
+            }
+          })
+        );
 
-    setCards(updated);
-  };
+        setCards(updated);
+      } finally {
+        setIsCalendarLoading(false);
+      }
+    };
 
-  loadAnsweredStates();
-}, []);
+    loadAnsweredStates();
+  }, [initialCards]);
 
 
   // 우표 클릭 시 상태 변경 -> 편지지 슬라이딩 
@@ -92,8 +106,8 @@ export const useCalendar = (navigate: Function) => {
     }
 
       // 오늘 + 답변 미완료인 경우 편지지 열기 
-        setCards(initialCards => {
-          const updatedCards = initialCards.map(card => ({
+        setCards(prevCards => {
+          const updatedCards = prevCards.map(card => ({
             ...card,
             isOpened: card.id === id,
           }));
@@ -121,5 +135,6 @@ export const useCalendar = (navigate: Function) => {
     handleCloseLetter,
     modalMessage,
     closeNoticeModal,
+    isCalendarLoading,
   };
 };
