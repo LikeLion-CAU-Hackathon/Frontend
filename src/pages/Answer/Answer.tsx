@@ -60,7 +60,7 @@ const Answer = () => {
         console.error("질문을 불러오지 못했습니다: ", error);
         if (isMounted) {
           setQuestionTitle("");
-          setQuestionError("질문을 불러오지 못했습니다.");
+          setQuestionError("로그인 후 오늘의 질문에 답변해보세요!");
         }
       } finally {
         if (isMounted) {
