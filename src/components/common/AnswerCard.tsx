@@ -163,6 +163,8 @@ const CardContent = styled.section`
   color: #000;
   text-align: left;
   font-family: "Gowun Batang", "MaruBuri", serif;
+  font-size: 16px;
+  line-height: 1.5;
 
   &::-webkit-scrollbar {
     display: none;
