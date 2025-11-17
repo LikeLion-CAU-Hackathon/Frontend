@@ -6,7 +6,7 @@
   justify-content: center;
   align-items: flex-end;
   padding: 48px 24px;
-  background: url("../../assets/images/loginintro.png") center/cover no-repeat;
+  background: url("../../assets/images/loginlong.png") center top/cover no-repeat;
 }
 
 .buttonWrapper {
