@@ -33,10 +33,10 @@ const LetterWrapper = styled.main`
   position: absolute;
   bottom: 0;
   width: 100%;
+  max-width:393px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: -10.4px; // 중앙 정렬이 안되는 이유?
   pointer-events: none;
 `;
 
@@ -60,7 +60,7 @@ const LetterBackground = styled.div`
   background: #781313;
   border-radius: 4.16px;
   border: 0.39px #781313 solid;
-  z-index: 0;
+  z-index: 1;
   pointer-events: none;
 `;
 
