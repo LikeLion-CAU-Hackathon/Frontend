@@ -174,7 +174,7 @@ const WriteAnswer = () => {
             onChange={(event) => {
                 const value = event.target.value;
 
-                if (value.length > 120) {
+                if (value.length > 119) {
                   setSubmitError("답변이 너무 길어요. 조금만 줄여주세요.");
                 } else {
                   setSubmitError(null);
