@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import GoogleLoginButton from "../../components/common/GoogleLoginButton/GoogleLoginButton";
+import GoogleLoginButton from "../../components/common/googleloginbutton/GoogleLoginButton";
 import styles from "./Login.module.css";
 
 const Login = () => {

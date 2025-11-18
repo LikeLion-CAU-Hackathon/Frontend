@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import styles from "./Answer.module.css";
+import styles from "./WriteAnswer.module.css";
 import { getQuestion } from "../../apis/question/question.api";
 import { getFormattedToday, getTodayDate, parseDateToDotted } from "../../utils/date";
 import { postAnswerReply } from "../../apis/answer/answer.api";
 import { getMyProfile } from "../../apis/user/user.api";
 import closeIcon from "../../assets/images/Comments/x.svg";
 
-const Answer = () => {
+const WriteAnswer = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const locationState = (location.state ?? {}) as {
@@ -202,4 +202,4 @@ const Answer = () => {
   );
 };
 
-export default Answer;
+export default WriteAnswer;
