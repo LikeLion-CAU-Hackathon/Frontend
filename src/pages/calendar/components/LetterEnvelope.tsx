@@ -56,7 +56,6 @@ const TopFold = styled.img`
 `;
 const LetterBackground = styled.div`
   width: 100%;
-  height: 255px;
   background: #781313;
   border-radius: 4.16px;
   border: 0.39px #781313 solid;
@@ -73,7 +72,6 @@ const SideFold = styled.img`
   z-index: 3;
   bottom: 0;
   display: block;
-  height: 230px;
   width: 100%;
   pointer-events: none;
 `;
