@@ -15,7 +15,7 @@
   background-color: transparent;
   background-size: 392px 852px;
   background-position: center;
-  background-repeat: no-repeat;
+  background-repeat: repeat;
   background-attachment: fixed;
   position: relative;
 }
@@ -149,7 +149,7 @@
 
 .replyBar {
   margin-top: auto;
-  width: 395px;
+  width: calc(100% + 40px);
   margin-left: -20px;
   margin-right: -20px;
   background: #decba1;

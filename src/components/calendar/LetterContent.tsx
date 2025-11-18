@@ -30,7 +30,7 @@ const LetterContent = ({
     if (isLoading) return "질문을 불러오는 중입니다...";
     if (error) return error;
     if (rawQuestion.length > 0) return rawQuestion;
-    return "오늘의 질문을 준비 중이에요.";
+    return "오늘의 질문에 답변해주세요🦁!!!!";
   })();
 
   return (

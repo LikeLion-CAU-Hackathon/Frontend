@@ -36,4 +36,5 @@ const GridWrapper = styled.section`
   column-gap: 16px;
   row-gap: 32px;
   width: 100%;
+  justify-items: center;
 `;
