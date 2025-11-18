@@ -48,21 +48,23 @@ const EnvelopeBody = styled.section`
 
 const TopFold = styled.img`
   display: block; 
-  margin-bottom: -25px;
   z-index: 1;
   width: 100%;
   pointer-events: none;
   transform: translateX(-50%);
+  left: 50%;
+  margin-bottom: -22px;
 `;
 const LetterBackground = styled.div`
   width: 100%;
-  height: 255px;
+  height: 249px;
+  display: block; 
   background: #781313;
   border-radius: 4.16px;
   border: 0.39px #781313 solid;
   z-index: 1;
   pointer-events: none;
-    left: 50%;
+  left: 50%;
   transform: translateX(-50%);
 `;
 
@@ -73,7 +75,6 @@ const SideFold = styled.img`
   z-index: 3;
   bottom: 0;
   display: block;
-  height: 230px;
   width: 100%;
   pointer-events: none;
 `;
