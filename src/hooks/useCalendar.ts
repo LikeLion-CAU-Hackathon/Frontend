@@ -146,6 +146,12 @@ export const useCalendar = (navigate: Function) => {
     setSelectedCard(null);
   };
 
+    // 캘린더로 가기 버튼 추가
+  const handleGoBacktoCalendar = () => {
+    navigate("/calendar", { replace: true})
+  }
+
+
   return {
     cards,
     selectedCard,
@@ -155,5 +161,6 @@ export const useCalendar = (navigate: Function) => {
     modalMessage,
     closeNoticeModal,
     isCalendarLoading,
+    handleGoBacktoCalendar
   };
 };
