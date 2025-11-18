@@ -97,7 +97,7 @@ const QuestionText = styled.h2`
   color: black;
   font-weight: 700;
   font-size: 20px;
-  white-space: normal;
+  white-space: pre-line;
   word-break: keep-all;
 
 `;

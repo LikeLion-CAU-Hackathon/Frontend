@@ -763,6 +763,7 @@ const QuestionHeader = styled.header`
   text-align: center;
   position: relative;
   z-index: 1;
+  white-space: pre-line;
 `;
 
 const SliderWrapper = styled.section<{ $disabled?: boolean }>`
