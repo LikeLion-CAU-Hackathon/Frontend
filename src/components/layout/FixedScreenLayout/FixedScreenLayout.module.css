@@ -1,6 +1,7 @@
 .screen {
   width: min(393px, 100vw);
-  height: 862px;
+  min-height: 100vh;
+  height: 100vh;
   margin: 0 auto;
   position: relative;
   overflow: hidden;
@@ -11,4 +12,49 @@
   background-position: center;
   background-repeat: no-repeat;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* 모바일 세로 */
+@media (max-width: 480px) {
+  .screen {
+    width: 100vw;
+    min-height: 100vh;
+    height: 100vh;
+  }
+}
+
+/* 태블릿 세로 */
+@media (min-width: 481px) and (max-width: 768px) {
+  .screen {
+    width: min(500px, 100vw);
+    min-height: 100vh;
+    height: 100vh;
+  }
+}
+
+/* 태블릿 가로 및 작은 데스크톱 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .screen {
+    width: min(600px, 100vw);
+    min-height: 100vh;
+    height: 100vh;
+  }
+}
+
+/* 데스크톱 */
+@media (min-width: 1025px) {
+  .screen {
+    width: min(393px, 100vw);
+    min-height: 100vh;
+    height: 100vh;
+    max-width: 393px;
+  }
+}
+
+/* 가로 모드 */
+@media (orientation: landscape) and (max-height: 500px) {
+  .screen {
+    min-height: 100vh;
+    height: 100vh;
+  }
 }

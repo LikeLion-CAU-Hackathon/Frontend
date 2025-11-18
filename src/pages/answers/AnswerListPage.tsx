@@ -15,6 +15,8 @@ import closeIcon from "../../assets/images/Comments/x.svg";
 import heartIcon from "../../assets/images/Comments/heart.svg";
 import commentIcon from "../../assets/images/Comments/comment.svg";
 import { getMyProfile } from "../../apis/user/user.api";
+import { useCalendar } from "../../hooks/useCalendar";
+import { AiOutlineClose } from "react-icons/ai";
 
 const ANSWER_LIST_STATE_KEY = "answerListState";
 
@@ -258,27 +260,18 @@ const AnswerListPage = () => {
     };
   }, [cardId]);
 
-  // // 기본 뒤로가기 차단하고 뒤로가기 하면 무조건 캘린더로
-  // useEffect(() => {
-  //   // 현재 URL을 replace하여 history에 남기지 않음
-  //   if (cardId) {
-  //     navigate(`/answer-list?questionId=${cardId}`, { replace: true });
-  //   }
+  // 기본 뒤로가기 차단하고 뒤로가기 하면 무조건 캘린더로
+  useEffect(() => {
+    const goBackCalendar = () => {
+      navigate(`/calendar`, { replace: true });
+    };
+ 
+    window.history.pushState(null, "", window.location.pathname);
+    window.addEventListener("popstate", goBackCalendar);
+ 
+    return () => window.removeEventListener("popstate", goBackCalendar);
+  }, [navigate]);
 
-  //   // history에 더미 상태를 추가하여 popstate 이벤트가 발생하도록 함
-  //   window.history.pushState({ preventBack: true }, "", window.location.href);
-
-  //   const handlePopState = () => {
-  //     // 뒤로가기 시 무조건 캘린더로 이동 (replace로 history 스택 정리)
-  //     navigate("/calendar", { replace: true });
-  //   };
-
-  //   window.addEventListener("popstate", handlePopState);
-    
-  //   return () => {
-  //     window.removeEventListener("popstate", handlePopState);
-  //   };
-  // }, [cardId, navigate]);
   // cardId로 질문과 답변 리스트 불러오기
   useEffect(() => {
     if (!cardId) {
@@ -570,6 +563,7 @@ const AnswerListPage = () => {
 
   const bgList = useMemo(() => slides.map(slide => slide.backgroundImg), [slides]);
 
+  const { handleGoBacktoCalendar } = useCalendar(navigate);
 
   if (loading) {
     return (
@@ -588,6 +582,9 @@ const AnswerListPage = () => {
 
   return (
     <PageWrapper>
+        <CloseButton onClick={handleGoBacktoCalendar}>
+          <CloseIcon />
+        </CloseButton>
       <BackgroundStrip offset={backgroundOffset} bgList={bgList}>
         {bgList.map((src) => (
           <BackgroundItem key={src} src={src} />
@@ -683,7 +680,7 @@ const BackgroundStrip = styled.div<{ offset: number; bgList: string[] }>`
 const BackgroundItem = styled.div<{ src: string }>`
   flex: 0 0 100vw;
   height: 100%;
-  background: url(${({ src }) => src}) no-repeat;
+  background: url(${({ src }) => src}) repeat;
 `;
 
 
@@ -849,4 +846,28 @@ const AnimatedStat = styled.span`
     width: 18px;
     height: 18px;
   }
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  border: none;
+  width: 36px;
+  height: 36px;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+`;
+
+const CloseIcon = styled(AiOutlineClose)`
+  position: absolute;
+  z-index: 100000;
+  color: white;
+  width: 24px;
+  height: 24px;
 `;

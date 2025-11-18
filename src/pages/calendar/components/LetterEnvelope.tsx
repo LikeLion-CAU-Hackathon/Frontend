@@ -16,9 +16,9 @@ const LetterEnvelope = ({ card }: LetterEnvelopeProps) => {
       <EnvelopeBody>
         <TopFold src={topFoldImage} alt="letter top fold" />
         <LetterBackground />
+        <SideFold src={sideFoldImage} alt="letter side fold" />
+        <BottomFold src={bottomFoldImage} alt="letter bottom fold" />
       </EnvelopeBody>
-      <SideFold src={sideFoldImage} alt="letter side fold" />
-      <BottomFold src={bottomFoldImage} alt="letter bottom fold" />
       { /* TODO: 편지봉투 위에 있으면 opacity=1 */}
       <StampSection>
         <CalendarCard card={card} onClick={() => {}} isLetterOpen />
@@ -33,10 +33,10 @@ const LetterWrapper = styled.main`
   position: absolute;
   bottom: 0;
   width: 100%;
+  max-width:393px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: -10.4px; // 중앙 정렬이 안되는 이유?
   pointer-events: none;
 `;
 
@@ -52,20 +52,24 @@ const TopFold = styled.img`
   z-index: 1;
   width: 100%;
   pointer-events: none;
+  transform: translateX(-50%);
 `;
-
 const LetterBackground = styled.div`
   width: 100%;
   height: 255px;
   background: #781313;
   border-radius: 4.16px;
   border: 0.39px #781313 solid;
-  z-index: 0;
+  z-index: 1;
   pointer-events: none;
+    left: 50%;
+  transform: translateX(-50%);
 `;
 
 const SideFold = styled.img`
   position: absolute;
+    left: 50%;
+  transform: translateX(-100%);
   z-index: 3;
   bottom: 0;
   display: block;
@@ -76,6 +80,8 @@ const SideFold = styled.img`
 
 const BottomFold = styled.img`
   position: absolute;
+    left: 50%;
+  transform: translateX(-100%);
   z-index: 4;
   bottom: 0;
   display: block;
@@ -85,7 +91,7 @@ const BottomFold = styled.img`
 const StampSection = styled.section`
   position: absolute;
   z-index: 5;
-  bottom: 10px;
-  right: 23px;
+  bottom: 0px;
+  transform: translateX(-65%);
   pointer-events: auto;
   `;
