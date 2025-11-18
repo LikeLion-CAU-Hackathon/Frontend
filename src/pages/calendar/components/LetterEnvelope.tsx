@@ -53,7 +53,7 @@ const TopFold = styled.img`
   pointer-events: none;
   transform: translateX(-50%);
   left: 50%;
-  margin-bottom: -24px;
+  margin-bottom: -22px;
 `;
 const LetterBackground = styled.div`
   width: 100%;
