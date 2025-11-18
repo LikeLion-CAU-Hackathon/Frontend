@@ -49,3 +49,38 @@ export const isOpportunityDay = (): boolean => {
   const [, , day] = today.split("-").map(Number);
   return day === 12 || day === 24;
 };
+
+export const formatDottedDate = (yy: string, mm: string, dd: string) =>
+  `${yy}. ${mm}. ${dd}`;
+
+// 실제 날짜 문자열을 → yy. mm. dd 형태로 파싱
+export const parseDateToDotted = (dateStr?: string | null): string | null => {
+  if (!dateStr) return null;
+
+  const trimmed = dateStr.trim();
+  if (trimmed.length === 0) return null;
+
+  // YYYY-MM-DD or YYYY-MM-DDT00:00:00 형태
+  const [yyyy, mm = "", ddRaw = ""] = trimmed.split("T")[0]?.split("-") ?? [];
+
+  if (yyyy && mm && ddRaw) {
+    const yy = yyyy.slice(-2);
+    const month = mm.padStart(2, "0");
+    const day = ddRaw.slice(0, 2).padStart(2, "0");
+    return formatDottedDate(yy, month, day);
+  }
+
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) return null;
+
+  const yy = String(parsed.getFullYear()).slice(-2);
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+
+  return formatDottedDate(yy, month, day);
+};
+
+export const getFormattedToday = (): string => {
+  const today = getTodayDate();
+  return parseDateToDotted(today) ?? "";
+};
