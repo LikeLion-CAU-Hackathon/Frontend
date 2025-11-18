@@ -6,7 +6,7 @@ import styled from "styled-components";
 import Footer from "../../components/common/Footer";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Overlay from "../../components/common/Overlay/Overlay";
-import { getAnswerList } from "../../apis/answer/answer.api";
+import { checkAnswered, getAnswerList } from "../../apis/answer/answer.api";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getQuestion } from "../../apis/question/question.api";
 import { convertIdToDate } from "../../utils/date";
@@ -17,6 +17,7 @@ import commentIcon from "../../assets/images/Comments/comment.svg";
 import { getMyProfile } from "../../apis/user/user.api";
 import { useCalendar } from "../../hooks/useCalendar";
 import { AiOutlineClose } from "react-icons/ai";
+import Modal from "../../components/common/Modal/Modal";
 
 const ANSWER_LIST_STATE_KEY = "answerListState";
 
@@ -221,17 +222,78 @@ const AnswerListPage = () => {
   const sliderWrapperRef = useRef<HTMLDivElement | null>(null);
   const [backgroundOffset, setBackgroundOffset] = useState(() => -currentSlide * 100);
   const rafRef = useRef<number | null>(null);
+  const [accessChecked, setAccessChecked] = useState(false);
+  const [canAccess, setCanAccess] = useState(false);
 
   // URL params에서 cardId 가져오기
   const [searchParams, setSearchParams] = useSearchParams();
   const cardId = searchParams.get("cardId") || searchParams.get("questionId");
 
+
+  // 답변 여부 확인 후 페이지 접근 허용
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
   useEffect(() => {
+    if (!cardId) {
+      setLoading(false);
+      setAccessChecked(true);
+      setCanAccess(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const checkAccess = async () => {
+      try {
+        const response = await checkAnswered(Number(cardId));
+        console.log("답변여부" ,response.answered);
+
+        if (cancelled) return;
+
+        if (!response.answered) {
+          setModalMessage("답변하지 않은 질문에 대한 접근입니다. \n당장 내쫓겠습니다🎅🏻");
+          setIsModalOpen(true);
+          setCanAccess(false);
+          setLoading(false);
+          return;
+        }
+
+        setCanAccess(true);
+      } catch (e) {
+        if (cancelled) return;
+        console.error("답변 여부 확인 실패", e);
+        setModalMessage("접근할 수 없는 페이지입니다.");
+        setIsModalOpen(true);
+        setCanAccess(false);
+        setLoading(false);
+      } finally {
+        if (!cancelled) {
+          setAccessChecked(true);
+        }
+      }
+    };
+
+    checkAccess();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [cardId, navigate]);
+
+  const handleModalClose = () => {
+      setIsModalOpen(false);
+      navigate("/calendar", { replace: true });
+    };
+
+
+  useEffect(() => {
+    if (!canAccess) return;
+    console.log("접근", canAccess);
+
     let cancelled = false;
     const cardIdNumber =
-      typeof cardId === "string" && cardId.trim().length > 0
-        ? Number(cardId)
-        : NaN;
+      typeof cardId === "string" && cardId.trim().length > 0 ? Number(cardId) : NaN;
     const questionIdParam = Number.isFinite(cardIdNumber) ? cardIdNumber : undefined;
     const fetchProfile = async () => {
       try {
@@ -258,7 +320,7 @@ const AnswerListPage = () => {
     return () => {
       cancelled = true;
     };
-  }, [cardId]);
+  }, [cardId, canAccess]);
 
   // 기본 뒤로가기 차단하고 뒤로가기 하면 무조건 캘린더로
   useEffect(() => {
@@ -274,8 +336,8 @@ const AnswerListPage = () => {
 
   // cardId로 질문과 답변 리스트 불러오기
   useEffect(() => {
+    if (!canAccess) return;
     if (!cardId) {
-      console.error("cardId가 없습니다.");
       setLoading(false);
       return;
     }
@@ -284,20 +346,13 @@ const AnswerListPage = () => {
       try {
         setLoading(true);
         const cardIdNumber = Number(cardId);
-        
-        // card.id를 날짜로 변환
+
         const date = convertIdToDate(cardIdNumber);
         const questionResponse = await getQuestion(date);
-        console.log("해당 id의 질문:", questionResponse);
-        
-        // 질문 저장
         setQuestion(questionResponse.content || "");
 
-        // cardId로 답변 리스트 불러오기
         const answerData = await getAnswerList(cardIdNumber);
-        console.log("답변 리스트:", answerData);
-        
-        // 백엔드 응답 형식 변환
+
         const mappedData = answerData.map((response: any) => {
           const writerNickname =
             response.userNickname ??
@@ -306,10 +361,9 @@ const AnswerListPage = () => {
             response.author ??
             "익명";
 
-          // localStorage에서 좋아요 상태 확인
           const likedAnswers = JSON.parse(localStorage.getItem("likedAnswers") || "[]");
           const isLiked = likedAnswers.includes(response.answerId) || response.liked || false;
-          
+
           const { date: formattedDate, time: formattedTime } = extractDateTimeFromTimestamp(
             response.createdTime
           );
@@ -329,15 +383,15 @@ const AnswerListPage = () => {
 
         const nicknameSnapshot = myNicknameRef.current ?? null;
         setAnswers(updateAnswerOwnership(mappedData, nicknameSnapshot));
-      } catch(error) {
+      } catch (error) {
         console.error("질문 또는 답변 리스트를 불러오는 데 오류가 발생했습니다: ", error);
       } finally {
         setLoading(false);
       }
     };
-    
+
     fetchQuestionAndAnswers();
-  }, [cardId]);
+  }, [cardId, canAccess]);
 
   useEffect(() => {
     setAnswers((prev) => updateAnswerOwnership(prev, myNickname));
@@ -564,8 +618,9 @@ const AnswerListPage = () => {
   const bgList = useMemo(() => slides.map(slide => slide.backgroundImg), [slides]);
 
   const { handleGoBacktoCalendar } = useCalendar(navigate);
+  const showLoadingView = loading || !accessChecked;
 
-  if (loading) {
+  if (showLoadingView) {
     return (
       <PageWrapper>
         <BackgroundStrip offset={backgroundOffset} bgList={bgList}>
@@ -580,11 +635,24 @@ const AnswerListPage = () => {
     );
   }
 
+  // 접근 불가(답변하지 않은 상태 등)일 때는 다른 UI를 전혀 렌더링하지 않고 모달만 노출
+  if (!canAccess) {
+    return (
+      <>
+        <Modal
+          isOpen={isModalOpen}
+          message={modalMessage}
+          onClose={handleModalClose}
+        />
+      </>
+    );
+  }
+
   return (
     <PageWrapper>
-        <CloseButton onClick={handleGoBacktoCalendar}>
-          <CloseIcon />
-        </CloseButton>
+      <CloseButton onClick={handleGoBacktoCalendar}>
+        <CloseIcon />
+      </CloseButton>
       <BackgroundStrip offset={backgroundOffset} bgList={bgList}>
         {bgList.map((src) => (
           <BackgroundItem key={src} src={src} />
