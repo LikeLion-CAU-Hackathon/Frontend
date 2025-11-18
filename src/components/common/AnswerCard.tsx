@@ -150,22 +150,21 @@ const CardHeader = styled.header`
   margin-bottom: 5px;
 `;
 
-/* TODO: 스크롤바 수정 필요*/
 const CardContent = styled.section`
   width: 100%;
-  height: 130px;
+  height: 140px;
   overflow-y: auto;
   flex-direction: column;
-  justify-content: center;
   align-items: flex-start;
   gap: 10px;
-  display: flex;
   color: #000;
   text-align: left;
   font-family: "Gowun Batang", "MaruBuri", serif;
   font-size: 16px;
   line-height: 1.5;
-  white-space: pre-line;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 
   &::-webkit-scrollbar {
     display: none;
