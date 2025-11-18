@@ -85,6 +85,7 @@ const BottomFold = styled.img`
   z-index: 4;
   bottom: 0;
   display: block;
+  width: 100%;
   pointer-events: none;
 `;
 
