@@ -33,6 +33,7 @@ const LetterSection = styled.main`
   bottom: 0;
   width: 100%;
   display: flex;
+  flex-direction: column; 
   z-index: 5;
   justify-content: center;
   align-items: center;
