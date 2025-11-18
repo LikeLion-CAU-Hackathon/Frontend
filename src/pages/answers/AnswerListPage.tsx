@@ -5,7 +5,7 @@ import AnswerSlide from "./components/AnswerSlide";
 import styled from "styled-components";
 import Footer from "../../components/common/Footer";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Overlay from "../../components/common/Overlay/Overlay";
+import Overlay from "../../components/common/overlay/Overlay";
 import { checkAnswered, getAnswerList } from "../../apis/answer/answer.api";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getQuestion } from "../../apis/question/question.api";
@@ -17,7 +17,7 @@ import commentIcon from "../../assets/images/Comments/comment.svg";
 import { getMyProfile } from "../../apis/user/user.api";
 import { useCalendar } from "../../hooks/useCalendar";
 import { AiOutlineClose } from "react-icons/ai";
-import Modal from "../../components/common/Modal/Modal";
+import Modal from "../../components/common/modal/Modal";
 
 const ANSWER_LIST_STATE_KEY = "answerListState";
 

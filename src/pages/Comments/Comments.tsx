@@ -7,7 +7,7 @@ import closeIcon from "../../assets/images/Comments/x.svg";
 import type { AnswerCardData } from "../../components/common/AnswerCard";
 import AnswerCard from "../../components/common/AnswerCard";
 import { getAnswerReplies, getAnswerLikeCount, postAnswerComment } from "../../apis/answer/answer.api";
-import Overlay from "../../components/common/Overlay/Overlay";
+import Overlay from "../../components/common/overlay/Overlay";
 import { getMyProfile } from "../../apis/user/user.api";
 
 const createFallbackFeatured = (): AnswerCardData => ({
