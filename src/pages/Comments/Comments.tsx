@@ -316,6 +316,11 @@ const Comments = () => {
       return;
     }
 
+    if (trimmed.length > 119) {
+      setReplyError("댓글이 너무 길어요. 조금만 줄여주세요.");
+      return;
+    }
+
     setIsPostingReply(true);
     setReplyError(null);
     try {
