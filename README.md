@@ -1,6 +1,10 @@
 # Frontend
 
-## 🦁🎄Likelion Postbox; 2025 Advent Calendar🎄🦁
+## 🦁🎄Likelion Postbox: 2025 Advent Calendar🎄🦁
 2025 중앙대학교 멋쟁이사자만을 위한 24일간의 기록
 
+## 📮프로젝트 설명
+24일 동안 매일 한 장의 ‘편지(질문)’가 찾아옵니다.<br/>
+38명의 익명 답장이 차곡차곡 쌓이고,<br/>
+우리는 서로의 진심을 함께 읽으며 추억을 공유합니다.
 
