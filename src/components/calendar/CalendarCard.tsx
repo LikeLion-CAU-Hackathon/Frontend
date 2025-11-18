@@ -75,7 +75,7 @@ const CardSection = styled.section`
 
 const CardImage = styled.img`
   cursor: pointer;
-  widthL 90px;
+  width: 90px;
   height: 114px;
 `
 
@@ -85,6 +85,7 @@ const Stamp = styled.img<{ isExpired?: boolean; isLetterOpen?: boolean}>`
   z-index:0.5;
   top:11px;
   right:15px;
+  cursor: pointer;
 
   ${({ isExpired }) =>
     isExpired &&

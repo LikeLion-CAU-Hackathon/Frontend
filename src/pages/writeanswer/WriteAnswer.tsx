@@ -1,16 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import styles from "./Answer.module.css";
+import styles from "./WriteAnswer.module.css";
 import { getQuestion } from "../../apis/question/question.api";
-import { getTodayDate } from "../../utils/date";
+import { getFormattedToday, getTodayDate, parseDateToDotted } from "../../utils/date";
 import { postAnswerReply } from "../../apis/answer/answer.api";
 import { getMyProfile } from "../../apis/user/user.api";
 import closeIcon from "../../assets/images/Comments/x.svg";
 
-const formatDottedDate = (year: string, month: string, day: string) => `${year}. ${month}. ${day}`;
-
-const Answer = () => {
+const WriteAnswer = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const locationState = (location.state ?? {}) as {
@@ -88,38 +86,8 @@ const Answer = () => {
     return "표시할 질문이 없습니다.";
   }, [isQuestionLoading, questionError, questionTitle]);
 
-  const formattedDate = useMemo(() => {
-    if (!questionDate) return null;
-    const trimmed = questionDate.trim();
-    if (trimmed.length === 0) return null;
-
-    const [yyyy, mm = "", ddRaw = ""] = trimmed.split("T")[0]?.split("-") ?? [];
-    if (yyyy && mm && ddRaw) {
-      const shortYear = yyyy.slice(-2);
-      const month = mm.padStart(2, "0");
-      const day = ddRaw.slice(0, 2).padStart(2, "0");
-      return formatDottedDate(shortYear, month, day);
-    }
-
-    const parsed = new Date(trimmed);
-    if (Number.isNaN(parsed.getTime())) return null;
-    const yy = String(parsed.getFullYear()).slice(-2);
-    const month = String(parsed.getMonth() + 1).padStart(2, "0");
-    const day = String(parsed.getDate()).padStart(2, "0");
-    return formatDottedDate(yy, month, day);
-  }, [questionDate]);
-
-  const fallbackDate = useMemo(() => {
-    const today = getTodayDate();
-    const [yyyy, mm = "", ddRaw = ""] = today.split("-");
-    if (yyyy && mm && ddRaw) {
-      const shortYear = yyyy.slice(-2);
-      const month = mm.padStart(2, "0");
-      const day = ddRaw.slice(0, 2).padStart(2, "0");
-      return formatDottedDate(shortYear, month, day);
-    }
-    return "";
-  }, []);
+  const formattedDate = useMemo(() => parseDateToDotted(questionDate), [questionDate]);
+  const fallbackDate = useMemo(() => getFormattedToday(), []);
 
   const questionIdForProfile =
     typeof questionId === "number" && Number.isFinite(questionId) ? questionId : undefined;
@@ -187,7 +155,7 @@ const Answer = () => {
 
   return (
     <div className={styles.container}>
-      <button type="button" className={styles.closeButton} onClick={() => navigate(-1)} aria-label="닫기">
+      <button type="button" className={styles.closeButton} onClick={() => navigate("/calendar")} aria-label="닫기">
         <img src={closeIcon} alt="닫기" />
       </button>
       <section className={styles.answerSection}>
@@ -234,4 +202,4 @@ const Answer = () => {
   );
 };
 
-export default Answer;
+export default WriteAnswer;
