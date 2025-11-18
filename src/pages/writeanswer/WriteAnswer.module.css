@@ -76,6 +76,7 @@
   font-weight: 400;
   color: black;
   line-height: 1.6;
+  white-space: pre-line;
 }
 
 .fromText {
