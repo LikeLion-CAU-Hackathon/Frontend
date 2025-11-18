@@ -155,7 +155,7 @@ const WriteAnswer = () => {
 
   return (
     <div className={styles.container}>
-      <button type="button" className={styles.closeButton} onClick={() => navigate(-1)} aria-label="닫기">
+      <button type="button" className={styles.closeButton} onClick={() => navigate("/calendar")} aria-label="닫기">
         <img src={closeIcon} alt="닫기" />
       </button>
       <section className={styles.answerSection}>
