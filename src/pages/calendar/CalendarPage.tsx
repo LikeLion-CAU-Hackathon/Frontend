@@ -9,7 +9,6 @@ import Modal from "../../components/common/Modal/Modal";
 import { useCalendar } from "../../hooks/useCalendar";
 import { getQuestion } from "../../apis/question/question.api";
 import { getTodayDate } from "../../utils/date";
-import { setAccessToken, setTokens, getAccessToken } from "../../utils/token";
 import { useAuthTokenHandler } from "../../hooks/useAuthTokenHandler";
 
 const CalendarPage = () => {
@@ -66,9 +65,9 @@ const CalendarPage = () => {
   }, [isCardOpened]);
 
   return (
-    <PageContainer isOpened={isCardOpened}>
+    <PageContainer>
       {isCardOpened && (
-        <Overlay isVisible={isCardOpened} onClick={handleCloseLetter} />
+        <Overlay isVisible onClick={handleCloseLetter} />
       )}
       {modalMessage && (
         <Modal
@@ -102,7 +101,7 @@ const CalendarPage = () => {
 
 export default CalendarPage;
 
-const PageContainer = styled.main<{ isOpened: boolean }>`
+const PageContainer = styled.main`
   display: flex;
   width: 100%;
   height: 100%;
