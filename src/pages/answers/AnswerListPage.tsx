@@ -680,7 +680,7 @@ const BackgroundStrip = styled.div<{ offset: number; bgList: string[] }>`
 const BackgroundItem = styled.div<{ src: string }>`
   flex: 0 0 100vw;
   height: 100%;
-  background: url(${({ src }) => src}) no-repeat;
+  background: url(${({ src }) => src}) repeat;
 `;
 
 
