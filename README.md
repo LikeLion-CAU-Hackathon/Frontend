@@ -58,6 +58,6 @@
 <br>
 
 ## 👨‍👩‍👧‍👧 Team
-| 조윤빈 | 권정주 | [강지혜](https://github.com/Jihaee) | [최영현](https://github.com/) | [김윤형](https://github.com/) | [오지원](https://github.com/) |[천재홍](https://github.com/) |
+| 조윤빈 | 권정주 | [강지혜](https://github.com/Jihaeee) | [최영현](https://github.com/) | [김윤형](https://github.com/) | [오지원](https://github.com/) |[천재홍](https://github.com/) |
 | :----------------------------------------: | :----------------------------------------: |:----------------------------------------: | :----------------------------------------: | :----------------------------------------: | :----------------------------------------: | :----------------------------------------: 
 | Project Manager | Designer | Frontend Developer | Frontend Developer | Backend Developer | Backend Developer | Backend Developer |
