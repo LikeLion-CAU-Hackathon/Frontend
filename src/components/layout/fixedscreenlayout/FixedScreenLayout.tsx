@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from "./FixedScreenLayout.module.css";
-import backgroundImage from '../../../assets/images/envelopes.svg';
+import backgroundImage from '../../../assets/images/cover.png';
 
 interface FixedScreenLayoutProps {
   children: React.ReactNode;
