@@ -5,7 +5,7 @@ import sendIcon from "../../assets/images/send.svg";
 import closeIcon from "../../assets/images/Comments/x.svg";
 import type { AnswerCardData } from "../../components/common/AnswerCard";
 import AnswerCard from "../../components/common/AnswerCard";
-ㄹimport Overlay from "../../components/common/overlay/Overlay";
+import Overlay from "../../components/common/overlay/Overlay";
 import { normalizeFeaturedAnswer } from "../../utils/comments";
 import { useCommentProfile } from "../../hooks/useCommentProfile";
 import { useCommentsReplies } from "../../hooks/useCommentsReplies";
