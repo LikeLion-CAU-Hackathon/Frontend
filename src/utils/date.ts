@@ -137,3 +137,37 @@ export const extractDateTimeFromTimestamp = (
 
   return { date: formatCardDateLabel(trimmed), time: "" };
 };
+
+export const formatTimestampWithSeconds = (timestamp: string): string => {
+  if (!timestamp) return "";
+  const trimmed = timestamp.trim();
+  if (trimmed.length === 0) return "";
+
+  const isoMatch =
+    /^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2})(?::?(\d{2}))?(?::?(\d{2}))?)?$/.exec(trimmed);
+  if (isoMatch) {
+    const [, , month, day, hour, minute, second] = isoMatch;
+    const monthIndex = Number(month) - 1;
+    const label = monthLabels[monthIndex] ?? month.toUpperCase();
+    const dayNumber = Number(day);
+    const datePart = `${label} ${Number.isFinite(dayNumber) ? dayNumber : day}`;
+    if (hour !== undefined && minute !== undefined) {
+      const hh = hour.padStart(2, "0");
+      const mm = minute.padStart(2, "0");
+      const ss = (second ?? "00").padStart(2, "0");
+      return `${datePart} | ${hh}:${mm}:${ss}`;
+    }
+    return datePart;
+  }
+
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) {
+    return trimmed;
+  }
+  const month = parsed.toLocaleString("en-US", { month: "short" }).toUpperCase();
+  const day = parsed.getDate();
+  const hours = String(parsed.getHours()).padStart(2, "0");
+  const minutes = String(parsed.getMinutes()).padStart(2, "0");
+  const seconds = String(parsed.getSeconds()).padStart(2, "0");
+  return `${month} ${day} | ${hours}:${minutes}:${seconds}`;
+};
