@@ -55,6 +55,158 @@
 
 ### Frontend
 
+페이지 중심 구조에서 발생한 로직 과밀 문제를 해결하기 위해, hooks / utils / apis 레이어를 기준으로 책임을 재정의하고 전반적인 리팩토링을 주도했습니다.
+```
+src
+├── App.css
+├── App.tsx
+├── apis
+│   ├── answer
+│   │   ├── answer.api.ts
+│   │   └── like.api.ts
+│   ├── auth.ts
+│   ├── axiosInstance.ts
+│   ├── question
+│   │   └── question.api.ts
+│   └── user
+│       └── user.api.ts
+├── assets
+│   └── images
+│       ├── background
+│       │   ├── bg1.png
+│       │   ├── bg10.png
+│       │   ├── bg2.png
+│       │   ├── bg3.png
+│       │   ├── bg4.png
+│       │   ├── bg5.png
+│       │   ├── bg6.png
+│       │   ├── bg7.png
+│       │   ├── bg8.png
+│       │   ├── bg9.png
+│       │   └── cover.png
+│       ├── comments
+│       │   ├── comment.svg
+│       │   ├── heart-filled.svg
+│       │   ├── heart.svg
+│       │   ├── react-icons
+│       │   │   └── ai
+│       │   │       └── AiOutlineMessage.svg
+│       │   └── x.svg
+│       ├── envelope
+│       │   ├── bottom_fold.png
+│       │   ├── letter_background.png
+│       │   ├── side_fold.png
+│       │   └── top_fold.png
+│       ├── login
+│       │   ├── google-login-button.png
+│       │   └── loginlong.png
+│       ├── send.svg
+│       └── stamp
+│           ├── expiredStamp.png
+│           ├── stamp.png
+│           ├── stamp1.png
+│           ├── stamp10.png
+│           ├── stamp11.png
+│           ├── stamp12.png
+│           ├── stamp13.png
+│           ├── stamp14.png
+│           ├── stamp15.png
+│           ├── stamp16.png
+│           ├── stamp17.png
+│           ├── stamp18.png
+│           ├── stamp19.png
+│           ├── stamp2.png
+│           ├── stamp20.png
+│           ├── stamp21.png
+│           ├── stamp22.png
+│           ├── stamp23.png
+│           ├── stamp24.png
+│           ├── stamp3.png
+│           ├── stamp4.png
+│           ├── stamp5.png
+│           ├── stamp6.png
+│           ├── stamp7.png
+│           ├── stamp8.png
+│           └── stamp9.png
+├── components
+│   ├── calendar
+│   │   ├── CalendarCard.tsx
+│   │   └── LetterContent.tsx
+│   ├── common
+│   │   ├── AnswerCard.tsx
+│   │   ├── Footer.tsx
+│   │   ├── button
+│   │   │   └── AnswerButton.tsx
+│   │   ├── googleloginbutton
+│   │   │   ├── GoogleLoginButton.module.css
+│   │   │   └── GoogleLoginButton.tsx
+│   │   ├── modal
+│   │   │   └── Modal.tsx
+│   │   └── overlay
+│   │       └── Overlay.tsx
+│   └── layout
+│       └── fixedscreenlayout
+│           ├── FixedScreenLayout.module.css
+│           └── FixedScreenLayout.tsx
+├── constants
+│   ├── baseURL.ts
+│   └── oauth.ts
+├── hooks
+│   ├── useAnswerListAccess.ts
+│   ├── useAnswerListAnimation.ts
+│   ├── useAnswerListData.ts
+│   ├── useAnswerListNavigation.ts
+│   ├── useAnswerListSlider.ts
+│   ├── useAnswerSubmit.ts
+│   ├── useAuthTokenHandler.ts
+│   ├── useCalendar.ts
+│   ├── useCommentProfile.ts
+│   ├── useCommentsReplies.ts
+│   ├── useLike.ts
+│   ├── useQuestion.ts
+│   └── useUserProfile.ts
+├── index.css
+├── main.tsx
+├── pages
+│   ├── answer
+│   │   ├── Answer.module.css
+│   │   └── Answer.tsx
+│   ├── answer-list
+│   │   ├── AnswerListPage.tsx
+│   │   └── components
+│   │       ├── AnswerGrid.tsx
+│   │       └── AnswerSlide.tsx
+│   ├── calendar
+│   │   ├── CalendarPage.tsx
+│   │   ├── LetterPage.tsx
+│   │   └── components
+│   │       ├── CalendarOverlay.tsx
+│   │       ├── CardGrid.tsx
+│   │       └── LetterEnvelope.tsx
+│   ├── comments
+│   │   ├── Comments.module.css
+│   │   └── Comments.tsx
+│   └── login
+│       ├── Login.module.css
+│       ├── Login.tsx
+│       └── styles
+│           └── global.css
+├── router
+│   └── PrivateRoute.tsx
+├── types
+│   ├── answerList.ts
+│   └── card.ts
+└── utils
+    ├── answer.ts
+    ├── comments.ts
+    ├── date.ts
+    ├── dayToKorean.ts
+    ├── likedAnswers.ts
+    ├── random.ts
+    ├── stampLoader.ts
+    ├── storage.ts
+    └── token.ts
+```
 <br>
 
 ## 👨‍👩‍👧‍👧 Team
