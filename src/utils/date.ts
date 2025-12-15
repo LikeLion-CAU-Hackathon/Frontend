@@ -85,3 +85,55 @@ export const getFormattedToday = (): string => {
   const today = getTodayDate();
   return parseDateToDotted(today) ?? "";
 };
+
+const monthLabels = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+export const formatCardDateLabel = (value?: string | null): string => {
+  if (!value) return "";
+  const trimmed = value.trim();
+  if (trimmed.length === 0) return "";
+  const isoMatch = /^(\d{4})[-/.](\d{2})[-/.](\d{2})/.exec(trimmed);
+  if (isoMatch) {
+    const [, , month, day] = isoMatch;
+    const monthIndex = Number(month) - 1;
+    const label = monthLabels[monthIndex] ?? month.toUpperCase();
+    const dayNumber = Number(day);
+    return `${label} ${Number.isFinite(dayNumber) ? dayNumber : day}`;
+  }
+  const parsed = new Date(trimmed);
+  if (!Number.isNaN(parsed.getTime())) {
+    const month = parsed.toLocaleString("en-US", { month: "short" }).toUpperCase();
+    const day = parsed.getDate();
+    return `${month} ${day}`;
+  }
+  return trimmed;
+};
+
+export const extractDateTimeFromTimestamp = (
+  timestamp?: string | null
+): { date: string; time: string } => {
+  if (!timestamp) return { date: "", time: "" };
+  const trimmed = timestamp.trim();
+  if (trimmed.length === 0) return { date: "", time: "" };
+
+  const isoMatch =
+    /^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2})(?::?(\d{2}))?(?::?(\d{2}))?)?/.exec(trimmed);
+  if (isoMatch) {
+    const [, year, month, day, hour, minute] = isoMatch;
+    const date = formatCardDateLabel(`${year}-${month}-${day}`);
+    const hh = hour ? hour.padStart(2, "0") : "";
+    const mm = minute ? minute.padStart(2, "0") : "";
+    const time = hh ? `${hh}:${mm || "00"}` : "";
+    return { date, time };
+  }
+
+  const parsed = new Date(trimmed);
+  if (!Number.isNaN(parsed.getTime())) {
+    const date = formatCardDateLabel(trimmed);
+    const hours = String(parsed.getHours()).padStart(2, "0");
+    const minutes = String(parsed.getMinutes()).padStart(2, "0");
+    return { date, time: `${hours}:${minutes}` };
+  }
+
+  return { date: formatCardDateLabel(trimmed), time: "" };
+};
