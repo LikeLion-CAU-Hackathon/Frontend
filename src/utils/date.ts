@@ -2,6 +2,7 @@
 export const getTodayDate = (): string => {
   const today = new Date();
   return today.toLocaleDateString("ko-KR", {
+    timeZone: "Asia/Seoul", 
     year: "numeric",
     month: "2-digit",
     day: "2-digit"
@@ -24,7 +25,7 @@ export const isCardOpenableToday = (cardId: number): boolean => {
 // API 형식에 맞게 변환
 export const convertIdToDate = (id: number): string => {
   const year = 2025;      
-  const month = 11;    //TODO: 12로 바꾸기      
+  const month = 12;        
   const day = id.toString().padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
