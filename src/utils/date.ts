@@ -2,6 +2,7 @@
 export const getTodayDate = (): string => {
   const today = new Date();
   return today.toLocaleDateString("ko-KR", {
+    timeZone: "Asia/Seoul", 
     year: "numeric",
     month: "2-digit",
     day: "2-digit"
@@ -24,7 +25,7 @@ export const isCardOpenableToday = (cardId: number): boolean => {
 // API 형식에 맞게 변환
 export const convertIdToDate = (id: number): string => {
   const year = 2025;      
-  const month = 11;    //TODO: 12로 바꾸기      
+  const month = 11; // (개발용) 12로 바꾸기      
   const day = id.toString().padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
@@ -83,4 +84,90 @@ export const parseDateToDotted = (dateStr?: string | null): string | null => {
 export const getFormattedToday = (): string => {
   const today = getTodayDate();
   return parseDateToDotted(today) ?? "";
+};
+
+const monthLabels = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+export const formatCardDateLabel = (value?: string | null): string => {
+  if (!value) return "";
+  const trimmed = value.trim();
+  if (trimmed.length === 0) return "";
+  const isoMatch = /^(\d{4})[-/.](\d{2})[-/.](\d{2})/.exec(trimmed);
+  if (isoMatch) {
+    const [, , month, day] = isoMatch;
+    const monthIndex = Number(month) - 1;
+    const label = monthLabels[monthIndex] ?? month.toUpperCase();
+    const dayNumber = Number(day);
+    return `${label} ${Number.isFinite(dayNumber) ? dayNumber : day}`;
+  }
+  const parsed = new Date(trimmed);
+  if (!Number.isNaN(parsed.getTime())) {
+    const month = parsed.toLocaleString("en-US", { month: "short" }).toUpperCase();
+    const day = parsed.getDate();
+    return `${month} ${day}`;
+  }
+  return trimmed;
+};
+
+export const extractDateTimeFromTimestamp = (
+  timestamp?: string | null
+): { date: string; time: string } => {
+  if (!timestamp) return { date: "", time: "" };
+  const trimmed = timestamp.trim();
+  if (trimmed.length === 0) return { date: "", time: "" };
+
+  const isoMatch =
+    /^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2})(?::?(\d{2}))?(?::?(\d{2}))?)?/.exec(trimmed);
+  if (isoMatch) {
+    const [, year, month, day, hour, minute] = isoMatch;
+    const date = formatCardDateLabel(`${year}-${month}-${day}`);
+    const hh = hour ? hour.padStart(2, "0") : "";
+    const mm = minute ? minute.padStart(2, "0") : "";
+    const time = hh ? `${hh}:${mm || "00"}` : "";
+    return { date, time };
+  }
+
+  const parsed = new Date(trimmed);
+  if (!Number.isNaN(parsed.getTime())) {
+    const date = formatCardDateLabel(trimmed);
+    const hours = String(parsed.getHours()).padStart(2, "0");
+    const minutes = String(parsed.getMinutes()).padStart(2, "0");
+    return { date, time: `${hours}:${minutes}` };
+  }
+
+  return { date: formatCardDateLabel(trimmed), time: "" };
+};
+
+export const formatTimestampWithSeconds = (timestamp: string): string => {
+  if (!timestamp) return "";
+  const trimmed = timestamp.trim();
+  if (trimmed.length === 0) return "";
+
+  const isoMatch =
+    /^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2})(?::?(\d{2}))?(?::?(\d{2}))?)?$/.exec(trimmed);
+  if (isoMatch) {
+    const [, , month, day, hour, minute, second] = isoMatch;
+    const monthIndex = Number(month) - 1;
+    const label = monthLabels[monthIndex] ?? month.toUpperCase();
+    const dayNumber = Number(day);
+    const datePart = `${label} ${Number.isFinite(dayNumber) ? dayNumber : day}`;
+    if (hour !== undefined && minute !== undefined) {
+      const hh = hour.padStart(2, "0");
+      const mm = minute.padStart(2, "0");
+      const ss = (second ?? "00").padStart(2, "0");
+      return `${datePart} | ${hh}:${mm}:${ss}`;
+    }
+    return datePart;
+  }
+
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) {
+    return trimmed;
+  }
+  const month = parsed.toLocaleString("en-US", { month: "short" }).toUpperCase();
+  const day = parsed.getDate();
+  const hours = String(parsed.getHours()).padStart(2, "0");
+  const minutes = String(parsed.getMinutes()).padStart(2, "0");
+  const seconds = String(parsed.getSeconds()).padStart(2, "0");
+  return `${month} ${day} | ${hours}:${minutes}:${seconds}`;
 };

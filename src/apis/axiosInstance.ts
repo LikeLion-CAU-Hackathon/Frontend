@@ -5,9 +5,8 @@ import {
   getRefreshToken,
   setAccessToken,
   setTokens,
-  clearTokens,
 } from "../utils/token.ts";
-import { getNewRefreshToken } from "./auth.ts";
+import { getNewRefreshToken, handleAuthError } from "./auth.ts";
 
 export const authAxios = axios.create({
     baseURL: BASE_URL,
@@ -50,7 +49,7 @@ authAxios.interceptors.response.use(
 
         return authAxios(originalRequest); 
       } catch (err) {
-        clearTokens();
+        handleAuthError();
         return Promise.reject(err);
       }
     }
