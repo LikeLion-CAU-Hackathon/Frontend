@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Comments.module.css";
 import sendIcon from "../../assets/images/send.svg";
-import closeIcon from "../../assets/images/Comments/x.svg";
+import closeIcon from "../../assets/images/comments/x.svg";
 import type { AnswerCardData } from "../../components/common/AnswerCard";
 import AnswerCard from "../../components/common/AnswerCard";
 import Overlay from "../../components/common/overlay/Overlay";
