@@ -6,7 +6,7 @@ import Login from "./pages/login/Login";
 import Answer from "./pages/answer/Answer";
 import Comments from "./pages/comments/Comments";
 import AnswerListPage from "./pages/answer-list/AnswerListPage";
-import PrivateRoute from "./components/common/PrivateRoute";
+import PrivateRoute from "./router/PrivateRoute";
 
 function App() {
   return (
