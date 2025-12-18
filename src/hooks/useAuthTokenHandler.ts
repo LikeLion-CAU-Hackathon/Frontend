@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { setAccessToken, setTokens, getAccessToken } from "../utils/token";
+import { setAccessToken, setTokens, getAccessToken } from "@/utils/token";
 
 interface UseAuthTokenParams {
   location: any;

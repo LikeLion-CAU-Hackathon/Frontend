@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import sideFoldImage from "../../../assets/images/side_fold.png";
-import bottomFoldImage from "../../../assets/images/bottom_fold.png";
-import topFoldImage from "../../../assets/images/top_fold.png";
-import CalendarCard from "../../../components/calendar/CalendarCard";
-import type { Card } from "../../../types/card";
+import sideFoldImage from "@/assets/images/envelope/side_fold.png";
+import bottomFoldImage from "@/assets/images/envelope/bottom_fold.png";
+import topFoldImage from "@/assets/images/envelope/top_fold.png";
+import CalendarCard from "@/components/calendar/CalendarCard";
+import type { Card } from "@/types/card";
 
 interface LetterEnvelopeProps {
   card: Card;

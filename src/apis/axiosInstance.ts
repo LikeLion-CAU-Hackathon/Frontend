@@ -1,13 +1,12 @@
 import axios from "axios";
-import { BASE_URL } from "../constants/baseURL";
+import { BASE_URL } from "@/constants/baseURL";
 import {
   getAccessToken,
   getRefreshToken,
   setAccessToken,
   setTokens,
-  clearTokens,
-} from "../utils/token.ts";
-import { getNewRefreshToken } from "./auth.ts";
+} from "@/utils/token.ts";
+import { getNewRefreshToken, handleAuthError } from "@/apis/auth.ts";
 
 export const authAxios = axios.create({
     baseURL: BASE_URL,
@@ -50,7 +49,7 @@ authAxios.interceptors.response.use(
 
         return authAxios(originalRequest); 
       } catch (err) {
-        clearTokens();
+        handleAuthError();
         return Promise.reject(err);
       }
     }

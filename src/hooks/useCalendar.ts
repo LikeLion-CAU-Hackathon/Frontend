@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Card } from "../types/card";
-import { checkAnswered } from "../apis/answer/answer.api";
-import { getTodayDate, isCardAfterToday, isCardBeforeToday, isCardOpenableToday, isOpportunityDay } from "../utils/date";
+import type { Card } from "@/types/card";
+import { checkAnswered } from "@/apis/answer/answer.api";
+import { getTodayDate, isCardAfterToday, isCardBeforeToday, isCardOpenableToday, isOpportunityDay } from "@/utils/date";
 
 export const useCalendar = (navigate: Function) => {
   const todayString = getTodayDate();

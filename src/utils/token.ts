@@ -34,5 +34,4 @@ export const clearTokens = () => {
   console.log("clearTokens called");
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
-  window.location.href = "/";
 };

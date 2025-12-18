@@ -1,10 +1,10 @@
 // TODO: stamp 이미지 날짜별 나중에 추가 : stampImages.tsx 생성
 import styled from 'styled-components'
-import stampImage from '../../assets/images/stamp.png'
-import type { Card } from '../../types/card'
-import { stamps } from '../../utils/stampLoader';
+import stampImage from '@/assets/images/stamp/stamp.png'
+import type { Card } from '@/types/card'
+import { stamps } from '@/utils/stampLoader';
 import { isCardAfterToday, isCardBeforeToday, isCardOpenableToday, isOpportunityDay } from '../../utils/date';
-import expiredStamp from '../../assets/images/stamp/expiredStamp.png'
+import expiredStamp from '@/assets/images/stamp/expiredStamp.png'
 
 interface CalendarCardProps {
     card: Card;

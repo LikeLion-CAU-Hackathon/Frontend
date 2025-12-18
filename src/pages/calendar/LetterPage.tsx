@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import LetterEnvelope from "./components/LetterEnvelope";
-import LetterContent from "../../components/calendar/LetterContent";
-import type { Card } from "../../types/card";
+import LetterEnvelope from "@/pages/calendar/components/LetterEnvelope";
+import LetterContent from "@/components/calendar/LetterContent";
+import type { Card } from "@/types/card";
 
 interface LetterPageProps {
   isOpened: boolean;

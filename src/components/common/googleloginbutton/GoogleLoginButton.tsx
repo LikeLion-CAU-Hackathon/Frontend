@@ -1,6 +1,6 @@
-import styles from "./GoogleLoginButton.module.css";
-import googleLoginButtonImage from "../../../assets/images/google-login-button.png";
-import { GOOGLE_AUTH_URL } from "../../../constants/oauth";
+import styles from "@/components/common/googleloginbutton/GoogleLoginButton.module.css";
+import googleLoginButtonImage from "@/assets/images/login/google-login-button.png";
+import { GOOGLE_AUTH_URL } from "@/constants/oauth";
 
 const GoogleLoginButton = () => {
   const handleLogin = () => {

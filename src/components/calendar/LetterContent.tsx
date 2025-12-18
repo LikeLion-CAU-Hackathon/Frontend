@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import letterBg from "../../assets/images/letter_background.png";
-import { formatDayToKorean } from "../../utils/dayToKorean";
-import AnswerButton from "../common/button/AnswerButton";
+import letterBg from "@/assets/images/envelope/letter_background.png";
+import { formatDayToKorean } from "@/utils/dayToKorean";
+import AnswerButton from "@/components//common/button/AnswerButton";
 
 interface LetterContentProps {
   isOpened: boolean;

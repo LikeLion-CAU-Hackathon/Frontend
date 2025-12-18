@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { addLike, deleteLike } from "../apis/answer/like.api";
-import { toggleStoredLikedAnswer } from "../utils/likedAnswers";
+import { addLike, deleteLike } from "@/apis/answer/like.api";
+import { toggleStoredLikedAnswer } from "@/utils/likedAnswers";
 
 export const useLike = (initialLiked: boolean, initialCount: number, answerId: number) => {
   const [liked, setLiked] = useState(initialLiked);

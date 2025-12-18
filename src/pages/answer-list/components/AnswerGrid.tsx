@@ -1,5 +1,5 @@
-import AnswerCard from "../../../components/common/AnswerCard";
-import type { AnswerCardData } from "../../../components/common/AnswerCard";
+import AnswerCard from "@/components/common/AnswerCard";
+import type { AnswerCardData } from "@/components/common/AnswerCard";
 import styled from "styled-components";
 
 interface AnswerGridProps {

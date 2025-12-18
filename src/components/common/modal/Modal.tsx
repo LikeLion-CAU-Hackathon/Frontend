@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Overlay from "../overlay/Overlay";
+import Overlay from "@/components/common/overlay/Overlay";
 
 interface ModalProps {
   isOpen: boolean;
