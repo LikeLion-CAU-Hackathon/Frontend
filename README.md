@@ -54,8 +54,6 @@
 ## 📂 Directory Structure
 
 ### Frontend
-
-페이지 중심 구조에서 발생한 로직 과밀 문제를 해결하기 위해, hooks / utils / apis 레이어를 기준으로 책임을 재정의하고 전반적인 리팩토링을 주도했습니다.
 ```
 src
 ├── App.css
