@@ -1,4 +1,4 @@
-import styles from "./GoogleLoginButton.module.css";
+import styles from "@/components/common/googleloginbutton/GoogleLoginButton.module.css";
 import googleLoginButtonImage from "@/assets/images/login/google-login-button.png";
 import { GOOGLE_AUTH_URL } from "@/constants/oauth";
 
