@@ -1,4 +1,4 @@
-import { authAxios } from "../axiosInstance";
+import { authAxios } from "@/apis/axiosInstance";
 
 export const getMyProfile = async (questionId?: number | string) => {
   if (!questionId && questionId !== 0) {

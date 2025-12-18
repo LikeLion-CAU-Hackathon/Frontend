@@ -1,4 +1,4 @@
-import type { AnswerCardData } from "../components/common/AnswerCard";
+import type { AnswerCardData } from "@/components/common/AnswerCard";
 
 export interface ReplyItem {
   id: number;

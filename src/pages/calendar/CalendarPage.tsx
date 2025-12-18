@@ -1,12 +1,12 @@
 import styled from "styled-components";
-import Footer from "../../components/common/Footer";
-import LetterPage from "./LetterPage";
-import CardGrid from "./components/CardGrid";
+import Footer from "@/components/common/Footer";
+import LetterPage from "@/pages/calendar/LetterPage";
+import CardGrid from "@/pages/calendar/components/CardGrid";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useCalendar } from "../../hooks/useCalendar";
-import { useAuthTokenHandler } from "../../hooks/useAuthTokenHandler";
-import { useQuestion } from "../../hooks/useQuestion";
-import CalendarOverlay from "./components/CalendarOverlay";
+import { useCalendar } from "@/hooks/useCalendar";
+import { useAuthTokenHandler } from "@/hooks/useAuthTokenHandler";
+import { useQuestion } from "@/hooks/useQuestion";
+import CalendarOverlay from "@/pages/calendar/components/CalendarOverlay";
 
 const CalendarPage = () => {
   const navigate = useNavigate();

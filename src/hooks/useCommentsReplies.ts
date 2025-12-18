@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { getAnswerReplies, getAnswerLikeCount, postAnswerComment } from "../apis/answer/answer.api";
-import type { AnswerCardData } from "../components/common/AnswerCard";
-import { mapReplies, updateRepliesWithNickname } from "../utils/comments";
-import type { ReplyItem } from "../utils/comments";
-import { formatTimestampWithSeconds } from "../utils/date";
+import { getAnswerReplies, getAnswerLikeCount, postAnswerComment } from "@/apis/answer/answer.api";
+import type { AnswerCardData } from "@/components/common/AnswerCard";
+import { mapReplies, updateRepliesWithNickname } from "@/utils/comments";
+import type { ReplyItem } from "@/utils/comments";
+import { formatTimestampWithSeconds } from "@/utils/date";
 
 interface Params {
   answerId: number | null;

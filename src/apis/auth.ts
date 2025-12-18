@@ -1,6 +1,6 @@
 import axios from "axios";
-import { BASE_URL } from "../constants/baseURL";
-import { getRefreshToken, clearTokens } from "../utils/token";
+import { BASE_URL } from "@/constants/baseURL";
+import { getRefreshToken, clearTokens } from "@/utils/token";
 
 export const getNewRefreshToken = async () => {
   const refreshToken = getRefreshToken();

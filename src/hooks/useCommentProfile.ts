@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { getMyProfile } from "../apis/user/user.api";
+import { getMyProfile } from "@/apis/user/user.api";
 
 interface Params {
   cardId?: number | string | null;

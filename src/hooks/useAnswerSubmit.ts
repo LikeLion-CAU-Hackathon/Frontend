@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { postAnswerReply } from "../apis/answer/answer.api";
+import { postAnswerReply } from "@/apis/answer/answer.api";
 
 interface UseAnswerSubmitParams {
   questionId: number | null;

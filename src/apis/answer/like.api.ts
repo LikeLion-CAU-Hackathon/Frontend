@@ -1,4 +1,4 @@
-import { authAxios } from "../axiosInstance";
+import { authAxios } from "@/apis/axiosInstance";
 
 export const addLike = async (answerId: number) => {
   try {

@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import CalendarPage from "./pages/calendar/CalendarPage";
-import "./pages/login/styles/global.css"; // 전역 스타일 적용
-import FixedScreenLayout from "./components/layout/fixedscreenlayout/FixedScreenLayout";
-import Login from "./pages/login/Login";
-import Answer from "./pages/answer/Answer";
-import Comments from "./pages/comments/Comments";
-import AnswerListPage from "./pages/answer-list/AnswerListPage";
-import PrivateRoute from "./router/PrivateRoute";
+import CalendarPage from "@/pages/calendar/CalendarPage";
+import "@/pages/login/styles/global.css"; // 전역 스타일 적용
+import FixedScreenLayout from "@/components/common/layout/FixedScreenLayout";
+import Login from "@/pages/login/Login";
+import Answer from "@/pages/answer/Answer";
+import Comments from "@/pages/comments/Comments";
+import AnswerListPage from "@/pages/answer-list/AnswerListPage";
+import PrivateRoute from "@/router/PrivateRoute";
 
 function App() {
   return (

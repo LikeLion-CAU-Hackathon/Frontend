@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import AnswerGrid from "./AnswerGrid";
-import type { AnswerCardData } from "../../../components/common/AnswerCard";
+import AnswerGrid from "@/pages/answer-list/components/AnswerGrid";
+import type { AnswerCardData } from "@/components/common/AnswerCard";
 
 interface AnswerSlideProps {
   answers: AnswerCardData[];

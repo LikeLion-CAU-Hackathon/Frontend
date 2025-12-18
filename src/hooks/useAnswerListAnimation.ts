@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type React from "react";
-import type { Answer } from "../utils/answer";
-import type { AnimationState, RelativeRect } from "../types/answerList";
+import type { Answer } from "@/utils/answer";
+import type { AnimationState, RelativeRect } from "@/types/answerList";
 
 interface Params {
   currentBackgroundImg: string;
