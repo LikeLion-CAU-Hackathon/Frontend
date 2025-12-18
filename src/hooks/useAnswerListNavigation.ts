@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { readStoredAnswerListState, clearStoredAnswerListState } from "../utils/storage";
-import type { AnimationState } from "../types/answerList";
+import { readStoredAnswerListState, clearStoredAnswerListState } from "@/utils/storage";
+import type { AnimationState } from "@/types/answerList";
 
 interface Params {
   cardId: string | null;

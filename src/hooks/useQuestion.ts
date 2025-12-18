@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getQuestion } from "../apis/question/question.api";
-import { getTodayDate } from "../utils/date";
+import { getQuestion } from "@/apis/question/question.api";
+import { getTodayDate } from "@/utils/date";
 
 interface UseQuestionParams {
   questionId?: number | null;

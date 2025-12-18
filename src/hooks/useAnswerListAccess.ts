@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { checkAnswered } from "../apis/answer/answer.api";
+import { checkAnswered } from "@/apis/answer/answer.api";
 
 interface Params {
   cardId: string | null;

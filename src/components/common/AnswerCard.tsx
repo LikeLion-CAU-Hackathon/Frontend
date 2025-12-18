@@ -3,8 +3,8 @@ import { useRef } from "react";
 import type { KeyboardEvent, MouseEvent } from "react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import styled from "styled-components";
-import { useLike } from "../../hooks/useLike";
-import commentIcon from "../../assets/images/comments/comment.svg";
+import { useLike } from "@/hooks/useLike";
+import commentIcon from "@/assets/images/comments/comment.svg";
 
 export interface AnswerCardData {
   id: number;

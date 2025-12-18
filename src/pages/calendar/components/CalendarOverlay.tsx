@@ -1,5 +1,5 @@
-import Overlay from "../../../components/common/overlay/Overlay";
-import Modal from "../../../components/common/modal/Modal";
+import Overlay from "@/components/common/overlay/Overlay";
+import Modal from "@/components/common/modal/Modal";
 
 interface Props {
   isCardOpened: boolean;

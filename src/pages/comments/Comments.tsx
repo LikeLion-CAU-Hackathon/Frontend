@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import styles from "./Comments.module.css";
-import sendIcon from "../../assets/images/send.svg";
-import closeIcon from "../../assets/images/comments/x.svg";
-import type { AnswerCardData } from "../../components/common/AnswerCard";
-import AnswerCard from "../../components/common/AnswerCard";
-import Overlay from "../../components/common/overlay/Overlay";
-import { normalizeFeaturedAnswer } from "../../utils/comments";
-import { useCommentProfile } from "../../hooks/useCommentProfile";
-import { useCommentsReplies } from "../../hooks/useCommentsReplies";
+import styles from "@/pages/comments/Comments.module.css";
+import sendIcon from "@/assets/images/send.svg";
+import closeIcon from "@/assets/images/comments/x.svg";
+import type { AnswerCardData } from "@/components/common/AnswerCard";
+import AnswerCard from "@/components/common/AnswerCard";
+import Overlay from "@/components/common/overlay/Overlay";
+import { normalizeFeaturedAnswer } from "@/utils/comments";
+import { useCommentProfile } from "@/hooks/useCommentProfile";
+import { useCommentsReplies } from "@/hooks/useCommentsReplies";
 
 const Comments = () => {
   const location = useLocation();

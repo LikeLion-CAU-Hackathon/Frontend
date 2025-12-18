@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type Slider from "react-slick";
-import { shuffleWithSeed, getSeedFromCardId } from "../utils/random";
-import type { Answer } from "../utils/answer";
+import { shuffleWithSeed, getSeedFromCardId } from "@/utils/random";
+import type { Answer } from "@/utils/answer";
 
 interface Params {
   answers: Answer[];

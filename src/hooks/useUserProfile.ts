@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMyProfile } from "../apis/user/user.api";
+import { getMyProfile } from "@/apis/user/user.api";
 
 interface UseUserProfileParams {
   questionId?: number | null;

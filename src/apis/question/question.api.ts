@@ -1,4 +1,4 @@
-import { authAxios } from "../axiosInstance";
+import { authAxios } from "@/apis/axiosInstance";
 
 export const getQuestion = async (date: string | number) => {
   try {

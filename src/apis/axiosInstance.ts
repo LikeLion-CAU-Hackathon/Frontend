@@ -1,12 +1,12 @@
 import axios from "axios";
-import { BASE_URL } from "../constants/baseURL";
+import { BASE_URL } from "@/constants/baseURL";
 import {
   getAccessToken,
   getRefreshToken,
   setAccessToken,
   setTokens,
-} from "../utils/token.ts";
-import { getNewRefreshToken, handleAuthError } from "./auth.ts";
+} from "@/utils/token.ts";
+import { getNewRefreshToken, handleAuthError } from "@/apis/auth.ts";
 
 export const authAxios = axios.create({
     baseURL: BASE_URL,

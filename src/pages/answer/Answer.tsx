@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import styles from "./Answer.module.css";
-import { getFormattedToday, parseDateToDotted } from "../../utils/date";
-import { useQuestion } from "../../hooks/useQuestion";
-import { useUserProfile } from "../../hooks/useUserProfile";
-import { useAnswerSubmit } from "../../hooks/useAnswerSubmit";
-import closeIcon from "../../assets/images/comments/x.svg";
+import styles from "@/pages/answer/Answer.module.css";
+import { getFormattedToday, parseDateToDotted } from "@/utils/date";
+import { useQuestion } from "@/hooks/useQuestion";
+import { useUserProfile } from "@/hooks/useUserProfile";
+import { useAnswerSubmit } from "@/hooks/useAnswerSubmit";
+import closeIcon from "@/assets/images/comments/x.svg";
 
 const Answer = () => {
   const location = useLocation();

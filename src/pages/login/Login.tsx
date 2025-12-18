@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import GoogleLoginButton from "../../components/common/googleloginbutton/GoogleLoginButton";
-import styles from "./Login.module.css";
+import GoogleLoginButton from "@/components/common/googleloginbutton/GoogleLoginButton";
+import styles from "@/pages/login/Login.module.css";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(true);

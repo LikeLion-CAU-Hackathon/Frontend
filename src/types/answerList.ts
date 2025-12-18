@@ -1,4 +1,4 @@
-import type { Answer } from "../utils/answer";
+import type { Answer } from "@/utils/answer";
 
 export interface RelativeRect {
   top: number;

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { getQuestion } from "../apis/question/question.api";
-import { getAnswerList } from "../apis/answer/answer.api";
-import { convertIdToDate, extractDateTimeFromTimestamp } from "../utils/date";
-import { updateAnswerOwnership } from "../utils/answer";
-import type { Answer } from "../utils/answer";
-import { getMyProfile } from "../apis/user/user.api";
+import { getQuestion } from "@/apis/question/question.api";
+import { getAnswerList } from "@/apis/answer/answer.api";
+import { convertIdToDate, extractDateTimeFromTimestamp } from "@/utils/date";
+import { updateAnswerOwnership } from "@/utils/answer";
+import type { Answer } from "@/utils/answer";
+import { getMyProfile } from "@/apis/user/user.api";
 
 interface Params {
   cardId: string | null;

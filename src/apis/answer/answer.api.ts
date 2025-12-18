@@ -1,4 +1,4 @@
-import { authAxios } from "../axiosInstance";
+import { authAxios } from "@/apis/axiosInstance";
 
 export const getAnswerList = async (questionId: number) => {
   const response = await authAxios.get(`/questions/${questionId}/answers`);
